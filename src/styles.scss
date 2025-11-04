@@ -1,1 +1,59 @@
-/* You can add global styles to this file, and also import other style files */
+.swal2-confirm{
+    color:white !important;
+  }
+.sidebar{
+     display: none !important;
+}
+.datatable-header-cell-label{
+    font-size: 14px !important;
+      font-weight: bold !important;
+  }
+  
+  .custom-datatable ngx-datatable.material .datatable-header .datatable-header-cell {
+    font-size: 15px !important;
+  }
+.themeClr{
+    color: #FD6C04 !important;
+}
+.modal-dialog {
+    max-width: 90% !important;
+  }
+
+.BackgroundColor{
+    background-color: #FDFFF7 !important;
+}
+.BottomSpace{
+  margin-bottom: 25rem;
+}
+
+.swal-wide {
+  width: 850px !important;
+  max-width: 95% !important;
+}
+
+
+ .custom-spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5); /* transparent black */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* sabse upar rahe */
+}
+
+.custom-spinner-overlay img {
+  width: 20rem;
+  height: 20rem;
+}
+.custom-spinner-content p {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  text-shadow: 0 0 5px #d8d8d8;
+  font-family: "Segoe UI", sans-serif;
+  margin-top: 10px; /* thoda gap */
+} 

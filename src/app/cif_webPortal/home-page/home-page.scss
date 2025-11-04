@@ -1,0 +1,646 @@
+/* Hide checkbox */
+.nest-nav input[type="checkbox"] {
+    display: none;
+}
+
+/* Desktop menu styles */
+.nest-nav nav ul.menu {
+    list-style: none;
+    margin: 1rem 0 0 0;
+    padding: 0;
+    // display: flex;
+    justify-content: center;
+}
+
+
+ 
+/* Toggle label (hamburger) hidden on desktop */
+.nest-nav .toggle {
+    display: none;
+}
+
+/* Hamburger icon bars */
+.mobile-nav-icon {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.mobile-nav-icon .bar1,
+.mobile-nav-icon .bar2,
+.mobile-nav-icon .bar3 {
+    width: 30px;
+    height: 3px;
+    background-color: #fff;
+    margin: 6px 0;
+    transition: 0.4s;
+}
+
+.mobile-nav-icon.change .bar1 {
+    transform: translate(0, 8px) rotate(-45deg);
+    width: 20px;
+}
+
+.mobile-nav-icon.change .bar2 {
+    opacity: 0;
+    width: 20px;
+}
+
+.mobile-nav-icon.change .bar3 {
+    transform: translate(0, -10px) rotate(45deg);
+    width: 20px;
+}
+
+/* Responsive styles */
+@media (max-width: 1030px) {
+
+    /* Show toggle label */
+    .nest-nav .toggle {
+        display: block;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1000;
+    }
+
+    /* Hide desktop menu */
+    .nest-nav nav ul.menu {
+        display: none;
+        flex-direction: column;
+        background-color: #8c0001;
+        position: fixed;
+        top: 1rem;
+        /* adjust if needed */
+        right: 0;
+        //   margin: 0;
+        //   padding: 0;
+        z-index: 999;
+    }
+
+    /* Show menu when checkbox is checked */
+    #drop:checked+ul.menu {
+        display: flex;
+    }
+
+    /* Menu items full width */
+    .nest-nav nav ul.menu li {
+        margin: 0;
+        width: 100%;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .nest-nav nav ul.menu li a {
+        color: #fff;
+        padding: 15px 20px;
+        font-size: 14px;
+        border: none;
+        text-transform: uppercase;
+        font-weight: 500;
+    }
+}
+
+
+
+/* Custom Menu css */
+
+
+.mobile-nav-icon .bar1,
+.mobile-nav-icon .bar2,
+.mobile-nav-icon .bar3 {
+    width: 30px;
+    height: 3px;
+    background-color: #fff;
+    margin: 6px 0;
+    transition: 0.4s;
+}
+
+.mobile-nav-icon.change .bar1,
+.mobile-nav-icon.change .bar2,
+.mobile-nav-icon.change .bar3 {
+    width: 20px;
+}
+
+.mobile-nav-icon.change .bar1 {
+    transform: translate(0, 8px) rotate(-45deg);
+}
+
+.mobile-nav-icon.change .bar2 {
+    opacity: 0;
+}
+
+.mobile-nav-icon.change .bar3 {
+    transform: translate(0, -10px) rotate(45deg);
+}
+
+.nest-nav.fixed-nav {
+    position: fixed;
+    width: 100%;
+    z-index: 99;
+    top: 145px;
+    padding: 8px 0;
+    left: 0;
+    background-color: #f5efe3;
+}
+
+.nest-nav.fixed-nav ul {
+    margin: 0;
+}
+
+.nest-nav .toggle,
+.nest-nav [id^="drop"] {
+    display: none;
+}
+
+.nest-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nest-nav nav {
+    margin: 0;
+    padding: 0;
+}
+
+.nest-nav nav:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.nest-nav nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0 0;
+    display: flex;
+    position: relative;
+}
+
+.nest-nav ul li:not(:first-child) {
+    margin: 0 10px;
+}
+
+.nest-nav ul li:first-child {
+    margin-left: 0;
+    margin-right: 10px;
+}
+
+.nest-nav ul li a {
+    color: #080708;
+    border: 1px solid rgba(8, 7, 8, 0.1);
+    font-size: 14px;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    display: block;
+}
+
+.nest-nav ul li ul li:not(:last-child) a {
+    border-bottom: none !important;
+}
+
+.nest-nav nav li.nextdrop a {
+    font-size: 14px;
+    text-transform: uppercase;
+    display: block;
+    padding: 8px 35px 8px 20px;
+}
+
+.nest-nav nav ul li.nextdrop ul li a {
+    display: block;
+    text-decoration: none;
+    margin: 0;
+    padding: 14px;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 0;
+    color: #080708;
+}
+
+.nest-nav nav ul li.nextdrop ul li {
+    margin: 0;
+}
+
+.nest-nav nav ul li.nextdrop ul li a:hover {
+    color: #ef7d00;
+    background: rgba(246, 130, 35, 0.2) !important;
+    border-color: transparent;
+}
+
+.nest-nav nav a:hover,
+.nest-nav nav a.active {
+    background: rgba(246, 130, 35, 0.2) !important;
+}
+
+.nest-nav nav ul ul {
+    display: none;
+    position: absolute;
+    z-index: 9;
+    background: #fdfff7;
+    border-top: 2px solid #ef7d00;
+    margin: 0;
+}
+
+.nest-nav nav ul li:hover>ul {
+    display: inherit;
+}
+
+.nest-nav nav ul ul li {
+    float: none;
+    display: list-item;
+    position: relative;
+}
+
+.nest-nav nav ul ul ul li {
+    position: relative;
+    top: -60px;
+    left: 170px;
+}
+
+.nest-nav li>a:after {
+    content: "\e7a7";
+    font-family: font-icons;
+    position: absolute;
+    margin-left: 7px;
+}
+
+.nest-nav li>a:only-child:after {
+    content: "";
+}
+
+.entrepreneurship-slider-innr .slick-slide {
+    margin: 0 10px;
+}
+
+@media all and (max-width: 1030px) {
+    .nest-nav nav ul li.nextdrop ul li a {
+        color: #fff !important;
+        padding: 10px;
+        font-size: 13px !important;
+    }
+
+    .nest-nav nav ul li a,
+    .nest-nav .toggle {
+        color: #fff;
+        font-size: 13px;
+        text-transform: uppercase;
+        padding: 15px;
+        display: block;
+        font-weight: 500;
+        border: none !important;
+        margin: 0;
+    }
+
+    .nest-nav ul li:not(:first-child),
+    .nest-nav ul li:not(:first-child) {
+        margin: 0;
+    }
+
+    .nest-nav {
+        position: fixed;
+        top: 0px;
+        z-index: 9999;
+        width: 100%;
+        border: 0;
+        justify-content: flex-end;
+        left: 0;
+    }
+
+    .nest-nav nav li.nextdrop a.dropa {
+        display: none !important;
+    }
+
+    .nest-nav nav {
+        margin: 0;
+    }
+
+    .nest-nav .toggle+a,
+    .nest-nav .menu {
+        display: none;
+    }
+
+    /* .nest-nav .toggle {
+          display: block;
+          background-color: #8c0001;
+          padding: 14px 20px;
+          color: #fff;
+          text-decoration: none;
+          border: none;
+          margin: 0;
+          font-weight: 500;
+        } */
+    .nest-nav .menu .toggle:after {
+        content: "\eb1f";
+        font-family: "font-icons";
+        font-size: 10px;
+        margin-left: 6px;
+    }
+
+    .nest-nav .menu .plusMinus.toggle:after {
+        content: "\e71e";
+        font-family: "font-icons";
+        font-size: 10px;
+        margin-left: 6px;
+    }
+
+    .nest-nav .toggle[for="drop"] .nav-toggle {
+        display: block;
+        background-color: #8c0001;
+        padding: 10px;
+        color: #fff;
+        text-decoration: none;
+        border: none;
+        margin: 0;
+        text-align: right;
+        position: absolute;
+        right: 0;
+        z-index: 9;
+    }
+
+    .nest-nav .toggle[for="drop"] .nav-toggle.change {
+        background: transparent;
+        top: 40px;
+        padding: 0;
+        right: 10px;
+    }
+
+    .nest-nav [id^="drop"]:checked+ul {
+        display: block;
+        margin: 0;
+    }
+
+    .nest-nav nav ul li {
+        margin: 0px;
+        display: inline-block;
+        float: left;
+        background-color: #8c0001;
+        position: relative;
+        display: block;
+        width: 100%;
+        border-bottom: 1px solid rgb(255, 255, 255, 0.3);
+    }
+
+    .nest-nav nav ul ul .toggle,
+    .nest-nav nav ul ul a {
+        padding: 0 40px;
+    }
+
+    .nest-nav nav ul ul ul a {
+        padding: 0 80px;
+    }
+
+    /* .nest-nav nav a:hover,
+        .nest-nav nav ul ul ul a {
+          background-color: #000000;
+        } */
+    .nest-nav nav ul li ul li .toggle,
+    .nest-nav nav ul ul a,
+    .nest-nav nav ul ul ul a {
+        padding: 14px 20px;
+        color: #fff;
+    }
+
+    .nest-nav nav ul li ul li .toggle,
+    .nest-nav nav ul ul a {
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .nest-nav nav ul ul {
+        float: none;
+        position: static;
+        color: #ffffff;
+        width: 100%;
+    }
+
+    .nest-nav nav ul ul li:hover>ul,
+    .nest-nav nav ul li:hover>ul {
+        display: none;
+    }
+
+    .nest-nav nav ul ul li {
+        display: block;
+        width: 100%;
+    }
+
+    .nest-nav nav ul ul ul li {
+        position: static;
+    }
+}
+
+@media all and (max-width: 330px) {
+    .nest-nav nav ul li {
+        display: block;
+        width: 94%;
+    }
+}
+.marquee-wrapper {
+    overflow: hidden;
+    width: 100%;
+    // background: #f7e600; /* Adjust background to match bg-dark-yellow */
+    padding: 10px 0;
+  }
+
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: marqueeAnim 30s linear infinite;
+  }
+
+  .event-item {
+    flex: 0 0 auto;
+    width: 250px;
+    margin-right: 30px;
+    text-align: center;
+    color: #333; /* Adjust text color */
+  }
+
+  .event-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+
+ .check-btn {
+    // background-color: #4CAF50; /* Green */
+    border: none;
+    // color: white;
+    padding: 8px 16px;
+    text-align: center;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+ 
+  .event-info {
+    font-size: 14px;
+  }
+
+  @keyframes marqueeAnim {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+ 
+  .event-card {
+    // background: white;
+    border-left: 4px groove #ef7d00;
+     border-right: 4px groove #ef7d00;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.12);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    // width: 42rem;
+  }
+
+  .event-title {
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem;
+    color: #2d3748;
+  }
+
+  .event-date {
+    font-size: 0.9rem;
+    color: #718096;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .event-details {
+    flex-grow: 1;
+    font-size: 0.95rem;
+    color: #4a5568;
+    margin-bottom: 1.25rem;
+    line-height: 1.4;
+  }
+
+  .btn-check {
+    align-self: flex-start;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: #3182ce;
+    border: 2px solid #3182ce;
+    background: transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .btn-check:hover,
+  .btn-check:focus {
+    background-color: #3182ce;
+    color: white;
+    outline: none;
+  }
+ 
+  
+// <style>
+  /* Wrapper and header */
+  .vertical-marquee-wrapper {
+    // max-width: 400px;
+    margin: 2rem auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #222;
+  }
+
+  .marquee-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  /* Vertical marquee container */
+  .vertical-marquee {
+    // height: 300px; /* fixed height for visible area */
+    overflow: hidden;
+    // background: #fff8e1;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgb(0 0 0 / 0.1);
+    padding: 1rem;
+    outline: none;
+  }
+
+  /* List styles */
+  .vertical-marquee-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    animation: scrollUp 20s linear infinite;
+  }
+
+  .vertical-marquee-item {
+    padding: 1rem 0;
+    // border-bottom: 1px solid #ddd;
+  }
+
+  /* Event card */
+  .event-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .event-title {
+    font-size: 1.2rem;
+    margin: 0;
+    color: #2d3748;
+  }
+
+  .event-date {
+    font-size: 0.9rem;
+    color: #718096;
+  }
+
+  .event-details {
+    font-size: 0.95rem;
+    color: #4a5568;
+  }
+
+  .btn-check {
+    align-self: flex-start;
+    margin-top: 0.5rem;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    color: #3182ce;
+    border: 2px solid #3182ce;
+    background: transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .btn-check:hover,
+  .btn-check:focus {
+    background-color: #3182ce;
+    color: white;
+    outline: none;
+  }
+
+  /* Scroll Up Animation */
+  @keyframes scrollUp {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-50%);
+    }
+  }
+
+  /* Duplicate your allEvents array in TS as marqueeEvents for seamless scroll */
+  /* Example: marqueeEvents = [...allEvents, ...allEvents]; */
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .vertical-marquee-wrapper {
+      max-width: 100%;
+      padding: 0 1rem;
+    }
+
+    .vertical-marquee {
+      height: 250px;
+    }
+  }
