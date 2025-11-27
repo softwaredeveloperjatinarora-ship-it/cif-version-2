@@ -1,0 +1,161 @@
+<app-top-bar (facilitiesClicked)="gotoFacilities()"></app-top-bar>
+
+<section class="section">
+    <div class="container">
+        <div class="heading-wraper mb-4">
+            <div class="main-head">
+                <h1>About the Instruments</h1>
+                <div class="call-action gap-3">
+                  <a routerLink="/Home" class="link-btn">
+                    <img src="https://www.lpu.in/lpu-assets/images/icons/chevron-right.svg" alt="Icon">Home Page</a>
+                </div>
+            </div>
+        </div>
+        <p> 
+            CIF of Lovely Professional University is equipped with sophisticated instruments to carry out spectral
+            measurements, structure determination and chemical analysis. Click on the instrument name in the
+            following table to view their description.
+        </p>
+
+        <div class="instrument-grid" id="instrumentGrid">
+            @for (instrument of instruments(); track instrument.id) {
+                <div class="instrument-block g-col-lg-3 g-col-6 d-grid"
+                    [class.selected-instrument]="instrument.id === selectedInstrumentId()">
+                    <a class="instrument-link" href="javascript:void(0)"
+                        (click)="fetchSpecifications(instrument.categoryId, instrument.id)">
+                        {{ instrument.instrumentName }}
+                    </a>
+                </div>
+            } @empty {
+                <div class="p-3 text-center">No instruments found.</div>
+            }
+        </div>
+    </div>
+</section>
+
+@if (isInstrumentActive() && instrumentDetails()) {
+  <section class="section bg-dark-yellow">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-9">
+          <div class="heading-wraper mb-4">
+            <div class="main-head align-items-start">
+              <h2 id="InstrumentName">{{ instrumentName() }}</h2>
+              <div class="call-action gap-3">
+                <a routerLink="/Login" class="lpu-btn">Login/Register</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="alert"
+            [class.alert-danger]="!isInstrumentActive()"
+            [class.alert-success]="isInstrumentActive()"
+            id="InstrumentStatus">
+            <strong>{{ isInstrumentActive() ? 'Instrument is Active' : 'Instrument is Inactive' }}</strong>
+          </div>
+          
+          <div class="mb-5">
+            <img [src]="instrumentImageUrl()" alt="Instrument Image" class="ImageSizes"/>
+          </div>
+          <p [innerHTML]="instrumentDescription()" style="text-align: justify;"></p>
+        </div>
+        <div class="col-lg-3">
+            <div class="section-light-red p-3">
+                <h4 class="font-primary white mb-3">Specifications:</h4>
+                <ul class="specifications lpu-list white" id="specificationsList">
+                    @for (spec of instrumentSpecifications(); track spec.id) {
+                    <li>
+                        <strong class="d-block">{{ spec.keyName }}:</strong> {{ spec.keyValue }}
+                    </li>
+                    } @empty {
+                    <li>No specifications available.</li>
+                    }
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+  </section>
+}
+
+<section class="section bg-dark-yellow" #facilitiesSection>
+  <div class="container">
+      <div class="heading-wraper mb-4">
+          <div class="main-head">
+              <h2 id="CIF_Facilities">Facilities</h2>
+              <div class="call-action">                    
+                  <a routerLink="/ourInstruments" class="link-btn">
+                      <img src="https://www.lpu.in/lpu-assets/images/icons/chevron-right.svg" alt="Icon">Know
+                      more</a>
+              </div>
+          </div>
+
+          <p>CIF of Lovely Professional University is equipped with sophisticated instruments to carry out
+              spectral
+              measurements, structure determination and chemical analysis. Click on the instrument name in the
+              following table to view their description.</p>
+      </div>
+      <div class="row cif-facilties">
+          @for (InstrumentData of featuredInstruments(); track $index) {
+              <div class="col-md-3">
+                  <div class="mb-4 position-relative">
+                    @if (imageLoadingStates()[$index]) {
+                      <div class="spinner-border text-primary position-absolute top-50 start-50 translate-middle"
+                          role="status" style="z-index: 10;">
+                          <span class="visually-hidden">Loading...</span>
+                      </div>
+                    }
+
+                    <img [src]="InstrumentData.imageUrl" alt="{{InstrumentData.instrumentName}}" class="img-fluid"
+                        loading="lazy" (load)="onImageLoad($index)" (error)="onImageError($event, $index)" />
+                  </div>
+                  <div class="mb-5">
+                      <a (click)="VisitUrl('/ourInstruments', InstrumentData.instrumentName.slice(0, 10), InstrumentData.id, InstrumentData.categoryId)">
+                          {{InstrumentData.instrumentName}}
+                      </a>
+                  </div>
+              </div>
+          } @empty {
+            <div class="col-12 p-3 text-center">No facilities listed.</div>
+          }
+      </div>
+  </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="heading-wraper mb-4">
+            <h2>FAQs</h2>
+        </div>
+        
+        <div class="accordion-container">
+            @for (faq of faqs(); track faq.question) {
+                <div class="accordion-item">
+                    <div class="accordion-header" (click)="toggleAccordion(faq)">
+                        <div class="accordion-title">{{ faq.question }}</div>
+                        <i class="accordion-icon" 
+                           [class.icon-minus]="faq.isOpen" 
+                           [class.icon-plus]="!faq.isOpen">
+                        </i>
+                      </div>
+                      
+                    @if (faq.isOpen) {
+                        <div class="accordion-body" [@slideInOut]>
+                            <div [innerHTML]="faq.answer"></div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<ng-template #chargesModal let-modal>
+    <div class="modal-header">
+        <h3 class="modal-title" id="exampleModalLabel">Instrument Charges </h3>
+        <button type="button" class="btn-close" (click)="modal.close('by: close icon')" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <button type="submit" (click)="navigateToLogin()" class="lpu-btn me-2">Book Test</button>
+        </div>
+</ng-template>

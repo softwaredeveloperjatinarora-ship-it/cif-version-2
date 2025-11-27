@@ -9,9 +9,34 @@
   </div>
 </div>
 } @else {
-<section class="section pb-0">
-  </section>
+ 
+ <section class="section p-0">
+    <div class="container mt-5 mb-5">
+      <div class="card-body">
+        <h2 class="text-center mb-4">Our Terms and Conditions</h2>
+        <div class="terms-content">
+          <h2 class="fs-3">Introduction</h2>
+          <p class="fs-5 m-3">
+            Welcome to Lovely Professional University. These terms and conditions outline the rules and regulations
+            for the use of Lovely Professional University's Website, located at lpu.co.in
+          </p>
 
+          <h2 class="fs-3 mb-3 mt-3">
+            You are specifically agree from all of the following undertakings:
+          </h2>
+          <ul>
+            <li>We agree to acknowledge CIF, LPU in our publications and thesis if the results from CIF instrumentation are incorporated/used in them.</li>
+            <li>I/We undertake to abide by the safety, standard sample preparation guidelines and precautions during testing of samples.</li>
+            <li>I/We understand the possibility of samples getting damaged during handling and analysis. CIF will not be responsible for such damage.</li>
+            <li>CIF, LPU reserves the right to return the samples without performing analysis and will refund analytical charges (after deduction of GST, if applicable) under special circumstances.</li>
+            <li>I/We agree to maintain decorum during CIF lab visits and understand that CIF reserves full rights to act if decorum is disturbed.</li>
+            <li>CIF shall not take responsibility for analysis interpretation or data publication by the end user.</li>
+            <li>I/We declare that the results of the analysis will not be used for any legal dispute resolution.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
 <section class="section bg-dark-yellow" #facilitiesSection>
   <div class="container">
     <div class="heading-wraper mb-4">
@@ -60,6 +85,7 @@
     </div>
 
   </div>
+
 </section>
 
 
@@ -214,5 +240,169 @@
         </div>
     </div>
 </section>
+
+
+
+<section class="section bg-dark-yellow">
+    <div class="container">
+      <div class="heading-wraper">
+      <div class="main-head">
+          <h2>Events & Happenings</h2>
+          <div class="inner-testi-slider-nav">
+              <button id="prev_event_slide" class="inner-testi-prev-arrow" (click)="carousel.prev()">
+                  <img src="https://www.lpu.in/lpu-assets/images/icons/vector-left.svg" />
+              </button>
+              <button id="next_event_slide" class="inner-testi-next-arrow" (click)="carousel.next()">
+                  <img src="https://www.lpu.in/lpu-assets/images/icons/vector-right.svg" />
+              </button>
+          </div>
+      </div>
+  </div>
+      <ngb-carousel
+        #carousel
+        [interval]="5000"
+        [pauseOnHover]="true"
+        [showNavigationArrows]="true"
+        [showNavigationIndicators]="false"
+      >
+        @for (group of chunkedEvents; track $index) {
+          <ng-template ngbSlide>
+            <div class="row text-center">
+              @for (event of group; track event.title) {
+                <div class="col-md-4 mb-3">
+                  <img [src]="event.img" [alt]="event.title" class="img-fluid rounded shadow-sm" />
+                  <div class="mt-3">
+                    <strong class="d-block">{{ event.title }}</strong>
+                    <small class="text-muted">{{ event.date }}</small>
+                  </div>
+                </div>
+              }
+            </div>
+          </ng-template>
+        }
+      </ngb-carousel>
+    </div>
+  </section>
 }
  
+<!-- ✅ Loader Section  
+@if (loadingIndicator) {
+  <div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+      <div class="custom-spinner-content text-center">
+        <img src="assets/images/spinner.gif" alt="Loading..." />
+      </div>
+    </div>
+  </div>
+} @else {
+
+    ✅ Terms Section 
+  <section class="section p-0">
+    <div class="container mt-5 mb-5">
+      <div class="card-body">
+        <h2 class="text-center mb-4">Our Terms and Conditions</h2>
+        <div class="terms-content">
+          <h2 class="fs-3">Introduction</h2>
+          <p class="fs-5 m-3">
+            Welcome to Lovely Professional University. These terms and conditions outline the rules and regulations
+            for the use of Lovely Professional University's Website, located at lpu.co.in
+          </p>
+
+          <h2 class="fs-3 mb-3 mt-3">
+            You are specifically agree from all of the following undertakings:
+          </h2>
+          <ul>
+            <li>We agree to acknowledge CIF, LPU in our publications and thesis if the results from CIF instrumentation are incorporated/used in them.</li>
+            <li>I/We undertake to abide by the safety, standard sample preparation guidelines and precautions during testing of samples.</li>
+            <li>I/We understand the possibility of samples getting damaged during handling and analysis. CIF will not be responsible for such damage.</li>
+            <li>CIF, LPU reserves the right to return the samples without performing analysis and will refund analytical charges (after deduction of GST, if applicable) under special circumstances.</li>
+            <li>I/We agree to maintain decorum during CIF lab visits and understand that CIF reserves full rights to act if decorum is disturbed.</li>
+            <li>CIF shall not take responsibility for analysis interpretation or data publication by the end user.</li>
+            <li>I/We declare that the results of the analysis will not be used for any legal dispute resolution.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ ✅ Facilities Section 
+  <section class="section bg-dark-yellow" #facilitiesSection>
+    <div class="container">
+      <div class="heading-wraper mb-4">
+        <div class="main-head">
+          <h2 id="CIF_Facilities">Facilities</h2>
+          <div class="call-action">
+            <a (click)="goto('/ourInstruments')" class="link-btn">
+              <img src="https://www.lpu.in/lpu-assets/images/icons/chevron-right.svg" alt="Icon" />Know more
+            </a>
+          </div>
+        </div>
+
+        <p>
+          CIF of Lovely Professional University is equipped with sophisticated instruments to carry out spectral
+          measurements, structure determination, and chemical analysis. Click on the instrument name in the following
+          table to view their description.
+        </p>
+      </div>
+
+      <div class="row cif-facilties">
+        @for (InstrumentData of tmpsInstrumentsDataData; track $index) {
+          <div class="col-md-3 mb-4 position-relative" [attr.data-index]="$index">
+            <div>
+              @if (loadingStates[$index]) {
+                <div
+                  class="spinner-border text-primary position-absolute top-50 start-50 translate-middle"
+                  role="status"
+                >
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              }
+              <img
+                [src]="InstrumentData.imageUrl"
+                alt="{{ InstrumentData.instrumentName }}"
+                class="img-fluid rounded"
+                loading="lazy"
+                (load)="onImageLoad($index)"
+                (error)="onImageError($event, $index)"
+              />
+            </div>
+            <div class="mb-5 text-center mt-2">
+              <a
+                (click)="VisitUrl('/ourInstruments', InstrumentData.instrumentName.slice(0, 10), InstrumentData.id, InstrumentData.categoryId)"
+                class="fw-semibold text-decoration-none"
+              >
+                {{ InstrumentData.instrumentName }}
+              </a>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  ✅ Carousel (optional for later use) -->
+  <!--
+  <section class="section bg-dark-yellow">
+    <div class="container">
+      <ngb-carousel #carousel [interval]="66000" [pauseOnHover]="true" [showNavigationArrows]="false" [showNavigationIndicators]="true">
+        @for (group of chunkedEvents; track $index) {
+          <ng-template ngbSlide>
+            <div class="row text-center">
+              @for (event of group; track event.title) {
+                <div class="col-md-4">
+                  <img [src]="event.img" [alt]="event.title" class="img-fluid rounded" />
+                  <div class="mt-4 mb-2">
+                    <strong class="d-block">{{ event.title }}</strong>
+                    {{ event.date }}
+                  </div>
+                </div>
+              }
+            </div>
+          </ng-template>
+        }
+      </ngb-carousel>
+    </div>
+  </section>
+
+
+}  -->

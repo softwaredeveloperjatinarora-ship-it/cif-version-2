@@ -31,6 +31,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         }
       });
   }
+  
 
   ngAfterViewInit() {
     this.loadGTMScript('GTM-P8ZP9K2');

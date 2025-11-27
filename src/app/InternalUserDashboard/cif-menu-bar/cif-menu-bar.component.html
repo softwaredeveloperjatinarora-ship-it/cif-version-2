@@ -1,0 +1,266 @@
+<div NgIf="loadingIndicator" class="fullscreen-loader">
+  <div class="loader-spinner"></div>
+  <div class="loader-text">Loading, please wait...</div>
+</div>
+
+<nav class="navbar navbar-light navbar-expand-lg mb-4 bg-light">
+  <div class="container-fluid">
+    <div class="w-100 text-center py-1 promo-banner">
+      <strong class="blinking-text">
+        <a
+          class="w-100 d-block text-decoration-none"
+          (click)="openSampleInstructions()"
+          style="cursor: pointer; margin-left: 0.8rem;"
+        >
+          <span
+            class="badge bg-info text-dark m-2 p-3 fs-5"
+            style="background: #ff9219 !important;"
+          >
+            Address for Sending Samples
+          </span>
+        </a>
+      </strong>
+    </div>
+
+    <button
+      class="navbar-toggler bg-light"
+      type="button"
+      (click)="toggleNavbar()"
+      aria-controls="navbarNav"
+      [attr.aria-expanded]="!isNavbarCollapsed"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div
+      [class.collapse]="isNavbarCollapsed"
+      class="navbar-collapse"
+      id="navbarNav"
+    >
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 bg-transparent">
+        <!-- Bookings -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle custom-nav-link"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <span style="border-bottom:1px solid #ef7d00;">Bookings</span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="goto('NewBookings')">New Booking</a></li>
+            <li><a class="dropdown-item" (click)="goto('ViewBookings')">My Bookings</a></li>
+          </ul>
+        </li>
+
+        <!-- Payments -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle custom-nav-link"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <span style="border-bottom:1px solid #ef7d00;">Payments</span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="goto('SearchPayments')">View All Paid</a></li>
+            <li><a class="dropdown-item" (click)="goto('SearchPendingPayments')">View All Pending</a></li>
+            <li><a class="dropdown-item" (click)="goto('FailedPayments')">View All Failed</a></li>
+          </ul>
+        </li>
+
+        <!-- Results -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle custom-nav-link"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <span style="border-bottom:1px solid #ef7d00;">Results</span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="goto('BookingStatus')">Test Status</a></li>
+            <li><a class="dropdown-item" (click)="goto('BookingResult')">View Results</a></li>
+          </ul>
+        </li>
+
+        <!-- Feedback -->
+        <li class="nav-item">
+          <a class="nav-link custom-nav-link" (click)="goto('FeedbackForm')">Feedback</a>
+        </li>
+
+        <!-- Sample Status -->
+        <li class="nav-item">
+          <a class="nav-link custom-nav-link" (click)="goto('SampleStatus')">Sample Status</a>
+        </li>
+
+        <!-- My Profile (conditional) -->
+        <li class="nav-item" *ngIf="UserRole !== '400000'">
+          <a class="nav-link custom-nav-link" (click)="goto('UserProfiles')">My Profile</a>
+        </li>
+
+        <!-- Logout -->
+        <li class="nav-item">
+          <a class="nav-link custom-nav-link" (click)="LogoutUser()">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Page Title -->
+<div class="text-center mt-4">
+  <h2 class="mb-4">Central Instrumentation Facility</h2>
+</div>
+
+<!-- <div *ngIf="loadingIndicator" class="fullscreen-loader">
+  <div class="loader-spinner"></div>
+  <div class="loader-text">Loading, please wait...</div>
+</div>
+
+<nav class="navbar navbar-light navbar-expand-lg mb-4">
+  <div class="container-fluid">
+    <div class="w-100 text-center py-1 promo-banner">
+       
+      <strong class="blinking-text"> <a class="w-100 d-block text-decoration-none" 
+        (click)="openSampleInstructions()"
+        style="cursor: pointer; margin-left: 0.8rem;"><span class="badge bg-info text-dark m-2 p-3 fs-5" style="background: #ff9219 !important;">
+          Address for Sending Samples </span></a> </strong>
+    </div>
+    <button
+      class="navbar-toggler bg-light"
+      type="button"
+      (click)="toggleNavbar()"
+      aria-controls="navbarNav"
+      [attr.aria-expanded]="isNavbarCollapsed ? 'false' : 'true'"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div [ngClass]="{'collapse': isNavbarCollapsed, 'navbar-collapse': true}"  id="navbarNav"    >
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 bg-transparent" >
+  
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle custom-nav-link"
+            id="newBookingsDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+          <span style="border-bottom:1px solid #ef7d00;">Bookings</span>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="newBookingsDropdown">
+            <li>
+              <a
+                class="dropdown-item custom-dropdown-item"
+                (click)="goto('NewBookings')"
+                >New Booking</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item custom-dropdown-item"
+                (click)="goto('ViewBookings')"
+                >My Bookings</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle custom-nav-link"
+            id="newBookingsDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+          <span style="border-bottom:1px solid #ef7d00;"> Payments</span>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="newBookingsDropdown">
+            <li>
+              <a
+                class="dropdown-item custom-dropdown-item"
+                (click)="goto('SearchPayments')"
+                > View All Paid   </a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item custom-dropdown-item"
+                (click)="goto('SearchPendingPayments')"
+                >View All Pending</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item custom-dropdown-item"
+                (click)="goto('FailedPayments')"
+                >View All Failed</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle custom-nav-link"
+            id="resultsDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+          <span style="border-bottom:1px solid #ef7d00;"> Results</span>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="resultsDropdown">
+            <li>
+              <a
+                class="dropdown-item custom-dropdown-item"
+                (click)="goto('BookingStatus')"
+                >Test Status</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item custom-dropdown-item"
+                (click)="goto('BookingResult')"
+                >View Results</a
+              >
+            </li>
+          </ul>
+        </li>    
+        <li class="nav-item">
+          <a
+            class="nav-link custom-nav-link"
+            (click)="goto('FeedbackForm')"
+            >Feedback</a
+          >
+        </li>
+        <li class="nav-item ">
+          <a
+          class="nav-link custom-nav-link"
+          (click)="goto('SampleStatus')"
+          >Sample Status</a
+        >
+
+        </li>
+        <li class="nav-item " *ngIf="this.UserRole!='400000'">
+          <a
+          class="nav-link custom-nav-link"
+          (click)="goto('UserProfiles')"
+          >My Profile</a
+        >
+
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link custom-nav-link"
+            (click)="LogoutUser()"
+            >Logout</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+ 
+<div class="text-center mt-4">
+  <h2 class="mb-0 text-center mb-4">Central Instrumentation Facility</h2>
+</div> -->

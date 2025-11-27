@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "serve:ssr:cif-version-2": "node dist/cif-version-2/server/server.mjs"
   },
   "prettier": {
     "printWidth": 100,

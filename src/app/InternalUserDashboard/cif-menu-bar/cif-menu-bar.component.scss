@@ -1,0 +1,117 @@
+.custom-nav-link {
+  padding: 10px 15px;  
+  font-size: 1.2rem;  
+  
+}
+
+.custom-dropdown-item {
+  padding: 8px 15px;
+  // font-weight: bold;
+  // font-size: 1rem;
+}
+
+.navbar-nav .nav-item {
+  padding: 0 2px;
+  background: #ef7d00 !important;
+  // width: 13.5rem !important;
+  // font-weight: bolder;
+  // font-size: 1.5rem;
+}
+// .navbar-nav {
+//   // font-weight: bolder;
+//   // font-size: 1.8rem;
+// }
+
+.navbar-toggler {
+  margin-right: 10px;  
+}
+
+/* Center navbar on large screens */
+@media (min-width: 992px) {
+  .navbar-nav {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+/* Adjust navbar for small screens */
+@media (max-width: 768px) {
+  .navbar-nav {
+    flex-direction: column;
+    text-align: start;
+    width: 100%;
+  }
+
+  .custom-nav-link {
+    padding: 10px; /* Larger padding for better touch targets */
+    font-size: 16px;
+  }
+
+  .dropdown-menu {
+    width: 100%; /* Full width for small devices */
+   
+  }
+}
+.blinking-banner h3 {
+  animation: blink-animation 1s steps(5, start) infinite;
+  color: #ef7d00; /* Change color as needed */
+}
+
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+
+
+/* ------ Promo Banner Styles ------ */
+.promo-banner {
+  // background: linear-gradient(90deg, #ff6b6b, #ff8e8e);  /* Gradient red */
+  // color: red;
+  width: 7rem !important;
+  // font-size: 1rem;
+  position: relative;  /* For optional pseudo-elements */
+  // box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Blinking Animation */
+.blinking-text {
+  animation: blink 1s ease-in-out infinite alternate;
+}
+
+@keyframes blink {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.8; transform: scale(1.05); }  /* Subtle pulse */
+}
+
+/* Optional "NEW" badge bounce */
+.badge {
+  animation: bounce 0.5s infinite alternate;
+}
+
+@keyframes bounce {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-3px); }
+}
+
+/* Optional "Ribbon" effect */
+.promo-banner:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 5px;
+  background: #000;
+}
+.promo-banner:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 5px;
+  background: #000;
+}
+

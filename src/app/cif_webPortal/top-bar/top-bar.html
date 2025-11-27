@@ -1,1 +1,24 @@
-<p>top-bar works!</p>
+<div class="nest-nav">
+    <nav>
+        <label for="drop" class="toggle">
+            <div class="mobile-nav-icon nav-toggle" onclick="myFunction(this)">
+                <div class="bar1"></div>
+                <div class="bar2"></div>
+                <div class="bar3"></div>
+            </div>
+        </label>
+        <input type="checkbox" id="drop" />
+        <ul class="menu">
+            <!-- <li><a (click)="goto('Home')">CIF Home</a></li> -->
+            <li><a (click)="onFacilitiesClick()">Facilities</a></li>
+            <li><a target="_blank" (click)="testClick('TestingChargesList')"> Test Charges</a></li>
+                <!-- <li><a (click)="goto('LPUTermsCondition', $event)">Terms & Conditions</a></li>
+                <li><a (click)="goto('Login', $event)">Login</a></li> -->
+            
+            <li> <a (click)="goto('LPUTermsCondition')" >Terms & Conditions</a></li>
+            <li> <a (click)="goto('Login')" >Login</a></li>
+            <li> <a (click)="goto('Register')" >Register</a></li>
+
+        </ul>
+    </nav>
+</div>

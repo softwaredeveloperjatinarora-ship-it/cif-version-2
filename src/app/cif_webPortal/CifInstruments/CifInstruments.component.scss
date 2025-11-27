@@ -1,0 +1,112 @@
+.selected-instrument {
+    background-color: #ef7d00 !important;
+    color: white;
+    transform: scale(1.1);  
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  
+}
+.ImageSizes{
+    height: 35rem;
+    width: 50.5rem;
+}
+
+.grid{
+    display: grid;
+        grid-template-rows: repeat(var(--bs-rows, 1), 1fr);
+        grid-template-columns: repeat(var(--bs-columns, 12), 1fr);
+        gap: var(--bs-gap, 1.5rem);
+}
+.cifInstrumentBlock{
+    background-color: #f5efe3;
+    color: #555;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 12px 16px;
+    text-align: center;
+    display: grid ;
+    align-items: center;
+}
+
+/* CSS file (e.g., styles.css) */
+.instrument-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);  
+    gap: 16px;  
+    margin: 0 auto;  
+    padding: 10px;  
+}
+
+.instrument-block {
+    color: black;
+    background-color: #f5efe3;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd; 
+    border-radius: 5px; 
+    transition: transform 0.2s ease, box-shadow 0.2s ease;  
+}
+
+.instrument-block:hover {
+    transform: scale(1.05);  
+    color: black;
+    background-color: #ef7d00 !important;
+    // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  
+}
+
+.instrument-link {
+    color: #000; 
+    text-decoration: none;
+    font-weight: bold;
+}
+
+// .instrument-link:hover {
+//     text-decoration: underline;  
+// }
+
+.accordion-icon {
+    font-family: Arial, sans-serif; /* Fallback for text icons */
+    transition: all 0.3s ease;
+    font-size: 1.5 rem;
+  }
+  
+  .icon-plus::before {
+    content: "+";
+    font-weight: bold;
+    display: inline-block;
+  }
+  
+  .icon-minus::before {
+    content: "-";
+    font-weight: bold;
+    display: inline-block;
+  }
+  
+.accordion-item {
+    border-bottom: 1px solid #ddd; /* Container handles last border */ 
+    margin-bottom: 10px;
+    border-radius: 4px;
+  }
+  
+  .accordion-header {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .accordion-body {
+    padding: 15px;
+    border-top: 1px solid #eee;
+    overflow: hidden;
+  }
+  
+  .accordion-title {
+    font-size: larger;
+    font-weight: 500;
+  }
+  
+ 
+  
+  .accordion-icon.rotated {
+    transform: rotate(180deg);
+  }
+  

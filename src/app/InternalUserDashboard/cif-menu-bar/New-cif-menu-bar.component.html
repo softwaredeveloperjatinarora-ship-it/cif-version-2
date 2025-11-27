@@ -1,0 +1,63 @@
+<div class="primary-menu-wrapper">
+  <nav class="primary-menu">
+      <ul class="menu-container">
+          <li class="menu-item current"><a class="menu-link" href="#">
+              <div> Bookings & Payments</div>
+              </a>
+              <ul class="sub-menu-container">
+
+                  <li class="menu-item mega-menu-title">
+                    <a class="dropdown-item custom-dropdown-item" (click)="goto('NewBookings')" >New Booking</a>
+                  </li>
+                  <li class="menu-item mega-menu-title">
+                    <a  class="dropdown-item custom-dropdown-item" (click)="goto('ViewBookings')" >All Bookings</a >
+                  </li>
+                 
+              </ul>
+          </li>
+          <li class="menu-item">
+            <a class="menu-link" href="#"> <div style="border-bottom:1px solid #ef7d00;"> Payment Receipts</div> </a>
+              <ul class="sub-menu-container">
+                <li class="menu-item mega-menu-title">           
+                  <a class="dropdown-item custom-dropdown-item" (click)="goto('SearchPayments')" >All Paid</a>
+                </li>
+                <li class="menu-item mega-menu-title">
+                  <a  class="dropdown-item custom-dropdown-item" (click)="goto('SearchPendingPayments')" >All Pending</a >
+                </li>               
+                <li class="menu-item mega-menu-title">
+                  <a  class="dropdown-item custom-dropdown-item" (click)="goto('FailedPayments')" >All Failed </a >
+                </li>               
+            </ul>
+          </li> 
+          <li class="menu-item"><a class="menu-link" href="#">
+                  <div style="border-bottom:1px solid #ef7d00;"> Results</div>
+              </a>
+              <ul class="sub-menu-container">
+                <li class="menu-item mega-menu-title">           
+                  <a class="dropdown-item custom-dropdown-item" (click)="goto('BookingStatus')" >Test Status</a>
+                </li>
+                <li class="menu-item mega-menu-title">
+                  <a  class="dropdown-item custom-dropdown-item" (click)="goto('BookingResult')" >Results</a >
+                </li>               
+            </ul>
+          </li> 
+       
+          <li class="menu-item">
+            <a class="nav-link custom-nav-link" href="javascript:void(0)" (click)="handleChangePassword($event)" > 
+                  <div>Change Password</div>
+              </a>
+          </li>
+          <li class="menu-item">
+            <a class="nav-link custom-nav-link" (click)="goto('CifLoginPages')" >
+                  <div>Logout </div>
+              </a>
+          </li>
+      </ul>
+  </nav><!-- #primary-menu end -->
+
+</div>
+
+<div class="text-center mt-4">
+  <h2 class="mb-0 text-center mb-4">Central Instrumentation Facility</h2>
+</div>
+ 
