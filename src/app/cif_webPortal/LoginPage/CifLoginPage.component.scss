@@ -1,0 +1,105 @@
+.sticky-bar {
+    display: block;
+    bottom: 15%;
+    right: -138px;
+    position: fixed;
+    z-index: 1040;
+    width: 184px;
+}
+
+.sticky-bar ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sticky-bar ul li {
+    /* background:  rgba(255, 255, 255, .7); */
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+    background: #b1040e;
+    margin: 4px;
+    transition: all .2s ease-in;
+    padding: 0 10px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+}
+
+.sticky-bar ul li a {
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .5px;
+    display: flex;
+    align-items: center;
+    line-height: 14px;
+}
+
+.sticky-bar ul li img {
+    width: auto;
+    height: 22px;
+    padding-right: 11px;
+    /* -webkit-filter: invert(1);
+        filter: invert(1); */
+}
+
+.sticky-bar ul li:hover {
+    margin-left: -122px;
+    /* background:  rgba(255, 255, 255, .7); */
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+    background: #b1040e;
+}
+
+.sticky-bar ul li.apply-now-outer {
+    display: none;
+}
+
+@media(max-width:992px) {
+    .sticky-bar ul li.apply-now-outer {
+        display: block;
+    }
+
+    .sticky-bar {
+        background: #b1040e;
+        bottom: 0;
+        right: 0;
+        position: fixed;
+        z-index: 9;
+        width: 100%;
+        display: block !important;
+    }
+
+    .sticky-bar ul {
+        display: flex;
+        justify-content: flex-start;
+        padding-left: 10px;
+    }
+
+    .sticky-bar ul li a .st-label {
+        display: none;
+    }
+
+    .sticky-bar ul li {
+        background: transparent;
+        box-shadow: none;
+        transition: all .2s ease-in;
+        padding: 10px 2px;
+        height: 50px;
+    }
+
+    .sticky-bar ul li .apply-now {
+        display: block;
+        font-size: 16px;
+        background: #fff;
+        color: #b1040e;
+        padding: 8px !important;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .sticky-bar ul li:hover {
+        margin-left: 0;
+        box-shadow: none;
+        background: transparent;
+    }
+}

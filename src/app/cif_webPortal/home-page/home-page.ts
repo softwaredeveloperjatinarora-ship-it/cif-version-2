@@ -7,17 +7,15 @@ import { TopBar } from "../top-bar/top-bar";
 
 @Component({
   selector: 'app-home-page',
-  // Removed 'imports: []' - it's usually not needed for a component using its own module's dependencies
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
   imports: [TopBar],
 })
 export class HomePage implements OnInit {
   @ViewChild('facilitiesSection') facilitiesSection!: ElementRef;
-  loadingIndicator: boolean = false; // Initialized to false, set to true on API call
+  loadingIndicator: boolean = false;
   i: any;
 
-  // Method to scroll to the Facilities section
   gotoFacilities() {
     this.facilitiesSection.nativeElement.scrollIntoView({ behavior: 'smooth' });
   }
@@ -31,7 +29,7 @@ export class HomePage implements OnInit {
   constructor(
     private CIFwebService: LpuCIFWebService,
     private fb: FormBuilder,
-    private cdRef: ChangeDetectorRef, // ChangeDetectorRef is correctly injected
+    private cdRef: ChangeDetectorRef,
     @Inject(DOCUMENT) document: Document,
     private router: Router, private route: ActivatedRoute) { }
 
@@ -63,7 +61,6 @@ export class HomePage implements OnInit {
     this.router.navigateByUrl(val);
   }
   VisitUrl(Sufix: any, name: any, Id: any, catId: any) {
-    // Corrected to use encodeURIComponent for instrumentName for safe routing
     this.router.navigateByUrl(`${Sufix}/${encodeURIComponent(name.slice(0, 10))}/${Id}/${catId}`);
   }
   onImageLoad(index: number): void {
@@ -75,18 +72,17 @@ export class HomePage implements OnInit {
     this.loadingStates[index] = false;
   }
 
-  // 👇 Refactored method with Change Detection fix
   getAllInstruments(): void {
     this.loadingIndicator = true;
-    this.isLoading = true; // Ensure inner loader is also shown
+    this.isLoading = true;
     const startTime = new Date().getTime();
 
     this.CIFwebService.GetAllInstrumentsData().subscribe({
       next: response => {
         if (response.item1 && response.item1.length > 0) {
           this.InstrumentsDataData = response.item1;
-          this.tmpsInstrumentsDataData = response.item1.slice(0, 8);
-          // Initialize loading states for all instruments we show
+          this.tmpsInstrumentsDataData = response.item1;
+          // this.tmpsInstrumentsDataData = response.item1.slice(0, 8);
           this.loadingStates = Array(this.tmpsInstrumentsDataData.length).fill(true);
         } else {
           this.InstrumentsDataData = [];
@@ -95,27 +91,23 @@ export class HomePage implements OnInit {
         }
 
         const elapsed = new Date().getTime() - startTime;
-        const remainingDelay = Math.max(2500 - elapsed, 0); // wait at least 2.5s
+        const remainingDelay = Math.max(2500 - elapsed, 0);
 
         setTimeout(() => {
           this.loadingIndicator = false;
           this.isLoading = false;
-          // 👇 ESSENTIAL FIX: Force change detection after the timeout
-          this.cdRef.detectChanges(); 
+          this.cdRef.detectChanges();
         }, remainingDelay);
       },
       error: err => {
         this.loadingIndicator = false;
         this.isLoading = false;
-        // 👇 ESSENTIAL FIX: Force change detection on error
         this.cdRef.detectChanges();
         console.error(err);
       }
     });
 
   }
-
-  // added on 21-aug-25
   chunkedEvents: any[][] = [];
 
 
@@ -187,7 +179,6 @@ export class HomePage implements OnInit {
     const fileName = `${a}.pdf`;
     const fileUrl = `assets/CifDocumentsTemplates/${fileName}`;
 
-    // Check if the file exists
     fetch(fileUrl, { method: 'HEAD' })
       .then(response => {
         if (response.ok) {
@@ -198,12 +189,9 @@ export class HomePage implements OnInit {
           link.click();
           document.body.removeChild(link);
         } else {
-          // console.error('File not found:', fileUrl);
-          // alert('File not found');
         }
       })
       .catch(error => {
-        // console.error('Error fetching the file:', error);
         alert('Error downloading file');
       });
   }

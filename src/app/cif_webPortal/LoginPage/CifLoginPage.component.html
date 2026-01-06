@@ -1,0 +1,141 @@
+<app-top-bar (facilitiesClicked)="gotoFacilities()"></app-top-bar>
+
+@if (loadingIndicator()) {
+<div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+        <div class="custom-spinner-content text-center">
+            <img src="assets/images/spinner.gif" alt="Loading..." />
+        </div>
+    </div>
+</div>
+}
+
+<section class="section">
+    <div class="container">
+        <div class="heading-wraper mb-5">
+            <div class="main-head">
+                <h1>Central Instrumentation Facility</h1>
+                <h2 class="text-center">User <span>Login</span> Page</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 d-none d-lg-block mt-5">
+                <img src="https://www.lpu.in/lpu-assets/images/cif/login-left.png" alt="Login Banner" />
+            </div>
+
+            <div class="col-md-6 login-div">
+                <div class="cif-login">
+                    <form [formGroup]="formdata" (ngSubmit)="onSubmit()">
+                        <div class="mb-4 cif-input-group">
+                            <label class="form-label">Login ID</label>
+                            <input type="text" class="form-control" formControlName="Email" placeholder="Enter Login ID/ Email" />
+                            @if (submitted() && formdata.get('Email')?.errors?.['required']) {
+                                <div class="text-danger"><small>User Id is required.</small></div>
+                            }
+                        </div>
+
+                        <div class="mb-4 cif-input-group position-relative">
+                            <label class="form-label">Password</label>
+                            <input [type]="showPassword() ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter password" />
+                            <i class="input-eye" [class.input-eye-slash]="!showPassword()" (click)="togglePasswordVisibility()"></i>
+                            @if (submitted() && formdata.get('password')?.errors?.['required']) {
+                                <div class="text-danger"><small>Password is required.</small></div>
+                            }
+                        </div>
+
+                        <div class="mb-4 cif-input-group">
+                            <label class="form-label">Choose Role</label>
+                            <select class="form-select" formControlName="UserRoleS">
+                                <option value="" disabled>Select Role</option>
+                                <option value="400001">External Academia</option>
+                                <option value="400002">Industry User</option>
+                            </select>
+                        </div>
+
+                        @if (loginError()) {
+                            <div class="text-danger text-center">{{ loginError() }}</div>
+                        }
+
+                        <div class="mb-4 text-center">
+                            <button type="submit" class="lpu-btn border-0 px-5 mb-3" [disabled]="formdata.invalid">Submit</button>
+                            <div class="d-flex justify-content-between">
+                                <a routerLink="/LpuLogin" class="link-btn">Internal Login</a>
+                                <a routerLink="/recoverAccount" class="link-btn" style="color: #ef7d00 !important;">Recover Account</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@defer (on viewport) {
+<section class="section bg-dark-yellow" #facilitiesSection>
+    <div class="container">
+        <div class="heading-wraper mb-4">
+            <div class="main-head">
+                <h2 id="CIF_Facilities">Facilities</h2>
+                <div class="call-action">
+                    <a (click)="goto('/ourInstruments')" class="link-btn">Know more</a>
+                </div>
+            </div>
+            <p>CIF of Lovely Professional University is equipped with sophisticated instruments...</p>
+        </div>
+
+        <div class="row cif-facilties">
+            @for (item of instruments(); track item.id; let i = $index) {
+            <div class="col-md-3">
+                <div class="mb-4 position-relative">
+                    @if (loadingStates()[i]) {
+                        <div class="spinner-border text-primary position-absolute top-50 start-50 translate-middle"></div>
+                    }
+                    <img [src]="item.imageUrl" [alt]="item.instrumentName" class="img-fluid" loading="lazy" (load)="onImageLoad(i)" />
+                </div>
+                <div class="mb-5">
+                    <a (click)="VisitUrl('/ourInstruments', item.instrumentName.slice(0,10), item.id, item.categoryId)">
+                        {{item.instrumentName}}
+                    </a>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</section>
+} @placeholder {
+    <div class="text-center p-5">Loading Facilities...</div>
+}
+
+ 
+<section class="section bg-dark-yellow">
+    <div class="container">
+        <div class="heading-wraper">
+            <div class="main-head">
+                <h2>Events & Happenings</h2>
+                <div class="inner-testi-slider-nav">
+                    <button class="inner-testi-prev-arrow" (click)="carousel.prev()">Prev</button>
+                    <button class="inner-testi-next-arrow" (click)="carousel.next()">Next</button>
+                </div>
+            </div>
+        </div>
+        <ngb-carousel #carousel [showNavigationArrows]="false" [showNavigationIndicators]="true">
+            @for (group of chunkedEvents(); track $index) {
+            <ng-template ngbSlide>
+                <div class="row text-center">
+                    @for (event of group; track event.title) {
+                    <div class="col-md-4">
+                        <img [src]="event.img" class="img-fluid" />
+                        <div class="mt-4 mb-2">
+                            <strong class="d-block">{{ event.title }}</strong>
+                            {{ event.date }}
+                        </div>
+                    </div>
+                    }
+                </div>
+            </ng-template>
+            }
+        </ngb-carousel>
+    </div>
+</section>
+ 
