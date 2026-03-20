@@ -1,0 +1,11 @@
+{
+  "/api": {
+    "target": "https://projectsapi.lpu.in",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "headers": {
+      "Origin": "https://projectsapi.lpu.in"
+    }
+  }
+}

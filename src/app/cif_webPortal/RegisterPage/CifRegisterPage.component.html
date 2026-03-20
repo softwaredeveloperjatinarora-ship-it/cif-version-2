@@ -1,0 +1,398 @@
+<!-- ── Top Bar ─────────────────────────────────────────────────────────────── -->
+<app-top-bar (facilitiesClicked)="gotoFacilities()" />
+
+<!-- ── Sticky sidebar bar ────────────────────────────────────────────────────── -->
+<div class="sticky-bar">
+  <ul>
+    <li class="apply-now-outer">
+      <a target="_blank" href="https://admission.lpu.in/" data-gtm-section="sticky">
+        <span class="apply-now">Apply Now</span>
+      </a>
+    </li>
+    <li>
+      <a target="_blank" href="https://iviewd.com/lpu2/" data-gtm-section="sticky">
+        <img width="auto" height="auto"
+             src="https://www.lpu.in/lpu-assets/images/icons/360-view-w.svg" alt="Virtual Tour" />
+        <span class="st-label">Virtual Tour</span>
+      </a>
+    </li>
+    <li>
+      <a target="_blank" href="" class="ppwnd" data-gtm-section="sticky">
+        <img width="auto" height="auto"
+             src="https://www.lpu.in/lpu-assets/images/icons/phone-full.svg" alt="Schedule a Call" />
+        <span class="st-label">Schedule a Call</span>
+      </a>
+    </li>
+    <li>
+      <a target="_blank"
+         href="https://api.whatsapp.com/send?phone=+919852569000&amp;text=Hi%2C%20I%20need%20assistance%20for%20Admissions%202024."
+         data-gtm-section="sticky">
+        <img width="auto" height="auto"
+             src="https://www.lpu.in/lpu-assets/images/icons/whatsapp-white.svg" alt="WhatsApp" />
+        <span class="st-label">Whatsapp only<br />+919852569000</span>
+      </a>
+    </li>
+    <li>
+      <a target="_blank" href="#" data-bs-toggle="modal" data-bs-target="#live-video-counselling">
+        <img width="auto" height="auto"
+             src="https://www.lpu.in/lpu-assets/images/icons/live-video.svg" alt="Live Video" />
+        <span class="st-label">Live Video<br />Counselling</span>
+      </a>
+    </li>
+    <li>
+      <a href="https://www.lpu.in/admission/lpu-in-your-town.php#lpu-town" data-gtm-section="sticky">
+        <img width="auto" height="auto"
+             src="https://www.lpu.in/lpu-assets/images/icons/town.svg" alt="LPU in Your Town" />
+        <span class="st-label">LPU in Your Town</span>
+      </a>
+    </li>
+  </ul>
+</div>
+
+<!-- ── Full-screen loader ─────────────────────────────────────────────────────── -->
+@if (loadingIndicator()) {
+  <div class="fullscreen-loader">
+    @if (isLoading()) {
+      <div class="custom-spinner-overlay">
+        <div class="custom-spinner-content text-center">
+          <img src="assets/images/spinner.gif" alt="Loading..." />
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<!-- ── Registration Section ───────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+
+    <div class="heading-wraper mb-5">
+      <div class="main-head">
+        <h1>Central Instrumentation Facility</h1>
+        <h2 class="text-center"><span>Registration Page</span></h2>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <!-- Left illustration (desktop only) -->
+      <div class="col-md-6 d-none d-lg-block">
+        <img src="https://www.lpu.in/lpu-assets/images/cif/login-left.png" alt="CIF Registration" />
+      </div>
+
+      <!-- Registration form column -->
+      <div class="col-md-6 reg-div">
+        <form [formGroup]="cifUserForm" (ngSubmit)="Onsubmit()" class="forms-sample">
+          <div class="cif-register">
+            <div class="row">
+
+              <!-- Sign-in prompt -->
+              <div class="col-md-12 mb-3">
+                If you already have an account, just
+                <a class="login-link" routerLink="/Login"><strong>sign in</strong></a>
+              </div>
+
+              <!-- Email -->
+              <div class="col-md-6 mb-3">
+                <label for="EmailId">Email</label>
+                <input type="email" id="EmailId" formControlName="EmailId" class="form-control"
+                       placeholder="Enter Email"
+                       [class.is-invalid]="form1['EmailId'].invalid &&
+                         (form1['EmailId'].touched || form1['EmailId'].dirty || isForm1Submitted)" />
+                @if (form1['EmailId'].errors?.['required'] &&
+                     (form1['EmailId'].touched || form1['EmailId'].dirty || isForm1Submitted)) {
+                  <div class="invalid-feedback">Required</div>
+                }
+                @if (form1['EmailId'].errors?.['email'] &&
+                     (form1['EmailId'].touched || form1['EmailId'].dirty || isForm1Submitted)) {
+                  <div class="invalid-feedback">Invalid Email</div>
+                }
+              </div>
+
+              <!-- Candidate Name -->
+              <div class="col-md-6 mb-3">
+                <label for="CandidateName">Name</label>
+                <input type="text" id="CandidateName" formControlName="CandidateName" class="form-control"
+                       placeholder="Enter Your Name"
+                       [class.is-invalid]="form1['CandidateName'].invalid &&
+                         (form1['CandidateName'].touched || form1['CandidateName'].dirty || isForm1Submitted)" />
+                @if (form1['CandidateName'].errors?.['required'] &&
+                     (form1['CandidateName'].touched || isForm1Submitted)) {
+                  <div class="invalid-feedback">Required</div>
+                }
+              </div>
+
+              <!-- Supervisor Name -->
+              <div class="col-md-6 mb-3">
+                <label for="SupervisorName">Supervisor Name</label>
+                <input type="text" id="SupervisorName" formControlName="Supervisorname" class="form-control"
+                       placeholder="Enter Supervisor Name"
+                       [class.is-invalid]="form1['Supervisorname'].invalid &&
+                         (form1['Supervisorname'].touched || form1['Supervisorname'].dirty || isForm1Submitted)" />
+                @if (form1['Supervisorname'].errors?.['required'] &&
+                     (form1['Supervisorname'].touched || isForm1Submitted)) {
+                  <div class="invalid-feedback">Required</div>
+                }
+              </div>
+
+              <!-- Mobile -->
+              <div class="col-md-6 mb-3">
+                <label for="MobileNumber">Mobile</label>
+                <input type="text" id="MobileNumber" formControlName="MobileNumber" class="form-control"
+                       placeholder="Enter Mobile No."
+                       [class.is-invalid]="form1['MobileNumber'].invalid &&
+                         (form1['MobileNumber'].touched || form1['MobileNumber'].dirty || isForm1Submitted)" />
+                @if (form1['MobileNumber'].errors?.['required'] &&
+                     (form1['MobileNumber'].touched || isForm1Submitted)) {
+                  <div class="invalid-feedback">Required</div>
+                }
+                @if (form1['MobileNumber'].errors?.['pattern'] &&
+                     (form1['MobileNumber'].touched || isForm1Submitted)) {
+                  <div class="invalid-feedback">Invalid Mobile Number</div>
+                }
+              </div>
+
+              <!-- Organization -->
+              <div class="col-md-6 mb-3">
+                <label for="InstituteName">Organization</label>
+                <input type="text" id="InstituteName" formControlName="InstituteName" class="form-control"
+                       placeholder="Enter Organization Name"
+                       [class.is-invalid]="form1['InstituteName'].invalid &&
+                         (form1['InstituteName'].touched || form1['InstituteName'].dirty || isForm1Submitted)" />
+                @if (form1['InstituteName'].errors?.['required'] &&
+                     (form1['InstituteName'].touched || isForm1Submitted)) {
+                  <div class="invalid-feedback">Required</div>
+                }
+              </div>
+
+              <!-- Department -->
+              <div class="col-md-6 mb-3">
+                <label for="DepartmentName">Department</label>
+                <input type="text" id="DepartmentName" formControlName="DepartmentName" class="form-control"
+                       placeholder="Enter Department Name"
+                       [class.is-invalid]="form1['DepartmentName'].invalid &&
+                         (form1['DepartmentName'].touched || form1['DepartmentName'].dirty || isForm1Submitted)" />
+                @if (form1['DepartmentName'].errors?.['required'] &&
+                     (form1['DepartmentName'].touched || isForm1Submitted)) {
+                  <div class="invalid-feedback">Required</div>
+                }
+              </div>
+
+              <!-- ID Proof Type -->
+              <div class="col-md-6 mb-3">
+                <label for="IdProofType">ID Proof Type</label>
+                <select id="IdProofType" formControlName="IdProofType" class="form-select"
+                        [class.is-invalid]="form1['IdProofType'].invalid &&
+                          (form1['IdProofType'].touched || form1['IdProofType'].dirty || isForm1Submitted)">
+                  <option value="" selected>Select</option>
+                  <option value="AadharCard">Aadhar Card</option>
+                  <option value="RegistrationCard">Organisation Card</option>
+                  <option value="PanCard">Pan Card</option>
+                  <option value="LicenseCard">License Card</option>
+                </select>
+                @if (form1['IdProofType'].errors?.['required'] &&
+                     (form1['IdProofType'].touched || isForm1Submitted)) {
+                  <div class="invalid-feedback">Required</div>
+                }
+              </div>
+
+              <!-- ID Proof Number -->
+              <div class="col-md-6 mb-3">
+                <label for="IdProofNumber">ID Proof Number</label>
+                <input type="text" id="IdProofNumber" formControlName="IdProofNumber" class="form-control"
+                       placeholder="Enter ID Proof Number"
+                       [class.is-invalid]="form1['IdProofNumber'].invalid &&
+                         (form1['IdProofNumber'].touched || form1['IdProofNumber'].dirty || isForm1Submitted)" />
+                @if (form1['IdProofNumber'].errors?.['required'] &&
+                     (form1['IdProofNumber'].touched || isForm1Submitted)) {
+                  <div class="invalid-feedback">Required</div>
+                }
+              </div>
+
+              <!-- Address -->
+              <div class="col-md-12 mb-3">
+                <label for="Address">Address</label>
+                <textarea id="Address" formControlName="Address" class="form-control"
+                          placeholder="Enter Address" rows="3"
+                          [class.is-invalid]="form1['Address'].invalid &&
+                            (form1['Address'].touched || form1['Address'].dirty || isForm1Submitted)">
+                </textarea>
+                @if (form1['Address'].errors?.['required'] &&
+                     (form1['Address'].touched || isForm1Submitted)) {
+                  <div class="invalid-feedback">Required</div>
+                }
+              </div>
+
+              <!-- Password -->
+              <div class="col-md-6 mb-3">
+                <label for="Password">Password</label>
+                <input type="password" id="Password" formControlName="Password" class="form-control"
+                       placeholder="Enter Password"
+                       [class.is-invalid]="form1['Password'].invalid &&
+                         (form1['Password'].touched || form1['Password'].dirty || isForm1Submitted)" />
+                @if (form1['Password'].errors?.['required'] &&
+                     (form1['Password'].touched || isForm1Submitted)) {
+                  <div class="invalid-feedback">Required</div>
+                }
+                @if (form1['Password'].errors?.['minlength'] &&
+                     (form1['Password'].touched || isForm1Submitted)) {
+                  <div class="invalid-feedback">Password must be at least 6 characters</div>
+                }
+              </div>
+
+              <!-- Confirm Password -->
+              <div class="col-md-6 mb-3">
+                <label for="ConfirmPassword">Confirm Password</label>
+                <input type="password" id="ConfirmPassword" formControlName="ConfirmPassword" class="form-control"
+                       placeholder="Confirm Password"
+                       [class.is-invalid]="form1['ConfirmPassword'].invalid &&
+                         (form1['ConfirmPassword'].touched || form1['ConfirmPassword'].dirty || isForm1Submitted)" />
+                @if (form1['ConfirmPassword'].errors?.['required'] &&
+                     (form1['ConfirmPassword'].touched || isForm1Submitted)) {
+                  <div class="invalid-feedback">Required</div>
+                }
+                @if (form1['ConfirmPassword'].errors?.['mismatch'] &&
+                     (form1['ConfirmPassword'].touched || isForm1Submitted)) {
+                  <div class="invalid-feedback">Passwords do not match</div>
+                }
+              </div>
+
+              <!-- Role -->
+              <div class="col-md-6 mb-3">
+                <label for="UserRole">Role</label>
+                <select id="UserRole" formControlName="UserRole" class="form-select"
+                        [class.is-invalid]="form1['UserRole'].invalid &&
+                          (form1['UserRole'].touched || form1['UserRole'].dirty || isForm1Submitted)">
+                  <option value="" selected>Select Role</option>
+                  <option value="400001">External Academia</option>
+                  <option value="400002">Industry Users</option>
+                </select>
+                @if (form1['UserRole'].errors?.['required'] &&
+                     (form1['UserRole'].touched || isForm1Submitted)) {
+                  <div class="invalid-feedback">Required</div>
+                }
+              </div>
+
+            </div><!-- /.row -->
+
+            <!-- Actions -->
+            <div class="col-md-12 mb-4 text-center">
+              <button type="submit" class="btn btn-primary border-0 px-5"
+                      [disabled]="cifUserForm.invalid">
+                Submit
+              </button>
+              <button type="button" class="btn btn-secondary ms-2 border-0 px-5"
+                      (click)="OnReset()">
+                Reset
+              </button>
+            </div>
+
+          </div><!-- /.cif-register -->
+        </form>
+      </div><!-- /.col reg-div -->
+    </div><!-- /.row -->
+  </div><!-- /.container -->
+</section>
+
+<!-- ── Facilities Section ─────────────────────────────────────────────────────── -->
+<section class="section bg-dark-yellow" #facilitiesSection>
+  <div class="container">
+
+    <div class="heading-wraper mb-4">
+      <div class="main-head">
+        <h2 id="CIF_Facilities">Facilities</h2>
+        <div class="call-action">
+          <a (click)="goto('/ourInstruments')" class="link-btn">
+            <img src="https://www.lpu.in/lpu-assets/images/icons/chevron-right.svg" alt="Icon" />
+            Know more
+          </a>
+        </div>
+      </div>
+      <p>
+        CIF of Lovely Professional University is equipped with sophisticated instruments to carry out
+        spectral measurements, structure determination and chemical analysis. Click on the instrument
+        name in the following table to view their description.
+      </p>
+    </div>
+
+    @if (tmpsInstrumentsData.length > 1) {
+      <div class="row cif-facilties">
+        @for (instrument of tmpsInstrumentsData; track instrument.id; let i = $index) {
+          <div class="col-md-3" [attr.data-index]="i">
+            <div class="mb-4">
+              @if (loadingStates[i]) {
+                <div class="spinner-border text-primary position-absolute top-50 start-50 translate-middle"
+                     role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              }
+              <img [src]="instrument.imageUrl"
+                   [alt]="instrument.instrumentName"
+                   class="img-fluid"
+                   loading="lazy"
+                   (load)="onImageLoad(i)"
+                   (error)="onImageError($event, i)" />
+            </div>
+            <div class="mb-5">
+              <a (click)="visitUrl('/ourInstruments', instrument.instrumentName.slice(0,10), instrument.id, instrument.categoryId)">
+                {{ instrument.instrumentName }}
+              </a>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="text-center">
+        <h3 class="text-center fs-2 m-5 text-danger pt-5">No Record!</h3>
+        <div class="row mt-4 mb-4">
+          <div class="col-sm-12 text-center">
+            <div class="mb-3 p-4">
+              <label class="form-label fs-4 text-danger">No Data Found.</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+  </div>
+</section>
+
+<!-- ── Events & Happenings Section ───────────────────────────────────────────── -->
+<section class="section bg-dark-yellow">
+  <div class="container">
+
+    <div class="heading-wraper">
+      <div class="main-head">
+        <h2>Events &amp; Happenings</h2>
+        <div class="inner-testi-slider-nav">
+          <button id="prev_event_slide" class="inner-testi-prev-arrow" (click)="carousel.prev()">
+            <img src="https://www.lpu.in/lpu-assets/images/icons/vector-left.svg" alt="Previous" />
+          </button>
+          <button id="next_event_slide" class="inner-testi-next-arrow" (click)="carousel.next()">
+            <img src="https://www.lpu.in/lpu-assets/images/icons/vector-right.svg" alt="Next" />
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ngb-carousel #carousel [interval]="66000" [pauseOnHover]="true"
+                  [showNavigationArrows]="false" [showNavigationIndicators]="true">
+      @for (group of chunkedEvents; track $index) {
+        <ng-template ngbSlide>
+          <div class="row text-center">
+            @for (event of group; track $index) {
+              <div class="col-md-4">
+                <img [src]="event.img" [alt]="event.title" class="img-fluid" />
+                <div class="mt-4 mb-2">
+                  <strong class="d-block">{{ event.title }}</strong>
+                  {{ event.date }}
+                </div>
+              </div>
+            }
+          </div>
+        </ng-template>
+      }
+    </ngb-carousel>
+
+  </div>
+</section>

@@ -9,6 +9,7 @@ export const environment = {
     messagingSenderId: "725668905079",
     appId: "1:725668905079:web:d3c1542ab17479b45d4672",
     measurementId: "G-SRK4QGDCXD"
-  }
+  },
+    apiBase: 'https://projectsapi.lpu.in',
   
 };

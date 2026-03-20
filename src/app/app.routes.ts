@@ -1,18 +1,10 @@
-import { Routes } from '@angular/router';
+import { Routes } from '@angular/router'; 
+export const routes: Routes = [ 
 
-// export const routes: Routes = [];
-export const routes: Routes = [
-
-
-//   {
-//   path: 'ourInstruments',
-//   loadChildren: () => import('./views/pages/cif_webPortal/CifInstruments/CifInstruments.module').then(m => m.CifInstrumentsModule),
-// },
-// {
-//   path: 'ourInstruments/:Name/:id/:categoryId',    
-//   loadChildren: () => import('./views/pages/cif_webPortal/CifInstruments/CifInstruments.module').then(m => m.CifInstrumentsModule),
-// },
-
+{
+  path: 'Register',
+  loadComponent: () => import('./cif_webPortal/RegisterPage/CifRegisterPage.component').then(m => m.CifRegisterPageComponent)
+},
 {
   path: 'Login',
   loadComponent: () => import('./cif_webPortal/LoginPage/CifLoginPage.component').then(m => m.CifLoginPageComponent)
@@ -47,8 +39,5 @@ export const routes: Routes = [
     redirectTo: 'Home',
     pathMatch: 'full',
   },
-//   {
-//     path: '**',
-//     redirectTo: 'Home',
-//   },
+ 
 ];

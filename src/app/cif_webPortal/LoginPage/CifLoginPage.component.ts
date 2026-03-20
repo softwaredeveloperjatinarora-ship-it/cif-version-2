@@ -1,13 +1,21 @@
-import { Component, OnInit, signal, ViewChild, ElementRef, inject, viewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  inject,
+  signal,
+} from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
-
-import { NgbCarouselModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 import swal from 'sweetalert2';
-
-
- 
 import { LpuCIFWebService } from '../../services/lpu-cifweb.service';
 import { TopBar } from "../top-bar/top-bar";
 import { AuthService } from '../../services/auth.service';
@@ -15,197 +23,348 @@ import { StorageService } from '../../services/storage.service';
 import { LoginSessionService } from '../../services/login-session.service';
 import { CookieService } from 'ngx-cookie-service';
 import { NgbCarousel } from "@ng-bootstrap/ng-bootstrap";
-// Services
- //   selector: 'app-CifLoginPage',
-//   templateUrl: './CifLoginPage.component.html',
-//   styleUrls: ['./CifLoginPage.component.scss'],
-//   imports: [TopBar, NgbCarousel]
+
+ 
+
 @Component({
-  selector: 'app-cif-login-page',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, NgbCarouselModule,TopBar, NgbCarousel],
-   templateUrl: './CifLoginPage.component.html',
-    styleUrls: ['./CifLoginPage.component.scss'],
+  selector: 'app-CifLoginPage',
+  standalone: true,                          // ← Angular 14+ standalone API
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    NgbCarouselModule,
+    TopBar,
+  ],
+  templateUrl: './CifLoginPage.component.html',
+  styleUrls: ['./CifLoginPage.component.scss'],
 })
 export class CifLoginPageComponent implements OnInit {
-    goto(val: any): void {
-    this.router.navigateByUrl(val);
-  }
-  VisitUrl(Sufix: any, name: any, Id: any, catId: any) {
-    this.router.navigateByUrl(Sufix + '/' + name + '/' + Id + '/' + catId);
-  }
-  // --- Dependency Injection ---
-  private fb = inject(FormBuilder);
-  private cifService = inject(LpuCIFWebService);
-  private authService = inject(AuthService);
-  private storageService = inject(StorageService);
-  private session = inject(LoginSessionService);
-  private router = inject(Router);
-  private cookieService = inject(CookieService);
-  private modalService = inject(NgbModal);
 
-  // --- UI State Signals ---
-  loadingIndicator = signal(false);
-  isLoading = signal(true);
-  submitted = signal(false);
-  showPassword = signal(false);
-  loginError = signal<string | null>(null);
-  
-  // --- Data Signals ---
-  instruments = signal<any[]>([]);
-  chunkedEvents = signal<any[][]>([]);
-  loadingStates = signal<boolean[]>([]);
+  // ─── DI via inject() (Angular 14+, preferred in standalone) ─────────────────
+  private readonly fb             = inject(FormBuilder);
+  private readonly cifWebService  = inject(LpuCIFWebService);
+  private readonly authService    = inject(AuthService);
+  private readonly storageService = inject(StorageService);
+  private readonly authSession    = inject(LoginSessionService);
+  private readonly router         = inject(Router);
+  private readonly cookieService  = inject(CookieService);
 
-  // --- Form ---
-  formdata!: FormGroup;
+  // ─── Signals (replaces plain boolean fields for OnPush friendliness) ─────────
+  readonly showPassword    = signal(false);
+  readonly loadingIndicator = signal(false);
+  readonly isLoading       = signal(true);
 
-  // --- View References ---
-  facilitiesSection = viewChild<ElementRef>('facilitiesSection');
+  // ─── Plain reactive state ────────────────────────────────────────────────────
+  submitted          = false;
+  loginError: string | null = null;
+  isLoginFailed      = false;
+  serverConnectionError = false;
 
-  events = [
-    { img: 'https://www.lpu.in/lpu-assets/images/cif/summer-training-programme-2025.webp', title: 'ANRF Sponsored Summer Training Programme', date: '(2 June - 11 July 2025)' },
-    { img: 'https://www.lpu.in/lpu-assets/images/cif/event-10.jpg', title: 'National Workshop', date: '(24 - 26 April 2025)' },
-    // ... rest of your events array
-  ];
+  userData: any;
+  email_value        = '';
 
+  // ─── Instruments / carousel state ───────────────────────────────────────────
+  instrumentsData:    any[] = [];
+  tmpsInstrumentsData: any[] = [];
+  loadingStates:      boolean[] = [];
+  chunkedEvents:      any[][] = [];
+
+  // ─── ViewChild refs ──────────────────────────────────────────────────────────
+  @ViewChild('facilitiesSection') facilitiesSection!: ElementRef;
+
+  // ─── Reactive form ───────────────────────────────────────────────────────────
+  formdata = this.fb.group({
+    Email:     ['', [Validators.required, Validators.minLength(5)]],
+    password:  ['', [Validators.required, Validators.minLength(5)]],
+    UserRoleS: ['', Validators.required],
+  });
+
+  // ─── Getters (identical API to Angular 13 version) ──────────────────────────
+  get email(): AbstractControl | null      { return this.formdata.get('Email'); }
+  get passwordText(): AbstractControl | null { return this.formdata.get('password'); }
+  get userRole(): AbstractControl | null   { return this.formdata.get('UserRoleS'); }
+
+  // ─── Lifecycle ───────────────────────────────────────────────────────────────
   ngOnInit(): void {
     this.cookieService.delete('InternalUserAuthData');
-    this.session.clearSession();
-    this.initForm();
-    this.loadInitialData();
-  }
-
-  private initForm(): void {
-    this.formdata = this.fb.group({
-      Email: ['', [Validators.required, Validators.minLength(5)]],
-      password: ['', [Validators.required, Validators.minLength(5)]],
-      UserRoleS: ['', Validators.required]
-    });
-  }
-
-  private async loadInitialData() {
-    this.loadingIndicator.set(true);
-    const startTime = Date.now();
+    this.authSession.clearSession();
+    this.submitted  = false;
+    this.loginError = null;
 
     this.getAllInstruments();
-    this.chunkedEvents.set(this.chunkArray(this.events, 3));
-
-    const elapsed = Date.now() - startTime;
-    setTimeout(() => this.loadingIndicator.set(false), Math.max(1500 - elapsed, 0));
+    this.chunkedEvents = this.chunkArray(this.events, 3);
   }
 
-  // --- API Calls (Maintained as requested) ---
-  getAllInstruments(): void {
-    this.cifService.GetAllInstrumentsData().subscribe({
-      next: response => {
-        if (response.item1?.length > 0) {
-          this.instruments.set(response.item1.slice(0, 8));
-          this.loadingStates.set(new Array(this.instruments().length).fill(true));
-        }
-      },
-      error: err => console.error(err)
-    });
+  // ─── UI helpers ─────────────────────────────────────────────────────────────
+  togglePasswordVisibility(): void {
+    this.showPassword.update(v => !v);
   }
 
+  checkUserType(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    if (!value) { console.warn('Please select a valid role.'); }
+  }
+
+  gotoFacilities(): void {
+    this.facilitiesSection?.nativeElement.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  goto(path: string): void {
+    this.router.navigateByUrl(path);
+  }
+
+  visitUrl(prefix: string, name: string, id: any, catId: any): void {
+    this.router.navigateByUrl(`${prefix}/${name}/${id}/${catId}`);
+  }
+
+  gotoHome(): void {
+    this.router.navigateByUrl('Home');
+  }
+
+  // ─── Image callbacks ─────────────────────────────────────────────────────────
+  onImageLoad(index: number): void {
+    this.loadingStates[index] = false;
+  }
+
+  onImageError(event: Event, index: number): void {
+    (event.target as HTMLImageElement).src = '/image.jpg';
+    this.loadingStates[index] = false;
+  }
+
+  // ─── Form submission ─────────────────────────────────────────────────────────
   onSubmit(): void {
-    this.submitted.set(true);
-    if (this.formdata.invalid) return;
+    this.submitted = true;
+
+    if (this.formdata.invalid) {
+      this.formdata.markAllAsTouched();
+      return;
+    }
 
     const { Email, password, UserRoleS } = this.formdata.value;
-    this.authoriseUser(Email, password, parseInt(UserRoleS, 10));
+    this.authoriseUser(Email!, password!, parseInt(UserRoleS!, 10));
   }
 
-  authoriseUser(Id: string, Key: string, Role: number): void {
+  // ─── Auth flow ───────────────────────────────────────────────────────────────
+  authoriseUser(id: string, key: string, role: number): void {
     const formData = new FormData();
-    formData.append('Email', Id);
-    formData.append('PasswordText', Key);
-    formData.append('UserRole', Role.toString());
+    formData.append('Email', id);
+    formData.append('PasswordText', key);
+    formData.append('UserRole', String(role));
 
-    this.cifService.GetAuthoriseUserData(formData).subscribe({
+    this.cifWebService.GetAuthoriseUserData(formData).subscribe({
       next: (response) => {
+        if (response?.error) {
+          this.serverConnectionError = true;
+          this.loginError  = response.message ?? 'Data Server Connection error, Try again later';
+          this.isLoginFailed = true;
+          this._resetForm();
+          return;
+        }
+
         if (response.item1?.length > 0) {
-          const email = response.item1[0].email;
-          this.createToken(email, response);
+          this.email_value = response.item1[0].email;
+          this.userData    = response.item1;
+          this.createToken(this.email_value, response);
+          this._resetForm();
+          this.loginError    = null;
+          this.isLoginFailed = false;
         } else {
-          this.handleLoginError('Invalid login details.');
+          this.loginError    = 'Invalid login details. Please try again.';
+          this.isLoginFailed = true;
+          swal.fire({ title: 'Invalid Login Details', text: 'Check Details!', icon: 'warning' });
+          this._resetForm();
         }
       },
-      error: (err) => this.handleLoginError('Server Error', err)
+      error: (err) => {
+        console.error(err);
+        this.loginError    = 'An error occurred while processing your request.';
+        this.isLoginFailed = true;
+
+        swal.fire({
+          title: err.status === 0 ? 'Server Down' : 'Error',
+          text:  err.status === 0
+            ? 'The server is currently unavailable. Please try again later.'
+            : this.loginError!,
+          icon: 'error',
+        });
+        this._resetForm();
+      },
     });
   }
 
-  private createToken(id: string, response: any): void {
+  createToken(id: string, response: any): void {
     this.authService.LoginJournalAccessTemp(id).subscribe({
       next: (data) => {
         this.storageService.saveUser(data);
         this.setUserData(response);
-      }
+      },
+      error: () => { /* silent – handled upstream */ },
     });
-  }
-
-  // --- Helper Methods ---
-  private handleLoginError(msg: string, err?: any) {
-    this.loginError.set(msg);
-    swal.fire({ title: 'Error', text: msg, icon: 'warning' });
-    this.formdata.reset({ UserRoleS: '' });
-    this.submitted.set(false);
-  }
-
-  togglePasswordVisibility = () => this.showPassword.update(v => !v);
-
-  onImageLoad = (index: number) => this.loadingStates.update(s => { s[index] = false; return s; });
-
-  gotoFacilities() {
-    this.facilitiesSection()?.nativeElement.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  chunkArray(arr: any[], size: number): any[][] {
-    return arr.reduce((acc, _, i) => (i % size ? acc : [...acc, arr.slice(i, i + size)]), []);
   }
 
   setUserData(response: any): void {
     const user = response.item1[0];
-    const userCookiesData = {
-      CandidateName: user.candidateName,
-      UserId: user.emailId,
-      EmailId: user.emailId,
-      UserRole: user.userRole,
-      // ... rest of your mapping
-    };
+    this.userData = response.item1;
 
+    const userCookiesData = {
+      CandidateName:  user.candidateName,
+      UserId:         user.emailId,
+      Department:     user.department,
+      DepartmentName: user.departmentName,
+      Designation:    user.department,
+      EmailId:        user.emailId,
+      MobileNo:       user.mobileNumber,
+      UserRole:       user.userRole,
+      SupervisorName: user.supervisorName,
+      ProofNumber:    btoa(user.idProofNumber),
+      ProofName:      user.idProofType,
+    };
     this.cookieService.set('InternalUserAuthData', JSON.stringify(userCookiesData));
-    
-    // Logic for password check and SweetAlert modal remains the same as your source
-    if (!user.isPasswordUpdated) {
-        this.session.addToSession(response.item1);
-        this.router.navigateByUrl('/SecurityIssue').then(() => window.location.reload());
+
+    if (user.isPasswordUpdated !== true) {
+      this.authSession.addToSession(this.userData);
+      this.router.navigateByUrl('/SecurityIssue').then(() => window.location.reload());
     } else {
-        this.showTermsModal(response.item1);
+      swal.fire({
+        title: 'Terms & Conditions',
+        html: `
+          <div style="max-height:400px;overflow-y:auto;text-align:left;padding:10px;">
+            <p>Welcome to Lovely Professional University. These terms and conditions outline the rules
+               and regulations for the use of LPU's Website at lpu.co.in</p>
+            <p><strong>You specifically agree to all of the following undertakings:</strong></p>
+            <ul style="list-style-type:disc;padding-left:20px;font-size:14px;line-height:1.6;">
+              <li>We agree to acknowledge CIF, LPU in our publications and thesis if the results from
+                  CIF instrumentation are incorporated/used in them.</li>
+              <li>I/We undertake to abide by the safety, standard sample preparation guidelines and
+                  precautions during testing of samples.</li>
+              <li>I/We understand the possibility of samples getting damaged during handling and
+                  analysis. I/We shall not claim for any loss/damage of the sample submitted to CIF
+                  and agree to resubmit the new sample requested by CIF for analysis.</li>
+              <li>CIF, LPU reserves the rights to return the samples without performing analysis and
+                  will refund the analytical charges (after deduction of GST, if applicable) under
+                  special circumstances.</li>
+              <li>I/we agree to maintain decorum during the visit in CIF labs for sample analysis and
+                  fully agree that CIF has full right to take action if decorum of CIF's labs
+                  functionality is disturbed/hampered by me.</li>
+              <li>CIF shall not take any responsibility about the analysis, interpretation and
+                  publication of data acquired by the end user.</li>
+              <li>I/We hereby declare that the results of the analysis will not be used for the
+                  settlement of any legal issue.</li>
+            </ul>
+          </div>`,
+        icon: 'info',
+        showCancelButton:  true,
+        confirmButtonText: 'Yes, Agreed',
+        cancelButtonText:  'No',
+        customClass: { popup: 'swal-wide' },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.authSession.addToSession(this.userData);
+          this.router.navigateByUrl('/NewBookings').then(() => window.location.reload());
+        } else {
+          swal.fire({ title: 'Agreement Required', text: 'You must agree to proceed further.', icon: 'warning' })
+            .then(() => this.logoutUser());
+        }
+      });
     }
   }
 
-  private showTermsModal(userData: any) {
+  logoutUser(): void {
+    this.cookieService.delete('InternalUserAuthData');
+    this.authSession.clearSession();
+    this.router.navigateByUrl('/Login');
+  }
+
+  openSampleInstructions(): void {
     swal.fire({
-      title: 'Terms & Conditions',
-      html: `YOUR_LONG_HTML_STRING_HERE`, // Keep your provided HTML string
+      title: 'Send Samples at Following Address:',
+      html: `<address>
+               <div class="contact-text">
+                 Central Instrumentation Facility (CIF)<br/>
+                 Lovely Professional University<br/>
+                 Block-38, Room No.106<br/>
+                 Jalandhar - Delhi G.T. Road,<br/>
+                 Phagwara, Punjab (India) - 144411<br/>
+                 Phone: <a href="tel:+911824444021">+91 1824-444021</a><br/>
+                 Email: cif@lpu.co.in
+               </div>
+             </address>`,
       icon: 'info',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, Agreed'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.session.addToSession(userData);
-        this.router.navigateByUrl('/NewBookings').then(() => window.location.reload());
-      } else {
-        this.logoutUser();
-      }
     });
   }
 
-  logoutUser = () => {
-    this.cookieService.delete('InternalUserAuthData');
-    this.session.clearSession();
-    this.router.navigateByUrl('/Login');
+  // ─── Instruments ─────────────────────────────────────────────────────────────
+  getAllInstruments(): void {
+    this.loadingIndicator.set(true);
+    const startTime = Date.now();
+
+    this.cifWebService.GetAllInstrumentsData().subscribe({
+      next: (response) => {
+        const items: any[] = response.item1?.length > 0 ? response.item1 : this.dataItems;
+        this.instrumentsData     = items;
+        this.tmpsInstrumentsData = [...items];
+        this.loadingStates       = Array(items.length).fill(true);
+
+        if (!response.item1?.length) {
+          this.serverConnectionError = true;
+          this.loginError = 'Data Server Connection error, Try again later';
+        }
+
+        const delay = Math.max(2500 - (Date.now() - startTime), 0);
+        setTimeout(() => this.loadingIndicator.set(false), delay);
+      },
+      error: (err) => {
+        console.error(err);
+        this.instrumentsData     = this.dataItems;
+        this.tmpsInstrumentsData = [...this.dataItems];
+        this.loadingStates       = Array(this.dataItems.length).fill(true);
+        this.serverConnectionError = true;
+        this.loginError = 'Data Server Connection error, Try again later';
+        this.loadingIndicator.set(false);
+      },
+    });
   }
+
+  // ─── Events carousel helpers ─────────────────────────────────────────────────
+  chunkArray<T>(arr: T[], size: number): T[][] {
+    return arr.reduce<T[][]>((acc, _, i) =>
+      i % size ? acc : [...acc, arr.slice(i, i + size)], []);
+  }
+
+  // ─── Private helpers ─────────────────────────────────────────────────────────
+  private _resetForm(): void {
+    this.formdata.reset();
+    this.formdata.patchValue({ UserRoleS: '' });
+    this.submitted = false;
+  }
+
+  // ─── Static data ─────────────────────────────────────────────────────────────
+  readonly events = [
+    { img: 'https://www.lpu.in/lpu-assets/images/cif/summer-training-programme-2025.webp', title: 'ANRF Sponsored Summer Training Programme', date: '(2 June - 11 July 2025)' },
+    { img: 'https://www.lpu.in/lpu-assets/images/cif/event-10.jpg', title: 'Discovering the Crystalline and Nano world using X-ray Diffraction and Particle Size and Zeta Potential Analyzer: A National Workshop', date: '(24 - 26 April 2025)' },
+    { img: 'https://www.lpu.in/lpu-assets/images/cif/event-9.jpg', title: 'National Workshop on Advance Research with Field Emission Scanning Electron Microscopy: Exploring the Nano-Structural Imaging', date: '(27 - 29 March 2025)' },
+    { img: 'https://www.lpu.in/lpu-assets/images/cif/event-7.jpg', title: 'National Workshop on Advanced Chromatographic Techniques Theory & Applications', date: '(19 - 21 September, 2024)' },
+    { img: 'https://www.lpu.in/lpu-assets/images/cif/event-8.jpg', title: 'SHORT-TERM COURSE on Advanced Materials analysis & Characterization Techniques: Hands-on-Training and Data Interpretation', date: '(09 - 13 December, 2024)' },
+    { img: 'https://www.lpu.in/lpu-assets/images/cif/event-1.jpg', title: 'National workshop on X-Ray Diffraction and Particle Size Analyzer', date: '(26 - 27 April 2024)' },
+    { img: 'https://www.lpu.in/lpu-assets/images/cif/event-2.jpg', title: 'Summer Training Programme', date: '(3 June - 13 July 2024)' },
+    { img: 'https://www.lpu.in/lpu-assets/images/cif/event-3.jpg', title: 'Workshop on Field Emission Scanning Electron Microscope', date: '(29 - 30 March 2024)' },
+  ];
+
+  readonly dataItems = [
+    { id: 1,  instrumentId: 0, instrumentName: 'Field Emission Scanning Electron Microscope, FESEM JEOL JSM-7610F-PLUS',                         categoryId: 1,  isActive: true, imageUrl: 'https://files.lpu.in/umsweb/CIFDocuments/Instrument_23899918_2_2025_100006_FESEM-Instrument.JPG' },
+    { id: 2,  instrumentId: 0, instrumentName: 'Powder XRD (Bruker D8 Advance)',                                                                   categoryId: 2,  isActive: true, imageUrl: 'https://files.lpu.in/umsweb/CIFDocuments/Instrument_2005552723_2_2025_100009_XRD-Instrument.JPG' },
+    { id: 3,  instrumentId: 0, instrumentName: 'FTIR with Diamond ATR & Pellet accessories (Perkin Elmer Spectrum 2)',                             categoryId: 3,  isActive: true, imageUrl: 'https://files.lpu.in/umsweb/CIFDocuments/Instrument_926534728_2_2025_100014_FTIR-Instrument.JPG' },
+    { id: 4,  instrumentId: 0, instrumentName: 'Fluorescence Spectrometer (Perkin Elmer LS6500)',                                                  categoryId: 4,  isActive: true, imageUrl: 'https://files.lpu.in/umsweb/CIFDocuments/Instrument_1449097689_2_2025_100011_Flourescence-Instrument.JPG' },
+    { id: 5,  instrumentId: 0, instrumentName: 'Thermogravimetric analyzer (Perkin Elmer TGA 4000)',                                               categoryId: 5,  isActive: true, imageUrl: 'https://files.lpu.in/umsweb/CIFDocuments/Instrument_543001469_2_2025_100012_TGA-Instrument.JPG' },
+    { id: 6,  instrumentId: 0, instrumentName: 'Differential scanning calorimeter (Perkin Elmer DSC 6000)',                                        categoryId: 6,  isActive: true, imageUrl: 'https://files.lpu.in/umsweb/CIFDocuments/Instrument_1507892084_2_2025_100013_DSC-Instrument.JPG' },
+    { id: 9,  instrumentId: 0, instrumentName: 'Gas Chromatography and Mass Spectroscopy, Shimadzu GCMS TQ8040 NX',                               categoryId: 7,  isActive: true, imageUrl: 'https://files.lpu.in/umsweb/CIFDocuments/Instrument_2009182246_2_2025_100008_GCMS-Instrument.JPG' },
+    { id: 10, instrumentId: 0, instrumentName: 'High Performance and Liquid Chromatography, Shimadzu Prominence LPGE',                            categoryId: 8,  isActive: true, imageUrl: 'https://files.lpu.in/umsweb/CIFDocuments/Instrument_34620374_2_2025_100007_HPLC-Instrument.JPG' },
+    { id: 11, instrumentId: 0, instrumentName: 'Electrochemical workstation, Metrohm: Multi-Channel Autolab AUT.MAC.204',                         categoryId: 9,  isActive: true, imageUrl: 'https://files.lpu.in/umsweb/CIFDocuments/Instrument_1060204202_3_2026_100000_ADP_2248.JPG' },
+    { id: 12, instrumentId: 0, instrumentName: 'Density meter (Axis Density Meter with analytical balance ALN-220)',                              categoryId: 10, isActive: true, imageUrl: 'https://files.lpu.in/umsweb/CIFDocuments/Instrument_382530855_2_2025_100002_Density_Meter-Instrument.jpg' },
+    { id: 13, instrumentId: 0, instrumentName: 'Refrigerated Centrifuge (Eppendorf 5804R)',                                                        categoryId: 11, isActive: true, imageUrl: 'https://files.lpu.in/umsweb/CIFDocuments/Instrument_259413724_2_2025_100003_Refrigerated_Centirfuge-Instrument.JPG' },
+    { id: 23, instrumentId: 0, instrumentName: 'Distilled Water (milli-Q water)',                                                                  categoryId: 0,  isActive: true, imageUrl: 'https://files.lpu.in/umsweb/CIFDocuments/Instrument_507378691_3_2025_100015_noImage.jpg' },
+  ];
 }
 
 // import { ChangeDetectorRef, Component, DOCUMENT, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
