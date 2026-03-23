@@ -1,0 +1,344 @@
+<app-cif-menu-bar></app-cif-menu-bar>
+
+<!-- ── Loading overlay ─────────────────────────────────────────────────────── -->
+@if (loadingIndicator) {
+  <div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+      <div class="custom-spinner-content text-center">
+        <img src="assets/images/spinner.gif" alt="Loading..." />
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── Floating cart ────────────────────────────────────────────────────────── -->
+@if (Datagrid.length > 0) {
+  <div class="floating-cart">
+    <div class="cart-content" (click)="goToDetails()">
+      <i class="mdi mdi-cart"></i>
+      <span class="cart-text">Tests Added: {{ Datagrid.length }}</span>
+    </div>
+  </div>
+}
+
+<!-- ── Maintenance banner ───────────────────────────────────────────────────── -->
+<div class="container">
+  <div class="row">
+    <div class="row mt-3 mb-3">
+      <div class="col-md-12">
+        <h2>New Test Booking Form</h2>
+      </div>
+    </div>
+
+    <div class="container-fluid mb-4 rounded border border-primary">
+      <div class="card-body p-3 p-sm-4">
+        <h3 class="m-2 fs-5 fs-sm-3">Instruments Under Maintenance:</h3>
+        @if (InstrumentDataInactive.length > 0) {
+          @for (banner of InstrumentDataInactive; track banner.instrumentId) {
+            <span class="badge text-bg-warning fs-6 fs-sm-5 me-1 badge-wrap">
+              {{ banner.instrumentName }}
+            </span>
+          }
+        } @else {
+          <h2 class="badge text-bg-warning fs-6 fs-sm-5 me-1 badge-wrap">
+            No Instrument is under Maintenance
+          </h2>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Multi-step container ─────────────────────────────────────────────────── -->
+<div class="container vh-sm-280 bottomMargin rounded border border-primary">
+
+  <!-- ══════════════════════════════════════════════════════
+       STEP 1 – Booking form
+  ══════════════════════════════════════════════════════════ -->
+  @if (currentStep === 1) {
+    <div>
+      <div class="row">
+        <form [formGroup]="formdata" (ngSubmit)="Addtogrid()">
+
+          @for (row of rows; track $index) {
+            <div class="row p-3">
+
+              <!-- Instrument Name -->
+              <div class="col-md-3 col-sm-6 mt-2">
+                <label>Instrument Name:</label>
+                <!--
+                  ✅ FIX: formControlName ONLY — [(ngModel)] removed.
+                     getAllAnalysis() reads the value via $event directly.
+                -->
+                <select class="form-select"
+                        formControlName="InstrumentName"
+                        (change)="getAllAnalysis($event)">
+                  <option value="Select" selected>Select Instrument</option>
+                  @for (dropDown of InstrumentData; track dropDown.instrumentId) {
+                    <option [value]="dropDown.instrumentId + '-' + dropDown.instrumentName">
+                      {{ dropDown.instrumentName }}
+                    </option>
+                  }
+                </select>
+              </div>
+
+              <!-- Analysis Type -->
+              <div class="col-md-3 col-sm-6 mt-2">
+                <label class="form-label">Analysis Type:</label>
+                <!-- ✅ formControlName ONLY — no [(ngModel)] -->
+                <select class="form-select"
+                        formControlName="AnalysisId"
+                        (change)="setAnalysisId($event)">
+                  <option value="Select">Select Analysis Type</option>
+                  @for (dropDownA of AnalysisData; track dropDownA.analysisId) {
+                    <option [value]="dropDownA.analysisId">
+                      {{ dropDownA.analysisType }}
+                    </option>
+                  }
+                </select>
+              </div>
+
+              <!-- Duration -->
+              <div class="col-md-2 col-sm-6 mt-2">
+                <label class="form-label">Duration:</label>
+                <!-- ✅ formControlName ONLY — no [(ngModel)] -->
+                <select class="form-select"
+                        formControlName="Duration"
+                        (change)="getPrice($event)">
+                  <option value="Select">Select Duration</option>
+                  @for (dropDownD of InstrumentsDuration; track dropDownD.analysisId) {
+                    <option [value]="dropDownD.analysisId">
+                      {{ dropDownD.typeName }}
+                    </option>
+                  }
+                </select>
+              </div>
+
+              <!-- Analysis Charges (hidden — managed by form only) -->
+              <div class="col-md-2 col-sm-6 mt-2" style="display:none;">
+                <label class="form-label">Analysis Charges:</label>
+                <!--
+                  ✅ formControlName ONLY — value set via patchValue in getPrice().
+                     No [(ngModel)] needed.
+                -->
+                <input type="text"
+                       class="form-control"
+                       formControlName="Charges"
+                       readonly />
+              </div>
+
+              <!-- Sample Count -->
+              <div class="col-md-2 col-sm-6 mt-2">
+                <label class="form-label">Sample Count:</label>
+                <!--
+                  ✅ FIX: Replaced [(ngModel)]="NumberOfSamples" + (change)="calculateAmount()"
+                     with a single (input) handler: onSampleCountChange().
+                     formControlName drives validation; component property updated manually.
+                -->
+                <input type="number"
+                       class="form-control"
+                       formControlName="NoOfSample"
+                       (input)="onSampleCountChange($event)"
+                       placeholder="Enter No. of Sample" />
+              </div>
+
+              <!-- Total Amount -->
+              <div class="col-md-2 col-sm-6 mt-2">
+                <label class="form-label">Total Amount:</label>
+                <!--
+                  ✅ Read-only computed field — value pushed in by patchValue after
+                     calculateAmount(). No [(ngModel)] needed.
+                -->
+                <input type="number"
+                       class="form-control"
+                       formControlName="TotalAmount"
+                       readonly />
+              </div>
+
+              <!-- Specific Parameters -->
+              <div class="col-md-3 col-sm-6 mt-5">
+                <label class="form-label">Specific Parameters for Test(s):</label><br />
+                <!--
+                  ✅ FIX: Replaced [(ngModel)]="Remarks" with (input)="onRemarksChange($event)".
+                     formControlName drives validation; Remarks property updated in handler.
+                -->
+                <textarea cols="15"
+                          class="form-control"
+                          formControlName="Remarks"
+                          (input)="onRemarksChange($event)"
+                          required></textarea>
+              </div>
+
+              <!-- Upload File -->
+              <div class="col-md-3 col-sm-6 mt-5">
+                <label class="form-label">Upload sample File For Parameters</label><br />
+                <input class="form-control"
+                       required
+                       type="file"
+                       formControlName="ExcelData"
+                       (change)="onFileSelected($event)"
+                       accept=".xls, .xlsx"
+                       #fileInput />
+                <label class="form-label text-success">
+                  {{ Message.length > 0 ? Message : '' }}
+                </label>
+              </div>
+
+              <!-- Download Format -->
+              <div class="col-md-2 col-sm-6 mt-5">
+                <label class="form-label">Parameters sample File</label><br />
+                <a (click)="DownloadFormat(InstrumentId)" class="btn btn-dark">
+                  Download Format
+                </a>
+              </div>
+
+              <!-- Add to Bucket -->
+              <div class="col-md-2 col-sm-6 mt-5">
+                <label class="form-label">Add Current Instrument</label><br />
+                <button type="button"
+                        class="btn btn-dark me-3"
+                        (click)="Addtogrid()"
+                        [disabled]="formdata.invalid">
+                  Add to Bucket
+                </button>
+              </div>
+
+              <!-- Next Step -->
+              <div class="col-md-2 col-sm-6 mt-5">
+                <label class="form-label"></label><br />
+                <button type="button"
+                        class="btn btn-dark"
+                        (click)="goToNextStep()"
+                        [disabled]="Datagrid.length === 0">
+                  Next Step
+                </button>
+              </div>
+
+            </div>
+          }<!-- /@for rows -->
+        </form>
+      </div>
+    </div>
+  }<!-- /@if step 1 -->
+
+
+  <!-- ══════════════════════════════════════════════════════
+       STEP 2 – Review added tests
+  ══════════════════════════════════════════════════════════ -->
+  @if (currentStep === 2) {
+    <div class="container-fluid">
+      <div class="mt-1 mb-1 row d-flex justify-content-center">
+        <div class="col-md-12 text-center">
+          <h4 class="fs-4">Test Requests Details</h4>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>AnalysisId</th>
+            <th>InstrumentId</th>
+            <th>InstrumentName</th>
+            <th>Price Value</th>
+            <th>Number Of Samples</th>
+            <th>Total Amount</th>
+            <th>Specific Parameters Required</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of Datagrid; track $index; let i = $index) {
+            <tr>
+              <td>{{ item.analysisId }}</td>
+              <td>{{ item.instrument }}</td>
+              <td>{{ item.instrumentName }}</td>
+              <td>{{ item.PriceValue }}</td>
+              <td>{{ item.NumberOfSamples }}</td>
+              <td>{{ item.totalAmount }}</td>
+              <td>{{ item.Remarks }}</td>
+              <td>
+                <button type="button" class="buttonx btn btn-lg" (click)="deleteEntry(i)">
+                  <i class="mdi fs-4 mdi-minus"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" class="text-end"><strong>Total Payment:</strong></td>
+            <td colspan="4">{{ getTotalPayment() | currency:'INR':'symbol' }}</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="row">
+        <div class="col-sm-12 mt-2 text-center">
+          <button type="button" class="btn btn-secondary me-3" (click)="prevStep()">Back</button>
+          <button type="button"
+                  class="me-2 btn btn-dark"
+                  [disabled]="Datagrid.length === 0"
+                  (click)="goToNextStep()">Proceed Next</button>
+        </div>
+      </div>
+    </div>
+  }<!-- /@if step 2 -->
+
+
+  <!-- ══════════════════════════════════════════════════════
+       STEP 3 – Final confirmation & save
+  ══════════════════════════════════════════════════════════ -->
+  @if (currentStep === 3) {
+    <div class="modal-body">
+      <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <div class="row mb-4">
+              <div class="col-sm">
+                <table id="dataTableAllClosedRemarks" class="table">
+                  <thead>
+                    <tr>
+                      <th>AnalysisId</th>
+                      <th>Name</th>
+                      <th>InstrumentId</th>
+                      <th>Price Value</th>
+                      <th>Number Of Samples</th>
+                      <th>Total Amount</th>
+                      <th>Specific Parameters Required</th>
+                      <th>MobileNo</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (item of Datagrid; track $index) {
+                      <tr>
+                        <td>{{ item.analysisId }}</td>
+                        <td>{{ candidateName }}</td>
+                        <td>{{ item.instrument }}</td>
+                        <td>{{ item.PriceValue }}</td>
+                        <td>{{ item.NumberOfSamples }}</td>
+                        <td>{{ item.totalAmount | currency:'INR':'symbol' }}</td>
+                        <td>{{ item.Remarks }}</td>
+                        <td>{{ MobileNo }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+
+                <div class="row">
+                  <div class="col-sm-12 mt-2 text-end">
+                    <button type="button" class="btn btn-secondary me-3" (click)="prevStep()">Back</button>
+                    <button type="button"
+                            class="me-2 btn btn-primary"
+                            [disabled]="Datagrid.length === 0"
+                            (click)="saveAllRecords()">Save Tests</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }<!-- /@if step 3 -->
+
+</div><!-- /.container -->

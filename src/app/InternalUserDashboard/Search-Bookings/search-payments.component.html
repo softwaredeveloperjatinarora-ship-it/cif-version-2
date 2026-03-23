@@ -1,0 +1,245 @@
+<app-cif-menu-bar></app-cif-menu-bar>
+ 
+@if (loadingIndicator) {
+  <div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+      <div class="custom-spinner-content text-center">
+        <img src="assets/images/spinner.gif" alt="Loading..." />
+      </div>
+    </div>
+  </div>
+}
+
+<div class="container-fluid">
+ 
+  @if (BookingStatusData.length > 0) {
+    <div class="row">
+      <div class="col-12 stretch-card">
+        <div class="card-body">
+          <hr />
+ 
+          <div class="row d-flex justify-content-center align-items-center mb-4">
+            <div class="col-12 mb-2 mb-md-0">
+              <h4 class="fs-3 mb-0 text-start">Paid Payment Page</h4>
+            </div>
+          </div>
+          <hr />
+
+          <div class="row mt-2 d-flex justify-content-center">
+            <div class="col-sm-2 text-start">
+              <div class="mb-3">
+                <button (click)="exportToExcel()"
+                        class="btn btn-dark"
+                        [disabled]="tmpsBookingStatusData.length === 0">
+                  Export to Excel
+                </button>
+              </div>
+            </div>
+            <div class="col-sm-4 text-center">
+              <div class="mb-1 text-start">
+                <h3 class="text-primary">Paid Payment Records</h3>
+              </div>
+            </div>
+            <div class="col-sm-3 text-start">
+              
+              <input [(ngModel)]="searchQuery"
+                     (keyup)="search()"
+                     id="search"
+                     type="text"
+                     class="form-control"
+                     style="width: 14rem;"
+                     placeholder="Search"
+                     aria-label="Search" />
+            </div>
+          </div>
+
+          <!-- ── Data table ──────────────────────────────────────────────── -->
+          @if (tmpsBookingStatusData.length > 0) {
+            <div class="table-responsive mt-4 mb-4">
+              <table id="BookinglDataTable" #table>
+                <thead>
+                  <tr>
+                    <th class="form-label">Booking Id</th>
+                    <th class="form-label">Instrument Name</th>
+                    <th class="form-label">Amount</th>
+                    <th class="form-label">Request Date</th>
+                    <th class="form-label">Status</th>
+                    <th class="form-label">Print</th>
+                  </tr>
+                </thead>
+                <tbody>
+            
+                  @for (row of getCurrentPageData(); track row.bookingId) {
+                    <tr>
+                      <td class="fw-bold">{{ row.bookingId }}</td>
+                      <td class="fw-bold">{{ row.instrumentName }}</td>
+                      <td class="fw-bold">{{ row.amount | currency:'INR':'symbol' }}</td>
+                      <td class="fw-bold">{{ row.requestDate }}</td>
+
+                      
+                      <td class="fw-bold">
+                        @if (row.paymentStatus === 'success') {
+                          <div class="fw-bold text-success p-2">
+                            Paid
+                            <span class="fw-bold text-dark">On</span>
+                            {{ row.paymentDate }}
+                          </div>
+                        } @else if (row.paymentStatus === 'failure') {
+                          <div class="fw-bold text-danger p-2">Failed</div>
+                        } @else {
+                          <div class="fw-bold text-dark p-3">Pending</div>
+                        }
+                      </td>
+
+                      <td>
+                        <button class="btn btn-success btn-sm"
+                                (click)="paymentReceiptScreen(row)">
+                          Print Receipt
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+
+              <div class="pagination">
+                <a href="javascript:void(0)"
+                   (click)="prevPage()"
+                   [class.disabled]="currentPage === 1">
+                  <i class="mdi mdi-chevron-left fs-2"></i>
+                </a>
+                <span class="text-danger p-2">{{ currentPage }} / {{ getTotalPages() }}</span>
+                <a href="javascript:void(0)"
+                   (click)="nextPage()"
+                   [class.disabled]="currentPage === getTotalPages()">
+                  <i class="mdi mdi-chevron-right fs-2"></i>
+                </a>
+              </div>
+            </div>
+
+          } @else {
+            <p class="fs-2 text-center">Try Search With Different Text.</p>
+          }
+
+        </div>
+      </div>
+    </div>
+
+  } @else {
+    <div class="card card-warning text-center p-2 mb-4">
+      <hr />
+      <div class="row mb-4">
+        <h3 class="text-center text-primary fs-2 mb-4 pb-4">All Paid Payments Page</h3>
+        <hr />
+        <div class="text-center py-5 BottomSpace">
+          <p class="fs-4 text-danger">No Details Found.</p>
+        </div>
+      </div>
+    </div>
+  }
+
+</div> 
+<ng-template #viewDescModal2 let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Get Result Screen</h5>
+    <button type="button" class="btn-close"
+            (click)="modal.close('by: close icon')"
+            aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    <div class="col-md-12 grid-margin stretch-card" id="ReceiptData">
+      <div class="modal-body">
+        <div class="container-fluid">
+
+          <p class="text-center mb-5"
+             style="font-size: 30px; border: 2px solid black;">
+            Payment Receipt
+          </p>
+
+          <button class="btn btn-primary mb-3" (click)="printReceipt()">
+            Print Receipt
+          </button>
+
+          <div class="row">
+            <hr />
+            <div class="col-6"><span>Name</span></div>
+            <div class="col-6">
+              <span class="text-danger">{{ PaymentReceipt?.candidateName }}</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <hr />
+            <div class="col-6"><span class="me-4">Booking Id</span></div>
+            <div class="col-6">{{ PaymentReceipt?.bookingId }}</div>
+            <hr />
+          </div>
+
+          <div class="row">
+            <div class="col-6"><span>Request Date</span></div>
+            <div class="col-6">{{ PaymentReceipt?.requestDate }}</div>
+            <hr />
+          </div>
+
+          <div class="row">
+            <div class="col-6"><span class="text-black">Instrument Name</span></div>
+            <div class="col-6"><p>{{ PaymentReceipt?.instrumentName }}</p></div>
+            <hr />
+          </div>
+
+          <div class="row">
+            <div class="col-6"><p>Charges Per sample</p></div>
+            <div class="col-6">
+              <p class="float-start">{{ PaymentReceipt?.amount }}</p>
+            </div>
+            <hr />
+          </div>
+
+          <div class="row text-black">
+            <div class="col-6"><p>Sample Count</p></div>
+            <div class="col-6">
+              <p class="float-start fw-bold">{{ PaymentReceipt?.noOfSamples }}</p>
+            </div>
+            <hr />
+          </div>
+
+          <div class="row text-black">
+            <div class="col-6"><p>Payable Amount</p></div>
+            <div class="col-6">
+              <p class="float-start fw-bold">Total: {{ PaymentReceipt?.totalCharges }}</p>
+            </div>
+            <hr style="border: 2px solid black;" />
+          </div>
+
+         
+          <div class="row">
+            <div class="col-6"><p>Payment Status</p></div>
+            <div class="col-6">
+         
+              <div class="fw-bold">
+                @if (PaymentReceipt?.paymentStatus === 'success') {
+                  <div class="fw-bold text-success">
+                    Paid
+                    <span class="fw-bold text-dark">Payment Date</span>
+                    {{ PaymentReceipt?.paymentDate }}
+                  </div>
+                } @else if (PaymentReceipt?.paymentStatus === 'failure') {
+                  <div class="fw-bold text-danger">
+                    Failed
+                    <span class="fw-bolder text-dark ms-4 me-3">Payment Date</span>
+                    {{ PaymentReceipt?.paymentDate }}
+                  </div>
+                } @else {
+                  <div class="fw-bold text-dark p-3">Pending</div>
+                }
+              </div>
+            </div>
+            <hr style="border: 2px solid black;" />
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

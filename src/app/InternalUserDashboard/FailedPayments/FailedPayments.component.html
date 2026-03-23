@@ -1,0 +1,432 @@
+<app-cif-menu-bar></app-cif-menu-bar>
+
+<!-- ── Loading overlay ──────────────────────────────────────────────────────── -->
+<!--
+  ✅ @if replaces *ngIf — Angular 20 control flow.
+     Inner duplicate *ngIf on custom-spinner-overlay also removed.
+-->
+@if (loadingIndicator) {
+  <div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+      <div class="custom-spinner-content text-center">
+        <img src="assets/images/spinner.gif" alt="Loading..." />
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MAIN CONTENT — shown when failed records exist
+═══════════════════════════════════════════════════════════════════════════ -->
+@if (BookingStatusData.length > 0) {
+  <div class="container-fluid BottomSpace">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+
+            <hr class="border-1 border-dark opacity-100" />
+            <div class="row d-flex justify-content-center align-items-center mb-4">
+              <div class="col-12 mb-2 mb-md-0">
+                <h4 class="fs-3 mb-0 text-start">Failed Payment Page</h4>
+              </div>
+            </div>
+            <hr class="border-1 border-dark opacity-100" />
+
+            <!-- Controls: Export | Title | Search -->
+            <div class="row mt-2 mb-3 align-items-center">
+              <div class="col-4 text-end mb-2 mb-md-0">
+                <button (click)="exportToExcel()"
+                        class="btn btn-dark"
+                        [disabled]="tmpsBookingStatusData.length === 0">
+                  <i class="bi bi-file-earmark-excel me-1"></i>Export to Excel
+                </button>
+              </div>
+              <div class="col-4 text-center mb-2 mb-md-0">
+                <h3 class="mb-0 text-primary">Payment Failed Details</h3>
+              </div>
+              <div class="col-4">
+                <!--
+                  ✅ [(ngModel)] valid — FormsModule is in imports[].
+                -->
+                <input [(ngModel)]="searchQuery"
+                       (keyup)="search()"
+                       id="search"
+                       type="text"
+                       class="form-control"
+                       style="width: 15rem;"
+                       placeholder="Search"
+                       aria-label="Search" />
+              </div>
+            </div>
+
+            <!-- ── Data table ─────────────────────────────────────────── -->
+            @if (tmpsBookingStatusData.length > 0) {
+              <div class="table-responsive mt-4 mb-4">
+                <table id="BookinglDataTable" #table class="table table-hover table-striped">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="d-none d-md-table-cell">Booking Id</th>
+                      <th class="d-none d-md-table-cell">Instrument Name</th>
+                      <th class="d-none d-lg-table-cell">Request Date</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                      <th>Upload Receipt</th>
+                      <th>Print</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!--
+                      ✅ @for replaces *ngFor on <ng-container>.
+                         track by bookingId — stable unique key.
+                    -->
+                    @for (row of getCurrentPageData(); track row.bookingId) {
+                      <tr>
+                        <td class="fw-bold d-none d-md-table-cell">{{ row.bookingId }}</td>
+                        <td class="fw-bold d-none d-md-table-cell">{{ row.instrumentName }}</td>
+                        <td class="fw-bold d-none d-lg-table-cell">{{ row.requestDate }}</td>
+                        <td class="fw-bold text-danger">
+                          {{ row.amount | currency:'INR':'symbol' }}
+                        </td>
+
+                        <!--
+                          ✅ [ngSwitch] / *ngSwitchCase replaced with @if / @else if / @else.
+                             ngSwitch is deprecated in Angular 20 new control flow.
+                        -->
+                        <td>
+                          @if (row.paymentStatus === 'success') {
+                            <div class="fw-bold text-success p-2">
+                              <span class="badge bg-success">Payment Successful</span>
+                              <span class="fw-bold text-dark">On</span>
+                              {{ row.paymentDate }}
+                            </div>
+                          } @else if (row.paymentStatus === 'failure') {
+                            <div class="fw-bold text-danger p-2">
+                              <span class="badge bg-danger">Payment Failed</span>
+                              <button class="btn btn-dark btn-sm ms-2"
+                                      (click)="openPaymentModal(row)">
+                                <i class="feather icon-dollar-sign ms-1 me-1"></i>
+                              </button>
+                            </div>
+                          } @else {
+                            <div class="fw-bold text-dark p-2">
+                              <span class="badge bg-warning text-dark">Payment Pending</span>
+                              <button class="btn btn-dark btn-sm ms-2"
+                                      (click)="openPaymentModal(row)">
+                                <i class="feather icon-dollar ms-1 me-1"></i>
+                              </button>
+                            </div>
+                          }
+                        </td>
+
+                        <!-- Upload Receipt -->
+                        <td>
+                          <!--
+                            ✅ *ngIf / ng-template #uploadBtn replaced with @if / @else
+                          -->
+                          @if (hasProofUploaded(row.bookingId)) {
+                            <span class="badge bg-success me-3">
+                              <i class="feather icon-check-circle me-1"></i> Uploaded
+                            </span>
+                            <button class="btn btn-sm btn-dark"
+                                    (click)="downloadFile(row.receiptProofFile)">
+                              <i class="feather icon-eye ms-1 me-1"></i>
+                            </button>
+                          } @else {
+                            <button class="btn btn-dark btn-sm"
+                                    (click)="openReceiptUploadModal(row)">
+                              <i class="mdi mdi-upload"></i>
+                            </button>
+                          }
+                        </td>
+
+                        <!-- Print -->
+                        <td>
+                          <button class="btn btn-dark btn-sm"
+                                  (click)="paymentReceiptScreen(row)">
+                            Receipt
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+
+                <!-- ── Pagination ──────────────────────────────────── -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center mt-4 gap-3">
+                  <div class="d-flex align-items-center gap-2">
+                    <label for="itemsPerPage" class="mb-0">Items per page:</label>
+                    <!--
+                      ✅ [(ngModel)] on select — FormsModule handles two-way binding.
+                    -->
+                    <select id="itemsPerPage"
+                            class="form-select form-select-sm"
+                            style="width: auto;"
+                            [(ngModel)]="itemsPerPage"
+                            (change)="onItemsPerPageChange()">
+                      @for (option of itemsPerPageOptions; track option) {
+                        <option [value]="option">{{ option }}</option>
+                      }
+                    </select>
+                  </div>
+                  <nav aria-label="Table pagination">
+                    <ul class="pagination pagination-sm mb-0">
+                      <li class="page-item" [class.disabled]="currentPage === 1">
+                        <a class="page-link"
+                           href="javascript:void(0)"
+                           (click)="prevPage()">
+                          <i class="bi bi-chevron-left"></i>
+                        </a>
+                      </li>
+                      <li class="page-item disabled">
+                        <span class="page-link text-danger">
+                          {{ currentPage }} / {{ getTotalPages() }}
+                        </span>
+                      </li>
+                      <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
+                        <a class="page-link"
+                           href="javascript:void(0)"
+                           (click)="nextPage()">
+                          <i class="bi bi-chevron-right"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+
+            } @else {
+              <!-- No search results -->
+              <div class="text-center py-5">
+                <p class="fs-2 text-danger text-center">No Payment Record(s).</p>
+              </div>
+            }
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+} @else {
+  <!-- ── No data at all ─────────────────────────────────────────────────── -->
+  <div class="card card-warning text-center p-2 mb-4">
+    <hr />
+    <div class="row mb-4">
+      <h3 class="text-center text-primary fs-2 mb-4 pb-4">All Failed Payments Page</h3>
+      <hr />
+      <div class="text-center py-5 BottomSpace">
+        <p class="fs-4 text-danger">No Details Found.</p>
+      </div>
+    </div>
+  </div>
+}
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODAL: Payment Receipt (Print view)
+═══════════════════════════════════════════════════════════════════════════ -->
+<ng-template #viewDescModal2 let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Payment Receipt</h5>
+    <button type="button" class="btn-close"
+            (click)="modal.close('by: close icon')" aria-label="Close"></button>
+  </div>
+  <div class="modal-body" #modalBody>
+    <div class="col-md-12" id="ReceiptData">
+      <div class="modal-body">
+        <div class="container-fluid">
+
+          <p class="text-center mb-5" style="font-size:30px; border:2px solid black;">
+            Payment Receipt
+          </p>
+
+          <button class="btn btn-primary mb-3" (click)="printReceipt()">
+            Print Receipt
+          </button>
+
+          <div class="row mb-2">
+            <div class="col-6 fw-bold">Name:</div>
+            <div class="col-6 text-danger">{{ PaymentReceipt?.candidateName }}</div>
+          </div>
+          <hr />
+          <div class="row mb-2">
+            <div class="col-6 fw-bold">Booking Id:</div>
+            <div class="col-6">{{ PaymentReceipt?.bookingId }}</div>
+          </div>
+          <hr />
+          <div class="row mb-2">
+            <div class="col-6 fw-bold">Request Date:</div>
+            <div class="col-6">{{ PaymentReceipt?.requestDate }}</div>
+          </div>
+          <hr />
+          <div class="row mb-2">
+            <div class="col-6 fw-bold">Instrument Name:</div>
+            <div class="col-6">{{ PaymentReceipt?.instrumentName }}</div>
+          </div>
+          <hr />
+          <div class="row mb-2">
+            <div class="col-6 fw-bold">Sample Count:</div>
+            <div class="col-6 fw-bold">{{ PaymentReceipt?.noOfSamples }}</div>
+          </div>
+          <hr />
+          <div class="row mb-2">
+            <div class="col-6 fw-bold">Payable Amount:</div>
+            <div class="col-6 fw-bold">Total: {{ PaymentReceipt?.totalCharges }}</div>
+          </div>
+          <hr style="border: 2px solid black;" />
+
+          <!-- Payment Status -->
+          <div class="row mb-2">
+            <div class="col-6 fw-bold">Payment Status:</div>
+            <div class="col-6">
+              <div class="fw-bold">
+                @if (PaymentReceipt?.paymentStatus === 'success') {
+                  <div class="fw-bold text-success">
+                    Paid <span class="fw-bold text-dark">Payment Date:</span>
+                    {{ PaymentReceipt?.paymentDate }}
+                  </div>
+                } @else if (PaymentReceipt?.paymentStatus === 'failure') {
+                  <div class="fw-bold text-danger">
+                    Failed
+                    <span class="fw-bold text-dark ms-2">Payment Date:</span>
+                    {{ PaymentReceipt?.paymentDate }}
+                  </div>
+                } @else {
+                  <div class="fw-bold text-dark">Pending</div>
+                }
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODAL: Payment Screen (Confirm & Pay)
+═══════════════════════════════════════════════════════════════════════════ -->
+<ng-template #viewDescModal5 let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Payment Screen</h5>
+    <button type="button" class="btn-close"
+            (click)="modal.close('by: close icon')" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-4">
+            <div class="col-sm">
+              <table id="dataTableAllClosedRemarks" class="table">
+                <thead>
+                  <tr>
+                    <th class="fw-bold">Booking Id</th>
+                    <th class="fw-bold">Instrument Name</th>
+                    <th class="fw-bold">Total Amount</th>
+                    <th class="fw-bold">Pay Now</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{{ BookingCase?.id }}</td>
+                    <td style="width:20%">{{ BookingCase?.instrumentName }}</td>
+                    <td>{{ BookingCase?.amount | currency:'INR':'symbol' }}</td>
+                    <td>
+                      <button type="button" class="btn btn-warning me-2"
+                              (click)="VerifyData(BookingCase)">
+                        <i class="mdi mdi-credit-card-check fs-3"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODAL: Payment Receipt Upload
+═══════════════════════════════════════════════════════════════════════════ -->
+<ng-template #PaymentReceiptUploadModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Payment Receipt Upload</h5>
+    <button type="button" class="btn-close"
+            (click)="modal.close('by: close icon')" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-body">
+        <form id="paymentReceiptForm">
+          <div class="row">
+
+            <!-- Booking ID -->
+            <div class="col-12 col-md-6 mb-3">
+              <label class="form-label fw-bold">Booking ID</label>
+              <div class="form-control-plaintext">{{ BookingCase?.bookingId }}</div>
+            </div>
+
+            <!-- Payment Amount -->
+            <div class="col-12 col-md-6 mb-3">
+              <label class="form-label fw-bold">Payment Amount</label>
+              <div class="form-control-plaintext">
+                {{ BookingCase?.amount | currency:'INR':'symbol' }}
+              </div>
+            </div>
+
+            <!-- File Upload -->
+            <div class="col-12 col-md-6 mb-3">
+              <label for="paymentReceiptFile" class="form-label fw-bold">
+                Payment Receipt File
+              </label>
+              <input class="form-control"
+                     type="file"
+                     id="paymentReceiptFile"
+                     name="paymentReceiptFile"
+                     (change)="onFileXSelected($event, BookingCase?.bookingId)"
+                     accept=".pdf, .jpg, .jpeg, .png, .zip, .rar, .7z" />
+              <div class="form-text">Maximum file size: 5MB</div>
+            </div>
+
+            <!-- Remarks -->
+            <div class="col-12 col-md-6 mb-3">
+              <label for="receiptRemarks" class="form-label fw-bold">
+                Comments/Remarks
+              </label>
+              <!--
+                ✅ [(ngModel)] valid — FormsModule imported.
+                   name attribute required when inside a <form>.
+              -->
+              <input class="form-control"
+                     type="text"
+                     id="receiptRemarks"
+                     name="receiptRemarks"
+                     [(ngModel)]="ReceiptRemarks"
+                     placeholder="Enter remarks..." />
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="row mt-3">
+            <div class="col-12 text-center">
+              <button type="submit"
+                      class="btn btn-primary"
+                      [disabled]="!fileChosen[BookingCase?.bookingId] && UserId?.length < 1"
+                      (click)="UpdateFileDocument(BookingCase?.bookingId)">
+                <i class="mdi mdi-upload me-1"></i> Upload Receipt
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</ng-template>

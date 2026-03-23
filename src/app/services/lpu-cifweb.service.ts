@@ -9,13 +9,11 @@ import { environment } from '../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class LpuCIFWebService {
 
-  // ── DI ──────────────────────────────────────────────────────────────────────
+ 
   private readonly http           = inject(HttpClient);
   private readonly storageService = inject(StorageService);
 
-  // ── Base URL ─────────────────────────────────────────────────────────────────
-  // Development  : environment.apiBase = ''   → relative URL → proxied by Angular CLI
-  // Production   : environment.apiBase = 'https://projectsapi.lpu.in'
+ 
   private readonly base = environment.apiBase;
   private readonly api  = `${this.base}/api/LpuCIF`;
 
@@ -25,9 +23,42 @@ export class LpuCIFWebService {
   readonly folderUrl = 'https://files.lpu.in/umsweb/webftp/CIFDocuments/';
   getFolderUrl(): string { return this.folderUrl; }
 
-  // ── Private header builders ──────────────────────────────────────────────────
 
-  /** For GET endpoints that do NOT need a dynamic session token */
+    UploadPaymentReceipt(PaymentReceipt: FormData): Observable<any> {
+       return this.http.post(
+      `${this.api}/CIFUploadPaymentReceipt`, PaymentReceipt,
+      { headers: this.multipartHeaders(true) }
+    );
+  }
+      
+   
+  GetBookingPaymentProofDetails(BookingId: any): Observable<any> {
+    return this.http.get(
+      `${this.api}/CIFGetBookingPaymentProofDetails?UserId=${BookingId}`,
+      { headers: this.staticJsonHeaders() }
+    );
+  }
+
+ 
+ 
+
+    downloadFile(fileUrl: string): Observable<Blob> {
+    const payload = {
+      fileName: fileUrl,
+      folderPath: ""
+    };
+    const token = this.storageService.getUser();
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': '*/*',
+      'Authorization': `Bearer ${this.authToken}`
+    });
+    return this.http.post(this.api +'api/Mou/DownloadMOUFiles/MOUDownloadFiles', payload, {
+    // return this.http.post('https://projectsapi.lpu.in/api/Mou/DownloadMOUFiles/MOUDownloadFiles', payload, {
+      headers: headers,
+      responseType: 'blob'
+    });
+  }
   private staticJsonHeaders(): HttpHeaders {
     return new HttpHeaders({
       'Authorization': `Bearer ${this.authToken}`,
@@ -35,7 +66,7 @@ export class LpuCIFWebService {
     });
   }
 
-  /** For endpoints that need the session JWT (admin / staff actions) */
+  
   private sessionJsonHeaders(): HttpHeaders {
     return new HttpHeaders({
       'Authorization': `Bearer ${this.storageService.getUser()}`,
@@ -43,24 +74,12 @@ export class LpuCIFWebService {
     });
   }
 
-  /**
-   * For multipart/form-data POST endpoints.
-   * IMPORTANT: Do NOT set Content-Type manually for FormData — the browser
-   * must set the boundary automatically. Setting it manually breaks uploads.
-   */
+ 
   private multipartHeaders(useSession = false): HttpHeaders {
     const token = useSession ? this.storageService.getUser() : this.authToken;
     return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
   }
-
-  // ╔══════════════════════════════════════════════════════════════════════════╗
-  // ║  AUTH                                                                    ║
-  // ╚══════════════════════════════════════════════════════════════════════════╝
-
-  /**
-   * FIX: Was sending FormData but setting Content-Type: application/json.
-   * These conflict — FormData must use multipart headers (no Content-Type set).
-   */
+ 
   GetAuthoriseUserData(loginData: FormData): Observable<any> {
     return this.http
       .post(`${this.api}/GetUserDataIdWise`, loginData, {
@@ -69,10 +88,7 @@ export class LpuCIFWebService {
       .pipe(catchError(err => of({ error: true, message: err.message })));
   }
 
-  // ╔══════════════════════════════════════════════════════════════════════════╗
-  // ║  USER MANAGEMENT                                                         ║
-  // ╚══════════════════════════════════════════════════════════════════════════╝
-
+  
   getStudentById(regNo: any): Observable<any> {
     return this.http.get(
       `${this.api}/GetStudentById?RegNo=${regNo}`,
