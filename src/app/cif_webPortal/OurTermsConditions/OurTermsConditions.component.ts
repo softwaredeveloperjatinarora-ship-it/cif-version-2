@@ -91,6 +91,10 @@ export class OurTermsConditionsComponent implements OnInit {
   }
 
   getAllInstruments(): void {
+      this.loadingIndicator = true;
+    this.isLoading = true;
+    const startTime = new Date().getTime();
+
     this.CIFwebService.GetAllInstrumentsData().subscribe({
       next: response => {
         if (response.item1 && response.item1.length > 0) {
@@ -102,6 +106,14 @@ export class OurTermsConditionsComponent implements OnInit {
           this.tmpsInstrumentsDataData = [];
           this.loadingStates = [];
         }
+         const elapsed = new Date().getTime() - startTime;
+        const remainingDelay = Math.max(500 - elapsed, 0);
+
+        setTimeout(() => {
+          this.loadingIndicator = false;
+          this.isLoading = false;
+          this.cdRef.detectChanges();
+        }, remainingDelay);
       },
       error: err => {
         this.loadingIndicator = false;

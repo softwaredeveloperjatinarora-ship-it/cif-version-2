@@ -8,6 +8,7 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class LpuCIFWebService {
+  private readonly authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJMb2dpbk5hbWUiOiJDSUYiLCJuYmYiOjE3NTM3NzU3ODIsImV4cCI6MTc4NTMxMTc4MiwiaWF0IjoxNzUzNzc1NzgyLCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo3MTI1LyIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjcxMjUvIn0.9Oc0vzoLFrYmMpzfN5z9cDy-ysE3PgyxY8o4XC8ZRuI';
 
  
   private readonly http           = inject(HttpClient);
@@ -17,8 +18,8 @@ export class LpuCIFWebService {
   private readonly base = environment.apiBase;
   private readonly api  = `${this.base}/api/LpuCIF`;
 
+  private readonly baseUrl = environment.apiUrl; //
   
-  private readonly authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJMb2dpbk5hbWUiOiJDSUYiLCJuYmYiOjE3NTM3NzU3ODIsImV4cCI6MTc4NTMxMTc4MiwiaWF0IjoxNzUzNzc1NzgyLCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo3MTI1LyIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjcxMjUvIn0.9Oc0vzoLFrYmMpzfN5z9cDy-ysE3PgyxY8o4XC8ZRuI';
 
   readonly folderUrl = 'https://files.lpu.in/umsweb/webftp/CIFDocuments/';
   getFolderUrl(): string { return this.folderUrl; }
@@ -42,7 +43,7 @@ export class LpuCIFWebService {
  
  
 
-    downloadFile(fileUrl: string): Observable<Blob> {
+  downloadFile(fileUrl: string): Observable<Blob> {
     const payload = {
       fileName: fileUrl,
       folderPath: ""
@@ -53,12 +54,13 @@ export class LpuCIFWebService {
       'Accept': '*/*',
       'Authorization': `Bearer ${this.authToken}`
     });
-    return this.http.post(this.api +'api/Mou/DownloadMOUFiles/MOUDownloadFiles', payload, {
-    // return this.http.post('https://projectsapi.lpu.in/api/Mou/DownloadMOUFiles/MOUDownloadFiles', payload, {
+    return this.http.post(this.api + 'api/Mou/DownloadMOUFiles/MOUDownloadFiles', payload, {
+      // return this.http.post('https://projectsapi.lpu.in/api/Mou/DownloadMOUFiles/MOUDownloadFiles', payload, {
       headers: headers,
       responseType: 'blob'
     });
   }
+
   private staticJsonHeaders(): HttpHeaders {
     return new HttpHeaders({
       'Authorization': `Bearer ${this.authToken}`,
@@ -103,6 +105,8 @@ export class LpuCIFWebService {
     );
   }
 
+
+  
   GetAllUserLists(): Observable<any> {
     return this.http.get(
       `${this.api}/GetCIFAssignTestProperties`,
@@ -124,12 +128,24 @@ export class LpuCIFWebService {
     );
   }
 
-  UpdateUserDetails(userData: FormData): Observable<any> {
+ 
+  UpdateUserDetails(UserData: FormData): Observable<any> {
+    var authToken = this.storageService.getUser();
+    let headers = new HttpHeaders()
+      .set('Authorization', 'Bearer ' + authToken)
     return this.http.post(
-      `${this.api}/CIUpdateUserDetails`, userData,
-      { headers: this.multipartHeaders(true) }
+      
+      `${this.api}/CIUpdateUserDetails`, UserData, { headers }
     );
   }
+
+
+  // UpdateUserDetails(userData: FormData): Observable<any> {
+  //   return this.http.post(
+  //     `${this.api}/CIUpdateUserDetails`, userData,
+  //     { headers: this.multipartHeaders(true) }
+  //   );
+  // }
 
   CIFLockUser(data: FormData): Observable<any> {
     return this.http.post(
@@ -152,9 +168,7 @@ export class LpuCIFWebService {
     );
   }
 
-  // ╔══════════════════════════════════════════════════════════════════════════╗
-  // ║  INSTRUMENTS                                                             ║
-  // ╚══════════════════════════════════════════════════════════════════════════╝
+  
 
   GetAllInstrumentsData(): Observable<any> {
     return this.http

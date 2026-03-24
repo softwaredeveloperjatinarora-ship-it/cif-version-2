@@ -1,0 +1,219 @@
+<app-cif-menu-bar></app-cif-menu-bar>
+
+<!-- ── Loading overlay ──────────────────────────────────────────────────────── -->
+<!--
+  ✅ @if replaces *ngIf — Angular 20 control flow.
+     Inner duplicate *ngIf="loadingIndicator" on custom-spinner-overlay removed.
+-->
+@if (loadingIndicator) {
+  <div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+      <div class="custom-spinner-content text-center">
+        <img src="assets/images/spinner.gif" alt="Loading..." />
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MAIN CONTENT — shown when booking records exist
+═══════════════════════════════════════════════════════════════════════════ -->
+@if (BookingData.length > 0) {
+  <div class="container-fluid BottomSpace">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <hr />
+
+            <!-- Controls: Export | Title | Search -->
+            <div class="row mt-2 mb-3 align-items-center">
+              <div class="col-12 col-md-3 col-lg-2 text-center text-md-start mb-2 mb-md-0">
+                <button (click)="exportToExcel()"
+                        class="btn btn-dark btn-sm"
+                        [disabled]="tmpsBookingData.length === 0">
+                  <i class="bi bi-file-earmark-excel me-1"></i>Export to Excel
+                </button>
+              </div>
+              <div class="col-12 col-md-6 col-lg-6 text-center text-md-start mb-2 mb-md-0">
+                <h3 class="mb-0 text-primary">Results Details</h3>
+              </div>
+              <div class="col-12 col-md-3 col-lg-4">
+                <!--
+                  ✅ [(ngModel)] valid — FormsModule is in imports[].
+                -->
+                <input [(ngModel)]="searchQuery"
+                       (keyup)="search()"
+                       id="search"
+                       type="text"
+                       class="form-control"
+                       placeholder="Search"
+                       aria-label="Search" />
+              </div>
+            </div>
+            <hr />
+
+            <!-- ── Data table ──────────────────────────────────────────── -->
+            @if (tmpsBookingData.length > 0) {
+              <div class="table-responsive mt-4 mb-4">
+                <table id="BookinglDataTable" #table class="table table-hover table-striped">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Booking Id</th>
+                      <th class="d-none d-md-table-cell">Instrument Name</th>
+                      <th>Request Date</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!--
+                      ✅ @for replaces *ngFor on <ng-container>.
+                         track by bookingId — stable unique key.
+                    -->
+                    @for (row of getCurrentPageData(); track row.bookingId) {
+                      <tr>
+                        <td class="fw-bold">{{ row.bookingId }}</td>
+                        <td class="fw-bold d-none d-md-table-cell">{{ row.instrumentName }}</td>
+                        <td class="fw-bold">
+                          {{ row.bookingRequestDate | date:'dd/MM/yyyy' }}
+                        </td>
+                        <td class="fw-bold">
+                          <button class="btn btn-dark btn-sm"
+                                  (click)="openPaymentModal(row)">
+                            Fetch Result
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+
+                <!-- ── Pagination ──────────────────────────────────────── -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center mt-4 gap-3">
+                  <div class="d-flex align-items-center gap-2">
+                    <label for="itemsPerPage" class="mb-0">Items per page:</label>
+                    <select id="itemsPerPage"
+                            [value]="itemsPerPage"
+                            (change)="onItemsPerPageChange($event)"
+                            class="form-select form-select-sm"
+                            style="width: auto;">
+                      <option [value]="2">Select</option>
+                      <!--
+                        ✅ @for replaces *ngFor on <option>.
+                      -->
+                      @for (option of itemsPerPageOptions; track option) {
+                        <option [value]="option">{{ option }}</option>
+                      }
+                    </select>
+                  </div>
+                  <nav aria-label="Table pagination">
+                    <ul class="pagination pagination-sm mb-0">
+                      <li class="page-item" [class.disabled]="currentPage === 1">
+                        <a class="page-link"
+                           href="javascript:void(0)"
+                           (click)="prevPage()">
+                          <i class="bi bi-chevron-left"></i>
+                        </a>
+                      </li>
+                      <li class="page-item disabled">
+                        <span class="page-link text-danger">
+                          {{ currentPage }} / {{ getTotalPages() }}
+                        </span>
+                      </li>
+                      <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
+                        <a class="page-link"
+                           href="javascript:void(0)"
+                           (click)="nextPage()">
+                          <i class="bi bi-chevron-right"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+
+            } @else {
+              <!-- No search results -->
+              <div class="text-center py-5">
+                <p class="fs-2 text-muted">No Grid Data Available.</p>
+              </div>
+            }
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+} @else {
+  <!-- ── No bookings at all ───────────────────────────────────────────────── -->
+  <div class="card card-warning text-center p-2 mb-4">
+    <hr />
+    <div class="row mb-4">
+      <h3 class="text-center fs-2 text-primary mb-4 pb-4">Booking Results Page</h3>
+      <hr />
+      <div class="text-center py-5 BottomSpace">
+        <p class="fs-4 text-danger">No Booking Found.</p>
+      </div>
+    </div>
+  </div>
+}
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODAL: Get Result Screen
+     ResultData is fetched inside openPaymentModal() before this modal opens,
+     so ResultData is guaranteed populated when the template renders.
+═══════════════════════════════════════════════════════════════════════════ -->
+<ng-template #viewDescModal2 let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Get Result Screen</h5>
+    <button type="button" class="btn-close"
+            (click)="modal.close('by: close icon')" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-4">
+            <div class="col-sm">
+              <table id="dataTableTestsResults" class="table">
+                <thead>
+                  <tr>
+                    <th>Booking Id</th>
+                    <th>Instrument Name</th>
+                    <th>Excel File</th>
+                    <th>Remarks</th>
+                    <th>Results File</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="p-4">{{ BookingCase?.bookingId }}</td>
+                    <td class="p-4">{{ BookingCase?.instrumentName }}</td>
+                    <td>
+                      <!--
+                        ✅ this.ResultData → ResultData (no 'this' in templates).
+                      -->
+                      <button type="button" class="btn btn-dark me-2"
+                              (click)="ExcelSheetDownload(ResultData)">
+                        Download Sheet
+                      </button>
+                    </td>
+                    <td class="p-4">{{ BookingCase?.remarks }}</td>
+                    <td>
+                      <button type="button" class="btn btn-dark me-2"
+                              (click)="VerifyData(ResultData)">
+                        Download Result
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

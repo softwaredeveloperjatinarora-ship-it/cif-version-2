@@ -1,219 +1,195 @@
 <app-cif-menu-bar></app-cif-menu-bar>
 
 @if (loadingIndicator) {
-  <div class="fullscreen-loader">
-    <div class="custom-spinner-overlay">
-      <div class="custom-spinner-content text-center">
-        <img src="assets/images/spinner.gif" alt="Loading..." />
-      </div>
+<div class="fullscreen-loader">
+  <div class="custom-spinner-overlay">
+    <div class="custom-spinner-content text-center">
+      <img src="assets/images/spinner.gif" alt="Loading..." />
     </div>
   </div>
+</div>
 }
 
- 
+
 @if (BookingData.length > 0) {
-  <div class="container-fluid BottomSpace">
-    <div class="row mt-5">
-      <div class="col-12 mb-5">
-        <div class="card">
-          <div class="card-body">
+<div class="container-fluid BottomSpace">
+  <div class="row mt-5">
+    <div class="col-12 mb-5">
+      <div class="card">
+        <div class="card-body">
 
-            <!-- Header row: Export | Title | Search -->
-            <div class="row mt-2 mb-3 align-items-center">
-              <div class="col-12 col-md-4 col-lg-3 text-center text-md-start mb-2 mb-md-0">
-                <button (click)="exportToExcel()" class="btn btn-dark"
-                        [disabled]="tmpsBookingData.length === 0">
-                  <i class="mdi mdi-file-excel"></i> Export to Excel
-                </button>
-              </div>
-              <div class="col-12 col-md-4 col-lg-6 text-center text-md-start mb-2 mb-md-0">
-                <h3 class="mb-0">Payment and Booking Details</h3>
-              </div>
-              <div class="col-12 col-md-4 col-lg-3">
-                <!--
-                  ✅ [(ngModel)] valid here — FormsModule is imported in the component.
-                     searchQuery is a plain string property; no reactive form needed.
-                -->
-                <input [(ngModel)]="searchQuery"
-                       (keyup)="search()"
-                       id="search"
-                       type="text"
-                       class="form-control"
-                       placeholder="Search"
-                       aria-label="Search" />
-              </div>
+
+          <div class="row mt-2 mb-3 align-items-center">
+            <div class="col-12 col-md-4 col-lg-3 text-center text-md-start mb-2 mb-md-0">
+              <button (click)="exportToExcel()" class="btn btn-dark" [disabled]="tmpsBookingData.length === 0">
+                <i class="mdi mdi-file-excel"></i> Export to Excel
+              </button>
             </div>
+            <div class="col-12 col-md-4 col-lg-6 text-center text-md-start mb-2 mb-md-0">
+              <h3 class="mb-0">Payment and Booking Details</h3>
+            </div>
+            <div class="col-12 col-md-4 col-lg-3">
 
-            <hr />
-
-            <!-- ── Data table ─────────────────────────────────────────────── -->
-            @if (tmpsBookingData.length > 0) {
-              <div class="table-responsive mt-4 mb-4">
-                <table id="BookinglDataTable" #table class="table table-hover table-striped">
-                  <thead class="table-light">
-                    <tr>
-                      <th class="d-none d-md-table-cell">Booking Id</th>
-                      <th class="d-none d-md-table-cell">Instrument Name</th>
-                      <th class="d-none d-lg-table-cell">Analysis Type</th>
-                      <th class="d-none d-lg-table-cell">Analysis Charges</th>
-                      <th class="d-none d-lg-table-cell">Number of Samples</th>
-                      <th class="d-none d-lg-table-cell">Request Date</th>
-                      <th class="d-none d-lg-table-cell">Request Sheet</th>
-                      <th>Total charges</th>
-                      <th>Payment Status</th>
-                      <th>Upload Receipt</th>
-                      <th>Sample Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!--
-                      ✅ @for replaces *ngFor on ng-container.
-                         track uses $index since booking rows may not have unique
-                         primitive keys guaranteed at this level.
-                    -->
-                    @for (BookingDataRow of getCurrentPageData(); track BookingDataRow.id) {
-                      <tr>
-                        <td class="fw-bold d-none d-md-table-cell">{{ BookingDataRow.id }}</td>
-                        <td class="fw-bold d-none d-md-table-cell">{{ BookingDataRow.instrumentName }}</td>
-                        <td class="fw-bold d-none d-lg-table-cell">{{ BookingDataRow.analysisType }}</td>
-                        <td class="fw-bold d-none d-lg-table-cell">
-                          {{ BookingDataRow.analysisCharges | currency:'INR':'symbol' }}
-                        </td>
-                        <td class="fw-bold d-none d-lg-table-cell">{{ BookingDataRow.noOfSamples }}</td>
-                        <td class="fw-bold d-none d-lg-table-cell">
-                          {{ BookingDataRow.bookingRequestDate | date:'dd/MM/yyyy' }}
-                        </td>
-
-                        <!-- Request Sheet download -->
-                        <td class="fw-bold d-none d-lg-table-cell">
-                          @if (BookingDataRow.fileName) {
-                            <button class="btn-dark btn ms-3"
-                                    (click)="downloadFile(BookingDataRow.fileName)">
-                              <i class="mdi mdi-eye-check fs-5"></i>
-                            </button>
-                          } @else {
-                            <span>No Sheet Found</span>
-                          }
-                        </td>
-
-                        <td class="fw-bold">
-                          {{ BookingDataRow.totalCharges | currency:'INR':'symbol' }}
-                        </td>
-
-                        <!-- Payment status -->
-                        <td>
-                          @if (BookingDataRow.paymentDate?.length > 0) {
-                            <span class="badge bg-dark">
-                              Payment Date {{ BookingDataRow.paymentDate }}
-                            </span>
-                          } @else {
-                            <span class="badge bg-danger mb-3">Payment Pending</span><br />
-                            <button class="btn btn-warning"
-                                    (click)="openPaymentModal(BookingDataRow)">
-                              <i class="feather icon-dollar-sign ms-1 me-1"></i>
-                            </button>
-                          }
-                        </td>
-
-                        <!-- Upload receipt -->
-                        <td>
-                          @if (hasProofUploaded(BookingDataRow.id)) {
-                            <span class="badge bg-success">
-                              <i class="mdi mdi-check-circle me-1 fs-5"></i> Already Uploaded
-                            </span>
-                          } @else {
-                            <button class="btn btn-dark btn-sm"
-                                    (click)="openReceiptUploadModal(BookingDataRow)">
-                              <i class="mdi mdi-upload fs-5"></i>
-                            </button>
-                          }
-                        </td>
-
-                        <!-- Sample status -->
-                        <td>
-                          <button type="button" class="btn btn-dark me-2"
-                                  (click)="GetStatus(BookingDataRow)">
-                            <i class="mdi mdi-check-circle fs-5"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- ── Pagination ──────────────────────────────────────────── -->
-              <div class="d-flex flex-wrap justify-content-between align-items-center mt-4 gap-3">
-                <div class="d-flex align-items-center gap-2">
-                  <span class="fw-bold me-3">Records per Page:</span>
-                  <select id="itemsPerPage"
-                          [value]="itemsPerPage"
-                          (change)="onItemsPerPageChange($event)"
-                          class="form-select form-select-sm"
-                          style="width: auto;">
-                    <option [value]="2">Select</option>
-                    @for (option of itemsPerPageOptions; track option) {
-                      <option [value]="option">{{ option }}</option>
-                    }
-                  </select>
-                </div>
-                <nav aria-label="Table pagination">
-                  <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item" [class.disabled]="currentPage === 1">
-                      <a class="page-link" (click)="prevPage()" href="javascript:void(0)">
-                        <i class="bi bi-chevron-left"></i>
-                      </a>
-                    </li>
-                    <li class="page-item disabled">
-                      <span class="page-link">
-                        <span class="text-danger">{{ currentPage }}</span> / {{ getTotalPages() }}
-                      </span>
-                    </li>
-                    <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
-                      <a class="page-link" (click)="nextPage()" href="javascript:void(0)">
-                        <i class="bi bi-chevron-right"></i>
-                      </a>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
-
-            } @else {
-              <!-- No search results -->
-              <div class="text-center py-5">
-                <p class="fs-2 text-center">No Result Found.</p>
-              </div>
-            }
-
+              <input [(ngModel)]="searchQuery" (keyup)="search()" id="search" type="text" class="form-control"
+                placeholder="Search" aria-label="Search" />
+            </div>
           </div>
+
+          <hr />
+
+
+          @if (tmpsBookingData.length > 0) {
+          <div class="table-responsive mt-4 mb-4">
+            <table id="BookinglDataTable" #table class="table table-hover table-striped">
+              <thead class="table-light">
+                <tr>
+                  <th class="d-none d-md-table-cell">Booking Id</th>
+                  <th class="d-none d-md-table-cell">Instrument Name</th>
+                  <th class="d-none d-lg-table-cell">Analysis Type</th>
+                  <th class="d-none d-lg-table-cell">Analysis Charges</th>
+                  <th class="d-none d-lg-table-cell">Number of Samples</th>
+                  <th class="d-none d-lg-table-cell">Request Date</th>
+                  <th class="d-none d-lg-table-cell">Request Sheet</th>
+                  <th>Total charges</th>
+                  <th>Payment Status</th>
+                  <th>Upload Receipt</th>
+                  <th>Sample Status</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                @for (BookingDataRow of getCurrentPageData(); track BookingDataRow.id) {
+                <tr>
+                  <td class="fw-bold d-none d-md-table-cell">{{ BookingDataRow.id }}</td>
+                  <td class="fw-bold d-none d-md-table-cell">{{ BookingDataRow.instrumentName }}</td>
+                  <td class="fw-bold d-none d-lg-table-cell">{{ BookingDataRow.analysisType }}</td>
+                  <td class="fw-bold d-none d-lg-table-cell">
+                    {{ BookingDataRow.analysisCharges | currency:'INR':'symbol' }}
+                  </td>
+                  <td class="fw-bold d-none d-lg-table-cell">{{ BookingDataRow.noOfSamples }}</td>
+                  <td class="fw-bold d-none d-lg-table-cell">
+                    {{ BookingDataRow.bookingRequestDate | date:'dd/MM/yyyy' }}
+                  </td>
+
+
+                  <td class="fw-bold d-none d-lg-table-cell">
+                    @if (BookingDataRow.fileName) {
+                    <button class="btn-dark btn ms-3" (click)="downloadFile(BookingDataRow.fileName)">
+                      <i class="mdi mdi-eye-check fs-5"></i>
+                    </button>
+                    } @else {
+                    <span>No Sheet Found</span>
+                    }
+                  </td>
+
+                  <td class="fw-bold">
+                    {{ BookingDataRow.totalCharges | currency:'INR':'symbol' }}
+                  </td>
+
+
+                  <td>
+                    @if (BookingDataRow.paymentDate?.length > 0) {
+                    <span class="badge bg-dark">
+                      Payment Date {{ BookingDataRow.paymentDate }}
+                    </span>
+                    } @else {
+                    <span class="badge bg-danger mb-3">Payment Pending</span><br />
+                    <button class="btn btn-warning" (click)="openPaymentModal(BookingDataRow)">
+                      <i class="feather icon-dollar-sign ms-1 me-1"></i>
+                    </button>
+                    }
+                  </td>
+
+
+                  <td>
+                    @if (hasProofUploaded(BookingDataRow.id)) {
+                    <span class="badge bg-success">
+                      <i class="mdi mdi-check-circle me-1 fs-5"></i> Already Uploaded
+                    </span>
+                    } @else {
+                    <button class="btn btn-dark btn-sm" (click)="openReceiptUploadModal(BookingDataRow)">
+                      <i class="mdi mdi-upload fs-5"></i>
+                    </button>
+                    }
+                  </td>
+
+
+                  <td>
+                    <button type="button" class="btn btn-dark me-2" (click)="GetStatus(BookingDataRow)">
+                      <i class="mdi mdi-check-circle fs-5"></i>
+                    </button>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+
+          <div class="d-flex flex-wrap justify-content-between align-items-center mt-4 gap-3">
+            <div class="d-flex align-items-center gap-2">
+              <span class="fw-bold me-3">Records per Page:</span>
+              <select id="itemsPerPage" [value]="itemsPerPage" (change)="onItemsPerPageChange($event)"
+                class="form-select form-select-sm" style="width: auto;">
+                <option [value]="2">Select</option>
+                @for (option of itemsPerPageOptions; track option) {
+                <option [value]="option">{{ option }}</option>
+                }
+              </select>
+            </div>
+            <nav aria-label="Table pagination">
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item" [class.disabled]="currentPage === 1">
+                  <a class="page-link" (click)="prevPage()" href="javascript:void(0)">
+                    <i class="bi bi-chevron-left"></i>
+                  </a>
+                </li>
+                <li class="page-item disabled">
+                  <span class="page-link">
+                    <span class="text-danger">{{ currentPage }}</span> / {{ getTotalPages() }}
+                  </span>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
+                  <a class="page-link" (click)="nextPage()" href="javascript:void(0)">
+                    <i class="bi bi-chevron-right"></i>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+
+          } @else {
+
+          <div class="text-center py-5">
+            <p class="fs-2 text-center">No Result Found.</p>
+          </div>
+          }
+
         </div>
       </div>
     </div>
   </div>
+</div>
 
 } @else {
-  <!-- ── No bookings at all ──────────────────────────────────────────────── -->
-  <div class="card card-warning text-center p-2 mb-4">
+
+<div class="card card-warning text-center p-2 mb-4">
+  <hr />
+  <div class="row mb-4">
+    <h3 class="text-center fs-2 text-primary mb-4 pb-4">My Bookings Page</h3>
     <hr />
-    <div class="row mb-4">
-      <h3 class="text-center fs-2 text-primary mb-4 pb-4">My Bookings Page</h3>
-      <hr />
-      <div class="text-center py-5 BottomSpace">
-        <p class="fs-4 text-danger">No Bookings Found.</p>
-      </div>
+    <div class="text-center py-5 BottomSpace">
+      <p class="fs-4 text-danger">No Bookings Found.</p>
     </div>
   </div>
+</div>
 }
 
 
-<!-- ══════════════════════════════════════════════════════════════════════════
-     MODAL: Payment Screen
-═══════════════════════════════════════════════════════════════════════════ -->
 <ng-template #viewDescModal2 let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Payment Screen</h5>
-    <button type="button" class="btn-close"
-            (click)="modal.close('by: close icon')" aria-label="Close"></button>
+    <button type="button" class="btn-close" (click)="modal.close('by: close icon')" aria-label="Close"></button>
   </div>
   <div class="modal-body">
     <div class="col-md-12">
@@ -240,8 +216,7 @@
                     <td>{{ BookingCase?.noOfSamples }}</td>
                     <td>{{ BookingCase?.totalCharges | currency:'INR':'symbol' }}</td>
                     <td>
-                      <button type="button" class="btn btn-warning me-2"
-                              (click)="VerifyData(BookingCase)">
+                      <button type="button" class="btn btn-warning me-2" (click)="VerifyData(BookingCase)">
                         <i class="mdi mdi-credit-card-check fs-3"></i>
                       </button>
                     </td>
@@ -257,55 +232,51 @@
 </ng-template>
 
 
-<!-- ══════════════════════════════════════════════════════════════════════════
-     MODAL: Sample Status
-═══════════════════════════════════════════════════════════════════════════ -->
 <ng-template #ViewUpdateStatusModal let-modal>
   <div class="modal-header">
     <h2 class="modal-title fs-2">Sample Status</h2>
-    <button type="button" class="btn-close"
-            (click)="modal.close('by: close icon')" aria-label="Close"></button>
+    <button type="button" class="btn-close" (click)="modal.close('by: close icon')" aria-label="Close"></button>
   </div>
   <div class="modal-body">
     <div class="col-md-12">
       <div class="card">
         <div class="card-body">
           @if (SampleStatusData && SampleStatusData.length > 0) {
-            <div class="row mb-4">
-              <div class="col-sm">
-                <table id="dataTableAllClosedRemarks" class="table">
-                  <thead>
-                    <tr>
-                      <th class="fs-5 text-dark">Booking Id</th>
-                      <th class="fs-5 text-dark">Instrument Id</th>
-                      <th class="fs-5 text-dark">Sample Condition</th>
-                      <th class="fs-5 text-dark">Received on</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="fs-5 p-4" style="width:20%">{{ SampleStatusData[0]?.bookingId }}</td>
-                      <td class="fs-5 p-4" style="width:20%">{{ SampleStatusData[0]?.instrumentId }}</td>
-                      <td class="fs-5 p-4" style="width:20%">{{ SampleStatusData[0]?.sampleCondition }}</td>
-                      <td class="fs-5 p-4" style="width:20%">{{ SampleStatusData[0]?.receivedOn }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+          <div class="row mb-4">
+            <div class="col-sm">
+              <table id="dataTableAllClosedRemarks" class="table">
+                <thead>
+                  <tr>
+                    <th class="fs-5 text-dark">Booking Id</th>
+                    <th class="fs-5 text-dark">Instrument Id</th>
+                    <th class="fs-5 text-dark">Sample Condition</th>
+                    <th class="fs-5 text-dark">Received on</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="fs-5 p-4" style="width:20%">{{ SampleStatusData[0]?.bookingId }}</td>
+                    <td class="fs-5 p-4" style="width:20%">{{ SampleStatusData[0]?.instrumentId }}</td>
+                    <td class="fs-5 p-4" style="width:20%">{{ SampleStatusData[0]?.sampleCondition }}</td>
+                    <td class="fs-5 p-4" style="width:20%">{{ SampleStatusData[0]?.receivedOn }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
+          </div>
           } @else {
-            <div class="text-center p-2 mb-4 vh-100">
-              <div class="row mt-4 mb-4 rounded border border-primary">
-                <h3 class="fs-2 pt-5">No Record!</h3>
-                <div class="col-sm-12 text-center">
-                  <div class="mb-3 p-4 mb-5 mt-5">
-                    <h3 class="fs-3 fw-bolder" style="color:#ef7d00 !important">
-                      No Status Updates Found
-                    </h3>
-                  </div>
+          <div class="text-center p-2 mb-4 vh-100">
+            <div class="row mt-4 mb-4 rounded border border-primary">
+              <h3 class="fs-2 pt-5">No Record!</h3>
+              <div class="col-sm-12 text-center">
+                <div class="mb-3 p-4 mb-5 mt-5">
+                  <h3 class="fs-3 fw-bolder" style="color:#ef7d00 !important">
+                    No Status Updates Found
+                  </h3>
                 </div>
               </div>
             </div>
+          </div>
           }
         </div>
       </div>
@@ -314,14 +285,10 @@
 </ng-template>
 
 
-<!-- ══════════════════════════════════════════════════════════════════════════
-     MODAL: Payment Receipt Upload
-═══════════════════════════════════════════════════════════════════════════ -->
 <ng-template #PaymentReceiptUploadModal let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Payment Receipt Upload</h5>
-    <button type="button" class="btn-close"
-            (click)="modal.close('by: close icon')" aria-label="Close"></button>
+    <button type="button" class="btn-close" (click)="modal.close('by: close icon')" aria-label="Close"></button>
   </div>
   <div class="modal-body">
     <div class="card">
@@ -348,37 +315,26 @@
               <label for="paymentReceiptFile" class="form-label fw-bold">
                 Payment Receipt File
               </label>
-              <input class="form-control"
-                     type="file"
-                     id="paymentReceiptFile"
-                     (change)="onFileXSelected($event, BookingCase?.bookingId)"
-                     accept=".pdf, .jpg, .jpeg, .png, .zip, .rar, .7z" />
+              <input class="form-control" type="file" id="paymentReceiptFile"
+                (change)="onFileXSelected($event, BookingCase?.bookingId)"
+                accept=".pdf, .jpg, .jpeg, .png, .zip, .rar, .7z" />
               <div class="form-text">Maximum file size: 10MB</div>
             </div>
 
             <!-- Remarks -->
             <div class="col-12 col-md-6 mb-3">
               <label for="receiptRemarks" class="form-label fw-bold">Comments/Remarks</label>
-              <!--
-                ✅ [(ngModel)] valid here — FormsModule imported.
-                   ReceiptRemarks is a plain string; no reactive form needed.
-              -->
-              <input class="form-control"
-                     type="text"
-                     id="receiptRemarks"
-                     [(ngModel)]="ReceiptRemarks"
-                     name="receiptRemarks"
-                     placeholder="Enter remarks..." />
+
+              <input class="form-control" type="text" id="receiptRemarks" [(ngModel)]="ReceiptRemarks"
+                name="receiptRemarks" placeholder="Enter remarks..." />
             </div>
           </div>
 
           <!-- Submit -->
           <div class="row mt-3">
             <div class="col-12 text-center">
-              <button type="submit"
-                      class="btn btn-primary"
-                      [disabled]="!fileChosen[BookingCase?.bookingId]"
-                      (click)="UpdateFileDocument(BookingCase?.bookingId)">
+              <button type="submit" class="btn btn-primary" [disabled]="!fileChosen[BookingCase?.bookingId]"
+                (click)="UpdateFileDocument(BookingCase?.bookingId)">
                 <i class="mdi mdi-upload me-1"></i> Upload Receipt
               </button>
             </div>

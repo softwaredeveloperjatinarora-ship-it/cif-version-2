@@ -1,4 +1,3 @@
-<!-- ── Loading overlay ──────────────────────────────────────────────────────── -->
 @if (loadingIndicator) {
   <div class="fullscreen-loader">
     <div class="loader-spinner"></div>
@@ -9,14 +8,9 @@
 <nav class="navbar navbar-light navbar-expand-lg mb-4 bg-light">
   <div class="container-fluid">
 
-    <!-- ── Promo / address banner ──────────────────────────────────────────── -->
     <div class="w-100 text-center py-1 promo-banner">
       <strong class="blinking-text">
-        <!--
-          ✅ FIX: href="javascript:void(0)" — tells browser to do nothing.
-             Only Angular's (click) handler fires. Bootstrap cannot follow
-             a javascript:void(0) href so no new-tab/reload can occur.
-        -->
+  
         <a class="w-100 d-block text-decoration-none"
            href="javascript:void(0)"
            (click)="openSampleInstructions()"
@@ -29,7 +23,6 @@
       </strong>
     </div>
 
-    <!-- ── Mobile toggler ─────────────────────────────────────────────────── -->
     <button class="navbar-toggler bg-light"
             type="button"
             (click)="toggleNavbar()"
@@ -39,13 +32,11 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- ── Nav links ──────────────────────────────────────────────────────── -->
     <div [class.collapse]="isNavbarCollapsed"
          class="navbar-collapse"
          id="navbarNav">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0 bg-transparent">
 
-        <!-- ── Bookings ───────────────────────────────────────────────────── -->
         <li class="nav-item dropdown">
 
           <a class="nav-link dropdown-toggle custom-nav-link"
@@ -106,7 +97,6 @@
           </ul>
         </li>
 
-        <!-- ── Results ────────────────────────────────────────────────────── -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle custom-nav-link"
              href="javascript:void(0)"
@@ -133,7 +123,6 @@
           </ul>
         </li>
 
-        <!-- ── Feedback ───────────────────────────────────────────────────── -->
         <li class="nav-item">
           <a class="nav-link custom-nav-link"
              href="javascript:void(0)"
@@ -142,7 +131,6 @@
           </a>
         </li>
 
-        <!-- ── Sample Status ──────────────────────────────────────────────── -->
         <li class="nav-item">
           <a class="nav-link custom-nav-link"
              href="javascript:void(0)"
@@ -151,7 +139,6 @@
           </a>
         </li>
 
-        <!-- ── My Profile (role-guarded) ──────────────────────────────────── -->
         @if (UserRole !== '400000') {
           <li class="nav-item">
             <a class="nav-link custom-nav-link"
@@ -162,7 +149,6 @@
           </li>
         }
 
-        <!-- ── Logout ─────────────────────────────────────────────────────── -->
         <li class="nav-item">
           <a class="nav-link custom-nav-link"
              href="javascript:void(0)"
@@ -173,12 +159,10 @@
 
       </ul>
     </div>
-    <!-- /.navbar-collapse -->
 
   </div>
 </nav>
 
-<!-- ── Page title ──────────────────────────────────────────────────────────── -->
 <div class="text-center mt-4">
   <h2 class="mb-4">Central Instrumentation Facility</h2>
 </div>

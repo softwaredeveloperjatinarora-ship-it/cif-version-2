@@ -1,6 +1,6 @@
 
 
-    import {
+import {
   Component, ElementRef, OnInit, TemplateRef, ViewChild,
   inject, DestroyRef, ChangeDetectorRef, PLATFORM_ID
 } from '@angular/core';
@@ -19,7 +19,6 @@ import { LpuCIFWebService } from '../../services/lpu-cifweb.service';
 import { StorageService } from '../../services/storage.service';
 import { AuthService } from '../../services/auth.service';
 import { LoginSessionService } from '../../services/login-session.service';
-// ── Module-level constants (unchanged from original) ─────────────────────────
 const FILE_SIZE_LIMIT = 1_048_576; // 1 MB
 
 interface UploadProofRecord {
@@ -44,9 +43,9 @@ interface ApiResponse {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,           // ✅ [(ngModel)] on searchQuery & ReceiptRemarks
-    ReactiveFormsModule,   // ✅ validationForm1 (FormGroup)
-    NgbModule,             // ✅ NgbModal (let-modal in ng-template)
+    FormsModule,
+    ReactiveFormsModule,
+    NgbModule,
     CurrencyPipe,
     CifMenuBarComponent,
   ],
@@ -56,103 +55,96 @@ interface ApiResponse {
 
 export class SearchPaymentsPendingComponent implements OnInit {
 
-  // ── ViewChildren ──────────────────────────────────────────────────────────
-  @ViewChild('viewDescModal2')           viewDescModal2!:           TemplateRef<any>;
-  @ViewChild('viewDescModal5')           viewDescModal5!:           TemplateRef<any>;
+  @ViewChild('viewDescModal2') viewDescModal2!: TemplateRef<any>;
+  @ViewChild('viewDescModal5') viewDescModal5!: TemplateRef<any>;
   @ViewChild('PaymentReceiptUploadModal') PaymentReceiptUploadModal!: TemplateRef<any>;
   @ViewChild('table') table!: ElementRef;
 
-  // ── DI via inject() ───────────────────────────────────────────────────────
-  private readonly CIFwebService  = inject(LpuCIFWebService);
-  private readonly formBuilder    = inject(FormBuilder);
-  private readonly modalService   = inject(NgbModal);
-  private readonly authSession    = inject(LoginSessionService);
-  private readonly route          = inject(ActivatedRoute);
-  private readonly cookieService  = inject(CookieService);
-  private readonly cdr            = inject(ChangeDetectorRef);
-  private readonly destroyRef     = inject(DestroyRef);
-  // ✅ SSR guard — prevents JSON.parse('') crash on server side
-  private readonly platformId     = inject(PLATFORM_ID);
 
-  // ── Data ──────────────────────────────────────────────────────────────────
-  BookingCase:           any;
-  BookingStatusData:     any[] = [];
+  private readonly CIFwebService = inject(LpuCIFWebService);
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly modalService = inject(NgbModal);
+  private readonly authSession = inject(LoginSessionService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly cookieService = inject(CookieService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
+
+  private readonly platformId = inject(PLATFORM_ID);
+
+
+  BookingCase: any;
+  BookingStatusData: any[] = [];
   tmpsBookingStatusData: any[] = [];
-  PaymentReceipt:        any;
-  paymentData:           any;
+  PaymentReceipt: any;
+  paymentData: any;
 
-  // ── Pagination ────────────────────────────────────────────────────────────
-  currentPage      = 1;
-  itemsPerPage     = 10;
+  currentPage = 1;
+  itemsPerPage = 10;
   pageSizeOptions: number[] = [10, 20, 30, 40, 50];
 
-  // ── Search ────────────────────────────────────────────────────────────────
   searchQuery = '';
 
-  // ── File upload ───────────────────────────────────────────────────────────
-  ReceiptRemarks   = '';
-  FileDataX:       string | null = null;
-  fileDataX:       any;
-  fileStatus:      any;
-  fileName:        any;
-  fileChosen:      { [key: number]: boolean } = {};
+
+  ReceiptRemarks = '';
+  FileDataX: string | null = null;
+  fileDataX: any;
+  fileStatus: any;
+  fileName: any;
+  fileChosen: { [key: number]: boolean } = {};
   validationForm1!: FormGroup;
   isForm1Submitted = false;
 
-  // ── User session ──────────────────────────────────────────────────────────
-  userId        = '';
-  userEmail     = '';
-  mobileNo      = '';
+
+  userId = '';
+  userEmail = '';
+  mobileNo = '';
   supervisorName = '';
   departmentName = '';
-  candidateName  = '';
-  userRole       = '';
+  candidateName = '';
+  userRole = '';
 
-  // ── UI state ──────────────────────────────────────────────────────────────
-  loadingIndicator = false;          // ✅ typed boolean — prevents NG0100
-  serverUrl        = 'https://files.lpu.in/umsweb/CIFDocuments/';
-  responseUrl      = '';
-  TypeId           = 'CIF';
 
-  // ── Payment proof ─────────────────────────────────────────────────────────
+  loadingIndicator = false;
+  serverUrl = 'https://files.lpu.in/umsweb/CIFDocuments/';
+  responseUrl = '';
+  TypeId = 'CIF';
+
+
   uploadProofStatusData: any[] = [];
-  filteredData:          any[] = [];
+  filteredData: any[] = [];
   paymentProofStatus: {
     [bookingId: string]: { hasProof: boolean; proofFile?: string; isApproved?: string }
   } = {};
 
-  // ── Route params ──────────────────────────────────────────────────────────
-  id:            string | null = null;
-  status:        string | null = null;
-  type:          string | null = null;
-  transactionNo: string | null = null;
-  hashedValue:   string | null = null;
-  course:        string | null = null;
-  keyNote:       string | null = null;
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
+  id: string | null = null;
+  status: string | null = null;
+  type: string | null = null;
+  transactionNo: string | null = null;
+  hashedValue: string | null = null;
+  course: string | null = null;
+  keyNote: string | null = null;
+
+
   ngOnInit(): void {
-    // ✅ SSR guard — skip all browser/cookie logic during server-side render
     if (!isPlatformBrowser(this.platformId)) { return; }
 
     this.initializeForm();
     this.initializeUserSession();
     this.initializeRouteParams();
 
-    // ✅ Defer first API call to avoid NG0100 ExpressionChangedAfterChecked.
-    //    loadingIndicator is set synchronously inside getBookingDetails();
-    //    deferring ensures Angular's first CD pass is already complete.
     Promise.resolve().then(() => {
       this.getBookingDetails();
       this.cdr.detectChanges();
     });
   }
 
-  // ── Init helpers ──────────────────────────────────────────────────────────
+
   private initializeForm(): void {
     this.validationForm1 = this.formBuilder.group({
       ReceiptRemarks: ['', Validators.required],
-      file:           [null, Validators.required],
+      file: [null, Validators.required],
     });
   }
 
@@ -161,14 +153,14 @@ export class SearchPaymentsPendingComponent implements OnInit {
     if (!raw || raw.trim().length === 0) { return; }
 
     try {
-      const c             = JSON.parse(raw);
-      this.userRole       = c.UserRole || 'Internal User';
-      this.userId         = c.EmailId;
-      this.userEmail      = c.EmailId;
-      this.mobileNo       = c.MobileNo;
+      const c = JSON.parse(raw);
+      this.userRole = c.UserRole || 'Internal User';
+      this.userId = c.EmailId;
+      this.userEmail = c.EmailId;
+      this.mobileNo = c.MobileNo;
       this.supervisorName = c.SupervisorName;
       this.departmentName = c.DepartmentName;
-      this.candidateName  = c.CandidateName;
+      this.candidateName = c.CandidateName;
 
       const base = `${window.location.origin}${window.location.pathname
         .split('/').slice(0, -1).join('/')}`;
@@ -188,27 +180,27 @@ export class SearchPaymentsPendingComponent implements OnInit {
       });
   }
 
-  // ── API: decode payment callback params ───────────────────────────────────
+
   getParams(): void {
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(params => {
-        this.id            = params.get('id');
-        this.status        = params.get('status');
-        this.type          = params.get('type');
+        this.id = params.get('id');
+        this.status = params.get('status');
+        this.type = params.get('type');
         this.transactionNo = params.get('transactionNo');
-        this.hashedValue   = params.get('hashedValue');
-        this.course        = params.get('Course');
-        this.keyNote       = params.get('KeyNote');
+        this.hashedValue = params.get('hashedValue');
+        this.course = params.get('Course');
+        this.keyNote = params.get('KeyNote');
 
         const formData = new FormData();
-        formData.append('Id',            this.id            || '');
-        formData.append('Status',        this.status        || '');
-        formData.append('Type',          this.type          || '');
+        formData.append('Id', this.id || '');
+        formData.append('Status', this.status || '');
+        formData.append('Type', this.type || '');
         formData.append('TransactionNo', this.transactionNo || '');
-        formData.append('Course',        this.course        || '');
-        formData.append('KeyNote',       this.keyNote       || '');
-        formData.append('HashedValue',   this.hashedValue   || '');
+        formData.append('Course', this.course || '');
+        formData.append('KeyNote', this.keyNote || '');
+        formData.append('HashedValue', this.hashedValue || '');
 
         this.CIFwebService.GetDecodePaymentStatusDetails(formData)
           .pipe(takeUntilDestroyed(this.destroyRef))
@@ -224,7 +216,7 @@ export class SearchPaymentsPendingComponent implements OnInit {
       });
   }
 
-  // ── API: pending bookings ─────────────────────────────────────────────────
+
   getBookingDetails(): void {
     this.loadingIndicator = true;
     const startTime = Date.now();
@@ -235,7 +227,7 @@ export class SearchPaymentsPendingComponent implements OnInit {
         next: (response: any) => {
           if (response.item1?.length > 0) {
             this.BookingStatusData = response.item1;
-            // ✅ Filter: null (pending) OR failure records only
+
             this.tmpsBookingStatusData = response.item1.filter((item: any) =>
               item.paymentStatus == null ||
               item.paymentStatus?.toLowerCase() === 'failure'
@@ -244,17 +236,17 @@ export class SearchPaymentsPendingComponent implements OnInit {
               this.fetchPaymentProofDetails(this.tmpsBookingStatusData);
             }
           } else {
-            this.BookingStatusData     = [];
+            this.BookingStatusData = [];
             this.tmpsBookingStatusData = [];
           }
           this.stopLoader(startTime);
         },
-        // ✅ loader always resets on error — prevents infinite spinner
+
         error: (err: any) => { console.error('Error loading payment data:', err); this.loadingIndicator = false; },
       });
   }
 
-  // ── API: payment proof status for each booking ────────────────────────────
+
   private fetchPaymentProofDetailsForUser(): void {
     this.CIFwebService.GetBookingPaymentProofDetails(this.userId)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -267,10 +259,10 @@ export class SearchPaymentsPendingComponent implements OnInit {
   private handleApiResponse(response: ApiResponse): void {
     if (response.item1?.length > 0) {
       this.uploadProofStatusData = response.item1;
-      this.filteredData          = [...this.uploadProofStatusData];
+      this.filteredData = [...this.uploadProofStatusData];
     } else {
       this.uploadProofStatusData = [];
-      this.filteredData          = [];
+      this.filteredData = [];
     }
   }
 
@@ -286,10 +278,10 @@ export class SearchPaymentsPendingComponent implements OnInit {
               const match = allProofData.find((p: any) => p.bookingId == id);
               this.paymentProofStatus[id] = match
                 ? {
-                    hasProof:   true,
-                    proofFile:  match.receiptProofFile || match.proofFile || null,
-                    isApproved: match.isProofApproved  || match.isApproved || null,
-                  }
+                  hasProof: true,
+                  proofFile: match.receiptProofFile || match.proofFile || null,
+                  isApproved: match.isProofApproved || match.isApproved || null,
+                }
                 : { hasProof: false };
             });
           } else {
@@ -315,7 +307,7 @@ export class SearchPaymentsPendingComponent implements OnInit {
     );
   }
 
-  // ── Search ────────────────────────────────────────────────────────────────
+
   search(): void {
     const query = this.searchQuery.toLowerCase();
     if (!query.trim()) {
@@ -331,7 +323,7 @@ export class SearchPaymentsPendingComponent implements OnInit {
     this.currentPage = 1;
   }
 
-  // ── Pagination ────────────────────────────────────────────────────────────
+
   getTotalPages(): number {
     return Math.ceil(this.tmpsBookingStatusData.length / this.itemsPerPage);
   }
@@ -343,17 +335,17 @@ export class SearchPaymentsPendingComponent implements OnInit {
 
   onPageSizeChange(event: Event): void {
     this.itemsPerPage = Number((event.target as HTMLSelectElement).value);
-    this.currentPage  = 1;
+    this.currentPage = 1;
   }
 
   nextPage(): void { if (this.currentPage < this.getTotalPages()) this.currentPage++; }
   prevPage(): void { if (this.currentPage > 1) this.currentPage--; }
 
-  // ── Modals ────────────────────────────────────────────────────────────────
+
   paymentReceiptScreen(data: any): void {
     this.PaymentReceipt = data;
     this.modalService.open(this.viewDescModal2, { size: 'sm' })
-      .result.then(() => {}).catch(() => {});
+      .result.then(() => { }).catch(() => { });
   }
 
   openPaymentModal(booking: any): void {
@@ -363,30 +355,30 @@ export class SearchPaymentsPendingComponent implements OnInit {
     }
     this.BookingCase = booking;
     this.modalService.open(this.viewDescModal5, { size: 'sm' })
-      .result.then(() => {}).catch(() => {});
+      .result.then(() => { }).catch(() => { });
   }
 
   openReceiptUploadModal(booking: any): void {
     this.BookingCase = booking;
     this.loadForm();
     this.modalService.open(this.PaymentReceiptUploadModal, { size: 'lg', centered: true })
-      .result.then(() => {}).catch(() => {});
+      .result.then(() => { }).catch(() => { });
   }
 
-  // ── Reactive form helpers ─────────────────────────────────────────────────
+
   get form1() { return this.validationForm1.controls; }
 
   loadForm(): void {
     this.validationForm1 = this.formBuilder.group({
       ReceiptRemarks: ['', Validators.required],
-      file:           [null, Validators.required],
+      file: [null, Validators.required],
     });
   }
 
-  // ── File upload ───────────────────────────────────────────────────────────
+
   onFileXSelected(event: any, id: number): void {
     this.fileChosen[id] = event.target.files.length > 0;
-    const target        = event.target as HTMLInputElement;
+    const target = event.target as HTMLInputElement;
     const file: File | null = (target.files as FileList)[0] || null;
     if (!file) { return; }
 
@@ -398,23 +390,23 @@ export class SearchPaymentsPendingComponent implements OnInit {
 
     const fileNameRegex = /^[a-zA-Z0-9._-]+$/;
     const activeFile: File = fileNameRegex.test(file.name) ? file : (() => {
-      const validName    = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const validName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
       const modifiedFile = new File([file], validName, { type: file.type });
-      const dt           = new DataTransfer();
+      const dt = new DataTransfer();
       dt.items.add(modifiedFile);
       target.files = dt.files;
       return modifiedFile;
     })();
 
-    this.fileDataX  = activeFile;
+    this.fileDataX = activeFile;
     this.fileStatus = true;
 
     const reader = new FileReader();
     reader.readAsDataURL(activeFile);
     reader.onload = () => {
-      const parts   = (reader.result as string).split(',');
+      const parts = (reader.result as string).split(',');
       this.FileDataX = parts[1];
-      this.fileName  = activeFile.name;
+      this.fileName = activeFile.name;
     };
   }
 
@@ -425,18 +417,18 @@ export class SearchPaymentsPendingComponent implements OnInit {
     const startTime = Date.now();
 
     const formData = new FormData();
-    formData.append('BookingId',          Id.toString());
-    formData.append('ReceiptRemarks',     this.ReceiptRemarks);
-    formData.append('PaymentReceiptUrl',  this.fileName  || '');
+    formData.append('BookingId', Id.toString());
+    formData.append('ReceiptRemarks', this.ReceiptRemarks);
+    formData.append('PaymentReceiptUrl', this.fileName || '');
     formData.append('PaymentReceiptData', this.FileDataX || '');
-    formData.append('UserId',             this.userId);
+    formData.append('UserId', this.userId);
 
     this.CIFwebService.UploadPaymentReceipt(formData)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data: any) => {
           const returnId = data.item1[0]?.returnId;
-          const message  = data.item1[0]?.msg;
+          const message = data.item1[0]?.msg;
 
           if (returnId === 1) {
             Swal.fire({ title: 'Upload Successful', text: 'Receipt saved successfully!', icon: 'success' })
@@ -444,20 +436,20 @@ export class SearchPaymentsPendingComponent implements OnInit {
           } else if (returnId === -1) {
             Swal.fire({
               title: 'Receipt Already Exists',
-              text:  message || 'A receipt has already been uploaded for this booking.',
-              icon:  'warning',
+              text: message || 'A receipt has already been uploaded for this booking.',
+              icon: 'warning',
             }).then(() => window.location.reload());
           } else if (returnId === 0) {
             Swal.fire({
               title: 'Upload Failed',
-              text:  message || 'Failed to upload receipt. Please try again.',
-              icon:  'error', timer: 2000, showConfirmButton: false,
+              text: message || 'Failed to upload receipt. Please try again.',
+              icon: 'error', timer: 2000, showConfirmButton: false,
             });
           } else {
             Swal.fire({
               title: 'Upload Result',
-              text:  message || 'Unknown response from server.',
-              icon:  'info', timer: 2000, showConfirmButton: false,
+              text: message || 'Unknown response from server.',
+              icon: 'info', timer: 2000, showConfirmButton: false,
             });
           }
           this.stopLoader(startTime);
@@ -469,7 +461,7 @@ export class SearchPaymentsPendingComponent implements OnInit {
       });
   }
 
-  // ── Payment gateway ───────────────────────────────────────────────────────
+
   VerifyData(BookingCase: any): void {
     if (!BookingCase?.bookingId) {
       Swal.fire({ title: 'Error', text: 'Invalid booking data. Please try again.', icon: 'error' });
@@ -483,15 +475,15 @@ export class SearchPaymentsPendingComponent implements OnInit {
     this.loadingIndicator = true;
 
     const formData = new FormData();
-    formData.append('BookingId',    BookingCase.bookingId);
+    formData.append('BookingId', BookingCase.bookingId);
     formData.append('InstrumentId', BookingCase.instrumentId);
     formData.append('CandidateName', this.candidateName);
-    formData.append('Amount',        BookingCase.amount);
-    formData.append('Type',          this.TypeId);
-    formData.append('UserEmailId',   this.userEmail);
-    formData.append('MobileNo',      this.mobileNo);
-    formData.append('FacultyCode',   this.userEmail);
-    formData.append('ResponseUrl',   this.responseUrl);
+    formData.append('Amount', BookingCase.amount);
+    formData.append('Type', this.TypeId);
+    formData.append('UserEmailId', this.userEmail);
+    formData.append('MobileNo', this.mobileNo);
+    formData.append('FacultyCode', this.userEmail);
+    formData.append('ResponseUrl', this.responseUrl);
 
     forkJoin({ payment: this.CIFwebService.MakePaymentforTest(formData) })
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -519,14 +511,14 @@ export class SearchPaymentsPendingComponent implements OnInit {
           this.loadingIndicator = false;
           Swal.fire({
             title: 'Payment Gateway Error',
-            text:  'Unable to connect to payment server. Please try again later.',
-            icon:  'error',
+            text: 'Unable to connect to payment server. Please try again later.',
+            icon: 'error',
           });
         },
       });
   }
 
-  // ── File download ─────────────────────────────────────────────────────────
+
   downloadFile(fileName: string): void {
     this.onDownloadFile(this.serverUrl + fileName);
   }
@@ -538,9 +530,9 @@ export class SearchPaymentsPendingComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (blob: Blob) => {
-          const url  = window.URL.createObjectURL(blob);
+          const url = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
-          link.href  = url;
+          link.href = url;
           link.download = remoteUrl.split('/').pop() || 'Document.pdf';
           document.body.appendChild(link);
           link.click();
@@ -560,14 +552,14 @@ export class SearchPaymentsPendingComponent implements OnInit {
       });
   }
 
-  // ── Excel export ──────────────────────────────────────────────────────────
+
   exportToExcel(): void {
-    const fileName    = 'Booking_Details_report.xlsx';
+    const fileName = 'Booking_Details_report.xlsx';
     const exportedData = this.BookingStatusData.map(item => ({
-      BookingId:      item.bookingId,
+      BookingId: item.bookingId,
       InstrumentName: item.instrumentName,
-      Samples:        item.noOfSamples,
-      RequestDate:    item.bookingRequestDate,
+      Samples: item.noOfSamples,
+      RequestDate: item.bookingRequestDate,
     }));
 
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportedData);
@@ -575,13 +567,13 @@ export class SearchPaymentsPendingComponent implements OnInit {
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     const blobData = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const link     = document.createElement('a');
-    link.href      = URL.createObjectURL(new Blob([blobData], { type: 'application/octet-stream' }));
-    link.download  = fileName;
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob([blobData], { type: 'application/octet-stream' }));
+    link.download = fileName;
     link.click();
   }
 
-  // ── Print receipt ─────────────────────────────────────────────────────────
+
   printReceipt(): void {
     const modalContent = document.getElementById('receiptData');
     if (!modalContent) { console.error('Modal content not found'); return; }
@@ -600,7 +592,7 @@ export class SearchPaymentsPendingComponent implements OnInit {
       }).join(' ');
 
     const cloned = modalContent.cloneNode(true) as HTMLElement;
-    const btn    = cloned.querySelector('button');
+    const btn = cloned.querySelector('button');
     if (btn) { btn.style.display = 'none'; }
 
     iframeDoc.open();
@@ -614,12 +606,13 @@ export class SearchPaymentsPendingComponent implements OnInit {
     };
   }
 
-  // ── applyFilter kept for API parity ──────────────────────────────────────
+
   applyFilter(event: Event): void {
-    // Kept for compatibility — was used with MatTableDataSource in Angular 14
+     const filterValue = (event.target as HTMLInputElement).value;
+    
   }
 
-  // ── Private: consistent loader shutdown ──────────────────────────────────
+
   private stopLoader(startTime: number): void {
     const remaining = Math.max(1500 - (Date.now() - startTime), 0);
     setTimeout(() => {

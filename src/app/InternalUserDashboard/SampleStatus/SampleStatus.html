@@ -1,0 +1,164 @@
+<app-cif-menu-bar />
+
+<!-- Full-screen loader -->
+@if (loadingIndicator()) {
+  <div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+      <div class="custom-spinner-content text-center">
+        <img src="assets/images/spinner.gif" alt="Loading..." />
+      </div>
+    </div>
+  </div>
+}
+
+<div class="container-fluid BottomSpace">
+
+  @if (samplesStatusData().length > 0) {
+
+    <div class="row">
+      <div class="col-12 stretch-card">
+        <div class="card-body">
+          <hr />
+          <div class="row mt-2 d-flex justify-content-center">
+
+            <!-- Export Button -->
+            <div class="col-sm-2 text-start">
+              <div class="mb-3">
+                <button
+                  (click)="exportToExcel()"
+                  class="btn btn-dark"
+                  [disabled]="filteredSamplesStatusData().length === 0">
+                  Export to Excel
+                </button>
+              </div>
+            </div>
+
+            <!-- Title -->
+            <div class="col-sm-4 text-center">
+              <div class="mb-1 text-start">
+                <h2>Samples Received with Condition Details</h2>
+              </div>
+            </div>
+
+            <!-- Search -->
+            <div class="col-sm-3 text-start">
+              <input
+                [ngModel]="searchQuery()"
+                (ngModelChange)="onSearchChange($event)"
+                id="search"
+                type="text"
+                class="form-control"
+                style="width: 14rem;"
+                placeholder="Search"
+                aria-label="Search" />
+            </div>
+
+          </div>
+          <hr />
+
+          @if (currentPageData().length > 0) {
+            <div class="table-responsive mt-4 mb-4">
+              <table id="SamplesDataTable" #table>
+                <thead>
+                  <tr>
+                    <th class="form-label">Booking Id</th>
+                    <th class="form-label">Instrument Name</th>
+                    <th class="form-label">Received By</th>
+                    <th class="form-label">Received On</th>
+                    <th class="form-label">Number of Samples</th>
+                    <th class="form-label">Sample Status Remarks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of currentPageData(); track row.bookingId) {
+                    <tr>
+                      <td class="fw-bold">{{ row.bookingId }}</td>
+                      <td class="fw-bold">{{ row.instrumentName }}</td>
+                      <td class="fw-bold text-danger">{{ row.receivedBy }}</td>
+                      <td class="fw-bold text-danger">{{ row.receivedDate }}</td>
+                      <td class="fw-bold">{{ row.sampleCount }}</td>
+                      <td class="fw-bold">{{ row.sampleCondition }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+
+              <!-- Pagination -->
+              <div class="pagination">
+                <a (click)="prevPage()" [class.disabled]="currentPage() === 1">
+                  <i class="mdi mdi-chevron-left fs-2"></i>
+                </a>
+                <span class="text-danger p-2">{{ currentPage() }} / {{ totalPages() }}</span>
+                <a (click)="nextPage()" [class.disabled]="currentPage() === totalPages()">
+                  <i class="mdi mdi-chevron-right fs-2"></i>
+                </a>
+              </div>
+            </div>
+          } @else {
+            <p class="fs-2 text-danger text-center">Try Search With Different Text.</p>
+          }
+
+        </div>
+      </div>
+    </div>
+
+  } @else {
+
+    <!-- No Data State -->
+    <div class="card card-warning text-center p-2 mb-4">
+      <hr />
+      <div class="row mb-4">
+        <h3 class="text-center fs-2 text-primary mb-4 pb-4">All Samples Page</h3>
+        <hr />
+        <div class="text-center py-5 BottomSpace">
+          <p class="fs-4 text-danger">No Samples Found.</p>
+        </div>
+      </div>
+    </div>
+
+  }
+
+</div>
+
+
+<!-- View Result Modal Template -->
+<ng-template #viewDescModal2 let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Get Result Screen</h5>
+    <button type="button" class="btn-close" (click)="modal.close('by: close icon')" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <div class="col-md-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-4">
+            <div class="col-sm">
+              <table id="dataTableTestsResults" class="table">
+                <thead>
+                  <tr>
+                    <th class="fs-5">Booking Id</th>
+                    <th class="fs-5">Instrument Name</th>
+                    <th class="fs-5">Excel File</th>
+                    <th class="fs-5">Remarks</th>
+                    <th class="fs-5">Results File</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @if (samplesCase()) {
+                    <tr>
+                      <td class="fs-5 p-4" style="width: 20%;">{{ samplesCase()!.bookingId }}</td>
+                      <td class="fs-5 p-4" style="width: 20%;">{{ samplesCase()!.instrumentName }}</td>
+                      <td class="fs-5"></td>
+                      <td class="fs-5 p-4" style="width: 20%;">{{ samplesCase()!.remarks }}</td>
+                      <td></td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

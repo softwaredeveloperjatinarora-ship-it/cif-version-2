@@ -1,0 +1,97 @@
+@if (loadingIndicator) {
+<div class="fullscreen-loader">
+  <div class="loader-spinner"></div>
+  <div class="loader-text">Loading, please wait...</div>
+</div>
+}
+
+<nav class="navbar navbar-light navbar-expand-lg mb-4 bg-light">
+  <div class="container-fluid">
+
+    <button class="navbar-toggler bg-light" type="button" (click)="toggleNavbar()" aria-controls="navbarNav"
+      [attr.aria-expanded]="!isNavbarCollapsed" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div [class.collapse]="isNavbarCollapsed" class="navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 bg-transparent">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" id="manageTestsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <span style="border-bottom:1px solid #ef7d00;"> Tests & Results </span>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="manageTestsDropdown">
+            <li><a class="dropdown-item" (click)="goto('StaffActionBookings')">Upload Results</a></li>
+            <li><a class="dropdown-item" (click)="goto('MyUploads')"> Results Uploaded </a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown ">
+          <a class="nav-link dropdown-toggle" id="manageUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            User & Payments
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="manageUserDropdown">
+            <li><a class="dropdown-item" (click)="goto('PendingPaymentsS')">All Payments</a></li>
+            <li><a class="dropdown-item" (click)="goto('UserDetailSS')">All User</a></li>
+            <li><a class="dropdown-item" (click)="goto('SampleStatusS')">All Sample Status</a></li>
+          </ul>
+        </li>
+
+
+        <li class="nav-item  ">
+          <a class="nav-link" (click)="LogoutUser()">Logout</a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+<div class="text-center mt-4">
+  <h2 class="mb-4">Central Instrumentation Facility</h2>
+</div>
+
+
+<div class="container-fluid  mt-4 ">
+  <div class="row">
+    <div class="col-md-4 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <div class="row d-flex justify-content-around">
+            <label class="col-md-6 form-label " style="font-weight: 700;">User Name
+            </label>
+            <label class="col-md-6 form-label text-dark  "
+              style="text-align: right; font-weight: 700;">{{this.candidateName}} </label>
+          </div>
+          <div class="row d-flex justify-content-around">
+            <label class="col-md-6 form-label " style="font-weight: 700;">Department Code
+            </label>
+            <label class="col-md-6 form-label text-dark  "
+              style="text-align: right; font-weight: 700;">{{this.supervisorName?.length>4 ? this.supervisorName : 'N/A'
+              }} </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 grid-margin ">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="text-success text-center mt-1 mb-4 ">CIF Staff Dashboard </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <div class="row d-flex justify-content-around">
+            <label class="col-md-5 form-label  " style="font-weight: 700;">Department
+              Name</label>
+            <label class="col-md-7 form-label text-dark " style="text-align: right;font-weight: 700;">
+              {{this.departmentName}}
+            </label>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

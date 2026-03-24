@@ -11,5 +11,6 @@ export const environment = {
     measurementId: "G-SRK4QGDCXD"
   },
     apiBase: 'https://projectsapi.lpu.in',
+    apiUrl: 'https://projectsapi.lpu.in/api' ,
   
 };

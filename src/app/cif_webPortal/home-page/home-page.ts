@@ -91,7 +91,7 @@ export class HomePage implements OnInit {
         }
 
         const elapsed = new Date().getTime() - startTime;
-        const remainingDelay = Math.max(2500 - elapsed, 0);
+        const remainingDelay = Math.max(500 - elapsed, 0);
 
         setTimeout(() => {
           this.loadingIndicator = false;

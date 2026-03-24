@@ -148,7 +148,7 @@ export class CifRegisterPageComponent implements OnInit {
 
     this.cifWebService.NewUserRecord(formData).subscribe({
       next: (data) => {
-        const delay = Math.max(1500 - (Date.now() - startTime), 0);
+        const delay = Math.max(500 - (Date.now() - startTime), 0);
         setTimeout(() => this.loadingIndicator.set(false), delay);
 
         if (data?.error) {
@@ -228,7 +228,7 @@ export class CifRegisterPageComponent implements OnInit {
         this.loadingStates       = Array(items.length).fill(true);
         if (!response.item1?.length) { this.serverConnectionError = true; }
 
-        const delay = Math.max(2500 - (Date.now() - startTime), 0);
+        const delay = Math.max(500 - (Date.now() - startTime), 0);
         setTimeout(() => this.loadingIndicator.set(false), delay);
       },
       error: (err) => {

@@ -1,0 +1,261 @@
+<app-StaffMenu-bar></app-StaffMenu-bar>
+
+<!-- Full Screen Loader -->
+@if (showLoader()) {
+  <div class="fullscreen-loader">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Fetching details, please wait...</div>
+  </div>
+}
+
+@if (UserDetailsData().length > 0) {
+  <div class="row">
+    <div class="col-12 stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <hr />
+
+          <!-- Controls Row -->
+          <div class="row d-flex justify-content-center">
+
+            <!-- Export Button -->
+            <div class="col-sm-2">
+              <div class="mb-3">
+                <button
+                  (click)="exportToExcel()"
+                  class="btn btn-dark"
+                  [disabled]="tmpsUserDetailsData().length === 0"
+                >
+                  Export to Excel
+                </button>
+              </div>
+            </div>
+
+            <!-- Status Filter -->
+            <div class="col-sm-5">
+              <select
+                [(ngModel)]="selectedStatus"
+                (change)="filterData()"
+                class="form-select w-100"
+              >
+                <option value="">-- All Users --</option>
+                <option value="400000">Internal User</option>
+                <option value="400001">External User</option>
+                <option value="400002">Industry User</option>
+              </select>
+            </div>
+
+            <!-- Search Box -->
+            <div class="col-sm-5 mb-4">
+              <input
+                [(ngModel)]="searchQuery"
+                (input)="search()"
+                id="search"
+                type="text"
+                class="form-control"
+                placeholder="Search"
+                aria-label="Search"
+              />
+            </div>
+            <hr />
+          </div>
+
+          <!-- Search Result Count -->
+          <div class="row m-4 p-2">
+            @if (searchQuery) {
+              <span class="fs-3 themeClr">
+                Search Result:&nbsp;
+                <span class="text-muted">Found {{ tmpsUserDetailsData().length }} Records</span>
+              </span>
+            }
+          </div>
+
+          <!-- Record / Page Count -->
+          <div class="row">
+            <div class="m-1">
+              <span class="text-dark m-3 fs-5 p-2 fw-bolder" style="border: 1px solid #ef7d00;">
+                Record Count: {{ getTotalRecords() }} | Total Pages: {{ getTotalPages() }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Data Table -->
+          @if (tmpsUserDetailsData().length > 0) {
+            <div class="table-responsive mt-4 mb-4">
+              <table id="BookingDetailsDataTable" #table>
+                <thead>
+                  <tr class="bg-primary">
+                    <th class="text-dark">Candidate Name</th>
+                    <th class="text-dark">Email Id</th>
+                    <th class="text-dark">Mobile Number</th>
+                    <th class="text-dark">Department</th>
+                    <th class="text-dark">School Name</th>
+                    <th class="text-dark">Supervisor Name</th>
+                    <th class="text-dark">Registration / UMS Id</th>
+                    <th class="text-dark">User Role</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of getCurrentPageData(); track row.idProofNumber) {
+                    @if (row.emailId?.length > 0 && row.emailId != null) {
+                      <tr>
+                        <td class="fw-bold">{{ row.candidateName }}</td>
+                        <td class="fw-bold">{{ row.emailId || 'NA' }}</td>
+                        <td class="fw-bold">{{ row.mobileNumber?.length > 0 ? row.mobileNumber : 'NA' }}</td>
+                        <td class="fw-bold">{{ row.departmentName?.length > 0 ? row.departmentName : 'NA' }}</td>
+                        <td class="fw-bold">{{ row.organisation ?? 'NA' }}</td>
+                        <td class="fw-bold">{{ row.supervisorName?.length > 0 ? row.supervisorName : 'NA' }}</td>
+                        <td class="fw-bold">{{ row.idProofNumber > 0 ? row.idProofNumber : 'NA' }}</td>
+                        <td class="fw-bold">
+                          @if (row.userRole?.length > 0) {
+                            @switch (row.userRole.trim()) {
+                              @case ('400000') {
+                                <span class="text-danger">Internal User</span>
+                              }
+                              @case ('400001') {
+                                <span class="text-danger">External Academia</span>
+                              }
+                              @case ('400002') {
+                                <span class="text-danger">Industry User</span>
+                              }
+                              @default {
+                                <span>Unknown Role</span>
+                              }
+                            }
+                          }
+                        </td>
+                      </tr>
+                    }
+                  }
+                </tbody>
+              </table>
+
+              <!-- Pagination Bar -->
+              <div class="pagination-bar">
+
+                <!-- Items per page -->
+                <div class="pagination-size">
+                  <label class="pagination-size-label">Rows per page:</label>
+                  <select
+                    [value]="itemsPerPage()"
+                    (change)="onPageSizeChange($event)"
+                    class="form-select form-select-sm pagination-size-select"
+                  >
+                    <option [ngValue]="5">5</option>
+                    <option [ngValue]="10">10</option>
+                    <option [ngValue]="15">15</option>
+                    <option [ngValue]="20">20</option>
+                    <option [ngValue]="0">All</option>
+                  </select>
+                </div>
+
+                <!-- Record info -->
+                <span class="pagination-info">
+                  {{ getPageRangeLabel() }}
+                </span>
+
+                <!-- Prev / Next -->
+                <div class="pagination-controls">
+                  <button
+                    class="btn btn-sm btn-outline-secondary pagination-btn"
+                    (click)="prevPage()"
+                    [disabled]="currentPage() === 1 || itemsPerPage() === 0"
+                  >
+                    &lsaquo; Prev
+                  </button>
+                  <span class="pagination-pages">
+                    Page {{ itemsPerPage() === 0 ? 1 : currentPage() }} of {{ itemsPerPage() === 0 ? 1 : getTotalPages() }}
+                  </span>
+                  <button
+                    class="btn btn-sm btn-outline-secondary pagination-btn"
+                    (click)="nextPage()"
+                    [disabled]="currentPage() === getTotalPages() || itemsPerPage() === 0"
+                  >
+                    Next &rsaquo;
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          } @else {
+            <p class="fs-2 text-danger text-center">No Grid Data Available.</p>
+          }
+
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="card">
+    <div class="card-body text-center">
+      <h3 class="fs-2 m-5 text-danger pt-5">No Record!</h3>
+      <div class="row mt-4 mb-4">
+        <div class="col-sm-12 text-center">
+          <div class="mb-3 p-4">
+            <label class="form-label fs-4 text-danger">No Booking Found.</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Result Upload Modal -->
+<ng-template #viewDescModal2 let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Result Upload Screen</h5>
+    <button type="button" class="btn-close" (click)="modal.close()" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <div class="col-md-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-4">
+            <div class="col-sm">
+              <table class="table" id="dataTableAllClosedRemarks">
+                <thead>
+                  <tr>
+                    <th class="fs-5">Booking Id</th>
+                    <th class="fs-5">Instrument Name</th>
+                    <th class="fs-5">Upload File</th>
+                    <th class="fs-5">Remarks (Any)</th>
+                    <th class="fs-5">Upload Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="fs-5 p-4" style="width:20%">{{ BookingCase?.bookingId }}</td>
+                    <td class="fs-5 p-4" style="width:20%">{{ BookingCase?.instrumentName }}</td>
+                    <td class="fs-5">
+                      <input
+                        required type="file" id="File" name="File"
+                        (change)="onFileSelected($event)"
+                        accept=".zip,.7z,.rar"
+                        #fileInput="ngModel" ngModel
+                      />
+                      <div class="mt-2">
+                        <span class="themeClr">Allowed formats: ZIP — Max size 5 MB</span>
+                      </div>
+                    </td>
+                    <td class="fs-5 p-4" style="width:20%">
+                      <textarea
+                        required name="remarks" [(ngModel)]="Remarks"
+                        rows="5" cols="30" class="col-12 p-2 form-control"
+                        id="remarks" autocomplete="off"
+                      ></textarea>
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-primary me-2" (click)="VerifyData(BookingCase)">
+                        Upload Result
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

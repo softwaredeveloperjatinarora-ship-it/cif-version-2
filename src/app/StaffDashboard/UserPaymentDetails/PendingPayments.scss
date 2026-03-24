@@ -1,0 +1,123 @@
+// ─── Loader ───────────────────────────────────────────────────────────────────
+.fullscreen-loader {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(255 255 255 / 85%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-spinner {
+  width: 60px;
+  height: 60px;
+  border: 8px solid #ccc;
+  border-top-color: #ff8800;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loader-text {
+  margin-top: 20px;
+  font-size: 20px;
+  color: #333;
+  font-weight: bold;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ─── Theme colour ─────────────────────────────────────────────────────────────
+.themeClr { color: #ef7d00; }
+
+// ─── Badge ────────────────────────────────────────────────────────────────────
+.badge {
+  font-weight: 600;
+  padding: 0.4em 0.6em;
+  font-size: 0.85rem;
+  border-radius: 0.5rem;
+}
+
+.bg-success { background-color: #28a745 !important; color: #fff !important; }
+.bg-danger  { background-color: #dc3545 !important; color: #fff !important; }
+.bg-warning { background-color: #ffc107 !important; color: #212529 !important; }
+
+// ─── Table ────────────────────────────────────────────────────────────────────
+#AdminPendingPayments {
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    padding: 0.75rem 1rem;
+    border: 1px solid #dee2e6;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  thead tr { background-color: var(--bs-primary, #0d6efd); }
+
+  tbody tr:hover { background-color: rgb(0 0 0 / 5%); }
+}
+
+// ─── Pagination Bar ───────────────────────────────────────────────────────────
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 0.5rem 0.25rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.pagination-size {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination-size-label {
+  font-size: 0.875rem;
+  color: #555;
+  white-space: nowrap;
+  margin-bottom: 0;
+}
+
+.pagination-size-select {
+  width: auto;
+  min-width: 75px;
+  cursor: pointer;
+}
+
+.pagination-info {
+  font-size: 0.875rem;
+  color: #555;
+  white-space: nowrap;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination-btn {
+  min-width: 72px;
+  font-size: 0.875rem;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.pagination-pages {
+  font-size: 0.875rem;
+  color: #333;
+  white-space: nowrap;
+  padding: 0 0.25rem;
+}

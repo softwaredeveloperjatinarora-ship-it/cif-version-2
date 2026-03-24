@@ -19,8 +19,8 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,       // ✅ required for [(ngModel)] on searchQuery
-    NgbModule,         // ✅ required for NgbModal (let-modal in ng-template)
+    FormsModule,     
+    NgbModule,       
     CurrencyPipe,
     CifMenuBarComponent,
   ],
@@ -70,7 +70,7 @@ export class SearchPaymentsComponent implements OnInit {
   ServerUrl!:     string;
 
   // ── UI state ──────────────────────────────────────────────────────────────────
-  loadingIndicator = false;   // ✅ typed boolean — prevents NG0100
+  loadingIndicator = false; 
   BookingCase:     any;
   PaymentReceipt:  any;
   searchQuery      = '';
@@ -81,7 +81,6 @@ export class SearchPaymentsComponent implements OnInit {
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────────
   ngOnInit(): void {
-    // ✅ SSR guard — skip all browser/cookie logic on server side
     if (!isPlatformBrowser(this.platformId)) { return; }
 
     this.ServerUrl = 'https://files.lpu.in/umsweb/CIFDocuments/';
@@ -89,7 +88,7 @@ export class SearchPaymentsComponent implements OnInit {
     const raw = this.cookieService.get('InternalUserAuthData');
 
     if (!raw || raw.trim().length === 0) {
-      return; // no session — cif-menu-bar handles redirect
+      return; 
     }
 
     try {
@@ -104,9 +103,6 @@ export class SearchPaymentsComponent implements OnInit {
       return;
     }
 
-    // ✅ Defer to avoid NG0100 ExpressionChangedAfterItHasBeenCheckedError.
-    //    loadingIndicator is set synchronously in getBookingDetails(); deferring
-    //    to a microtask ensures Angular's first CD pass is already complete.
     Promise.resolve().then(() => {
       this.getBookingDetails();
       this.cdr.detectChanges();
@@ -145,7 +141,6 @@ export class SearchPaymentsComponent implements OnInit {
             this.BookingStatusData = response.item1;
             this.dataSource        = response.item1;
 
-            // ✅ Filter: only show successfully paid records
             this.tmpsBookingStatusData = response.item1.filter(
               (item: { paymentStatus: any }) =>
                 item.paymentStatus?.toLowerCase() === 'success' &&
@@ -163,7 +158,6 @@ export class SearchPaymentsComponent implements OnInit {
           }
           this.stopLoader(startTime);
         },
-        // ✅ loader always resets on error — prevents infinite spinner
         error: err => { console.error(err); this.loadingIndicator = false; },
       });
   }
@@ -257,7 +251,6 @@ export class SearchPaymentsComponent implements OnInit {
     iframe.onload = () => {
       iframe.contentWindow?.focus();
       iframe.contentWindow?.print();
-      // Clean up after print dialog closes
       setTimeout(() => document.body.removeChild(iframe), 1000);
     };
   }

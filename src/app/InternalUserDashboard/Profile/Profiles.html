@@ -1,0 +1,210 @@
+<app-cif-menu-bar />
+<!-- Full-screen loader -->
+@if (loadingIndicator()) {
+  <div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+      <div class="custom-spinner-content text-center">
+        <img src="assets/images/spinner.gif" alt="Loading..." />
+      </div>
+    </div>
+  </div>
+}
+
+ 
+<section class="section ">
+  <div class="container BottomSpace">
+
+    <div class="heading-wraper mb-5">
+      <div class="main-head">
+        <h1>User Profile</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 reg-div">
+        <div class="cif-register">
+          <div class="row">
+
+            <form [formGroup]="cifUserForm" (ngSubmit)="onUpdate()" class="forms-sample" novalidate>
+              <div class="row">
+
+                <!-- Email -->
+                <div class="col-md-6 mb-3">
+                  <label for="EmailId">Email</label>
+                  <input
+                    type="email"
+                    id="EmailId"
+                    formControlName="EmailId"
+                    class="form-control"
+                    [attr.disabled]="true" />
+                  @if (isForm1Submitted() && form1['EmailId'].errors) {
+                    <div class="invalid-feedback d-block">
+                      @if (form1['EmailId'].errors?.['required']) { <div>Required</div> }
+                      @if (form1['EmailId'].errors?.['email'])    { <div>Invalid Email</div> }
+                    </div>
+                  }
+                </div>
+
+                <!-- Name -->
+                <div class="col-md-6 mb-3">
+                  <label for="CandidateName">Name</label>
+                  <input
+                    type="text"
+                    id="CandidateName"
+                    formControlName="CandidateName"
+                    class="form-control"
+                    [class.is-invalid]="isForm1Submitted() && form1['CandidateName'].invalid"
+                    [attr.readonly]="!isEditMode() || null" />
+                  @if (isForm1Submitted() && form1['CandidateName'].errors) {
+                    <div class="invalid-feedback">
+                      @if (form1['CandidateName'].errors?.['required']) { <div>Required</div> }
+                    </div>
+                  }
+                </div>
+
+                <!-- Supervisor Name -->
+                <div class="col-md-6 mb-3">
+                  <label for="SupervisorName">Name of Supervisor</label>
+                  <input
+                    type="text"
+                    id="SupervisorName"
+                    formControlName="SupervisorName"
+                    class="form-control"
+                    [class.is-invalid]="isForm1Submitted() && form1['SupervisorName'].invalid"
+                    [attr.readonly]="!isEditMode() || null" />
+                  @if (isForm1Submitted() && form1['SupervisorName'].errors) {
+                    <div class="invalid-feedback">
+                      @if (form1['SupervisorName'].errors?.['required']) { <div>Required</div> }
+                    </div>
+                  }
+                </div>
+
+                <!-- Mobile -->
+                <div class="col-md-6 mb-3">
+                  <label for="MobileNumber">Mobile</label>
+                  <input
+                    type="text"
+                    id="MobileNumber"
+                    formControlName="MobileNumber"
+                    class="form-control"
+                    [class.is-invalid]="isForm1Submitted() && form1['MobileNumber'].invalid"
+                    [attr.readonly]="!isEditMode() || null" />
+                  @if (isForm1Submitted() && form1['MobileNumber'].errors) {
+                    <div class="invalid-feedback">
+                      @if (form1['MobileNumber'].errors?.['required']) { <div>Required</div> }
+                      @if (form1['MobileNumber'].errors?.['pattern'])  { <div>Invalid Mobile Number</div> }
+                    </div>
+                  }
+                </div>
+
+                <!-- Organization -->
+                <div class="col-md-6 mb-3">
+                  <label for="InstituteName">Organization</label>
+                  <input
+                    type="text"
+                    id="InstituteName"
+                    formControlName="InstituteName"
+                    class="form-control"
+                    [class.is-invalid]="isForm1Submitted() && form1['InstituteName'].invalid"
+                    [attr.readonly]="!isEditMode() || null" />
+                  @if (isForm1Submitted() && form1['InstituteName'].errors) {
+                    <div class="invalid-feedback">
+                      @if (form1['InstituteName'].errors?.['required']) { <div>Required</div> }
+                    </div>
+                  }
+                </div>
+
+                <!-- Department -->
+                <div class="col-md-6 mb-3">
+                  <label for="DepartmentName">Department</label>
+                  <input
+                    type="text"
+                    id="DepartmentName"
+                    formControlName="DepartmentName"
+                    class="form-control"
+                    [class.is-invalid]="isForm1Submitted() && form1['DepartmentName'].invalid"
+                    [attr.readonly]="!isEditMode() || null" />
+                  @if (isForm1Submitted() && form1['DepartmentName'].errors) {
+                    <div class="invalid-feedback">
+                      @if (form1['DepartmentName'].errors?.['required']) { <div>Required</div> }
+                    </div>
+                  }
+                </div>
+
+                <!-- ID Proof Type -->
+                <div class="col-md-6 mb-3">
+                  <label for="IdProofType">ID Proof Type</label>
+                  <select
+                    id="IdProofType"
+                    formControlName="IdProofType"
+                    class="form-select"
+                    [class.is-invalid]="isForm1Submitted() && form1['IdProofType'].invalid"
+                    [attr.disabled]="!isEditMode() || null">
+                    <option value="">Select</option>
+                    <option value="AadharCard">Aadhar Card</option>
+                    <option value="RegistrationCard">Organisation Card</option>
+                    <option value="PanCard">Pan Card</option>
+                    <option value="LicenseCard">License Card</option>
+                  </select>
+                  @if (isForm1Submitted() && form1['IdProofType'].errors) {
+                    <div class="invalid-feedback">
+                      @if (form1['IdProofType'].errors?.['required']) { <div>Required</div> }
+                    </div>
+                  }
+                </div>
+
+                <!-- ID Proof Number -->
+                <div class="col-md-6 mb-3">
+                  <label for="IdProofNumber">ID Proof Number</label>
+                  <input
+                    type="text"
+                    id="IdProofNumber"
+                    formControlName="IdProofNumber"
+                    class="form-control"
+                    [class.is-invalid]="isForm1Submitted() && form1['IdProofNumber'].invalid"
+                    [attr.readonly]="!isEditMode() || null" />
+                  @if (isForm1Submitted() && form1['IdProofNumber'].errors) {
+                    <div class="invalid-feedback">
+                      @if (form1['IdProofNumber'].errors?.['required']) { <div>Required</div> }
+                    </div>
+                  }
+                </div>
+
+                <!-- Address -->
+                <div class="col-md-12 mb-3">
+                  <label for="Address">Address</label>
+                  <textarea
+                    id="Address"
+                    formControlName="Address"
+                    class="form-control"
+                    [class.is-invalid]="isForm1Submitted() && form1['Address'].invalid"
+                    [attr.readonly]="!isEditMode() || null">
+                  </textarea>
+                  @if (isForm1Submitted() && form1['Address'].errors) {
+                    <div class="invalid-feedback">
+                      @if (form1['Address'].errors?.['required']) { <div>Required</div> }
+                    </div>
+                  }
+                </div>
+
+              </div><!-- /row -->
+
+              <!-- Action Buttons -->
+              <div class="col-md-12 mb-4 text-center">
+                @if (!isEditMode()) {
+                  <button type="button" class="btn btn-primary me-2" (click)="onEdit()">Edit</button>
+                }
+                @if (isEditMode()) {
+                  <button type="submit" class="btn btn-success">Update</button>
+                }
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

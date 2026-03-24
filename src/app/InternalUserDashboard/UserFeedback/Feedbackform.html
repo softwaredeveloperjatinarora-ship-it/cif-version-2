@@ -1,0 +1,108 @@
+<app-cif-menu-bar></app-cif-menu-bar>
+
+@if (loadingIndicator()) {
+  <div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+      <div class="custom-spinner-content text-center">
+        <img src="assets/images/spinner.gif" alt="Loading..." />
+      </div>
+    </div>
+  </div>
+}
+
+@if (isSubmitting()) {
+  <div class="fullscreen-loader" style="background: rgba(0,0,0,0.4); z-index: 10000;">
+    <div class="custom-spinner-content text-center">
+      <div class="loader-spinner">
+        <span class="material-icons md-48 spin-icon" style="color: white; font-size: 48px;">autorenew</span>
+        <p class="text-white mt-2">Submitting your feedback...</p>
+      </div>
+    </div>
+  </div>
+}
+
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8"> <div class="card shadow border-0">
+
+        <div class="card-header text-white"
+             style="background: #ff9219 !important; padding: 20px;">
+          <h3 class="mb-1">Feedback Form</h3>
+          <p class="mb-0 opacity-75">We value your opinion!</p>
+        </div>
+
+        <div class="card-body p-4">
+          <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()" novalidate>
+
+            <div class="mb-4">
+              <label class="form-label fw-bold">Overall Satisfaction Rating</label>
+              <div class="rating-group mb-2">
+                <div class="btn-group w-100" role="group">
+                  @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track i) {
+                    <label class="btn btn-outline-primary py-2"
+                           [ngClass]="{ 'active': feedbackForm.get('rating')?.value === i }"
+                           (click)="setRating(i)">
+                      <input type="radio"
+                             formControlName="rating"
+                             [value]="i"
+                             class="d-none" />
+                      {{ i }}
+                    </label>
+                  }
+                </div>
+              </div>
+              @if (isSubmitted && f['rating'].errors) {
+                <div class="text-danger small mt-1">Please rate your experience (1-10)</div>
+              }
+            </div>
+
+            <div class="mb-4">
+              <label for="CifComments" class="form-label fw-bold">Your Feedback</label>
+              <textarea class="form-control"
+                        id="CifComments"
+                        rows="4"
+                        placeholder="Tell us what you liked or what we can improve..."
+                        formControlName="CifComments"
+                        [ngClass]="{ 'is-invalid': isSubmitted && f['CifComments'].errors }">
+              </textarea>
+              @if (isSubmitted && f['CifComments'].errors) {
+                <div class="invalid-feedback">Please provide your feedback</div>
+              }
+            </div>
+
+            <div class="mb-4">
+              <label for="suggestions" class="form-label fw-bold">Suggestions (if Any)</label>
+              <textarea class="form-control"
+                        id="suggestions"
+                        rows="4"
+                        placeholder="Any specific suggestions for the facility?"
+                        formControlName="suggestions"
+                        [ngClass]="{ 'is-invalid': isSubmitted && f['suggestions'].errors }">
+              </textarea>
+              @if (isSubmitted && f['suggestions'].errors) {
+                <div class="invalid-feedback">Please provide your suggestions</div>
+              }
+            </div>
+
+            <input type="hidden" formControlName="name">
+            <input type="hidden" formControlName="email">
+
+            <div class="d-grid gap-2 mt-4">
+              <button type="submit"
+                      class="btn btn-lg text-white"
+                      style="background: #ff9219;"
+                      [disabled]="isSubmitting()">
+                <span>Submit Feedback</span>
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+        <div class="card-footer text-muted bg-transparent border-top-0 text-center pb-4">
+          <small>Your feedback helps us improve our services. Thank you!</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

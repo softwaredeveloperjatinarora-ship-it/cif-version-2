@@ -7,34 +7,6 @@ import { LpuCIFWebService } from '../../services/lpu-cifweb.service';
 import { StorageService } from '../../services/storage.service';
 import { AuthService } from '../../services/auth.service';
  
-// import {
-//   Component, ElementRef, OnInit, ViewChild,
-//   inject, DestroyRef, ChangeDetectorRef, PLATFORM_ID
-// } from '@angular/core';
-// import { isPlatformBrowser } from '@angular/common';
-// import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-// import { Router } from '@angular/router';
-// import { CommonModule, CurrencyPipe } from '@angular/common';
-// import { forkJoin } from 'rxjs';
-// import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
-
-// @Component({
-//   selector: 'app-new-bookings',
-//   standalone: true,
-//   imports: [
-//     CommonModule,
-//     ReactiveFormsModule,
-//     CurrencyPipe,
-//     CifMenuBarComponent,
-//   ],
-//   templateUrl: './view-bookings.component.html',
-//   styleUrls: ['./view-bookings.component.scss'],
-// })
-// export class 
-
-
-
 import {
   ChangeDetectorRef, Component, ElementRef, OnInit,
   TemplateRef, ViewChild, inject, DestroyRef, PLATFORM_ID

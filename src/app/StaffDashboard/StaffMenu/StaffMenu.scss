@@ -1,0 +1,44 @@
+.custom-nav-link {
+  padding: 10px 15px;
+  font-size: 1.2rem;
+}
+
+.custom-dropdown-item {
+  padding: 8px 15px;
+}
+
+.navbar-nav .nav-item {
+  padding: 0 1rem;
+  background: #ef7d00 !important;
+  font-weight: bolder;
+}
+
+.navbar-toggler {
+  margin-right: 10px;
+}
+
+@media (min-width: 992px) {
+  .navbar-nav {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-nav {
+    flex-direction: column;
+    text-align: start;
+    width: 100%;
+  }
+
+  .custom-nav-link {
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  .dropdown-menu {
+    width: 100%;
+
+  }
+}

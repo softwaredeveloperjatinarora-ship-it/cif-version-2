@@ -1,0 +1,84 @@
+<app-StaffMenu-bar></app-StaffMenu-bar>
+
+@if (loadingIndicator()) {
+<div class="fullscreen-loader">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Loading, please wait...</div>
+</div>
+}
+
+<div class="card mb-3">
+    <div class="card-body">
+        <hr />
+        <div class="d-flex justify-content-center">
+            <label class="fs-2">Upload Result Page</label>
+        </div>
+        <hr />
+    </div>
+</div>
+
+<div class="row BottomSpace">
+    <div class="col-12 stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="row d-flex justify-content-center align-items-end">
+                    <div class="col-sm-3 mb-4">
+                        <button (click)="exportToExcel()" class="btn btn-info w-100" [disabled]="NoResults === 'No Details'">
+                            Export to Excel <i class="mdi mdi-download ms-2"></i>
+                        </button>
+                    </div>
+
+                    <div class="col-sm-3 mb-4">
+                        <label class="form-label">Filter by Status</label>
+                        <ng-select 
+                            [items]="statusOptions" 
+                            bindLabel="label" 
+                            bindValue="value" 
+                            [(ngModel)]="selectedStatus"
+                            [clearable]="false">
+                        </ng-select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>Booking ID</th>
+                            <th>User Name</th>
+                            <th>Instrument</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            @for (item of filteredBookings(); track item.bookingId) {
+                            <tr>
+                                <td>{{ item.bookingId }}</td>
+                                <td>{{ item.candidateName }}</td>
+                                <td>{{ item.instrumentName }}</td>
+                                <td>
+                                    <span class="badge" [ngClass]="item.paymentStatus === 'Completed' ? 'bg-success' : 'bg-warning'">
+                                        {{ item.paymentStatus }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm" (click)="VerifyData(item)">
+                                        <i class="mdi mdi-eye-check"></i> Upload
+                                    </button>
+                                </td>
+                            </tr>
+                            } @empty {
+                            <tr>
+                                <td colspan="5" class="text-center p-5">
+                                    <h4 class="text-muted">No bookings found for the selected criteria.</h4>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
