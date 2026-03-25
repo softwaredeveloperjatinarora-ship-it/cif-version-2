@@ -20437,7 +20437,7 @@ ngb-alert:not(.show) {
   content: ">" !important;
 }
 
-/* Buttons */
+
 .btn.btn-rounded, .swal2-container .swal2-popup .swal2-actions button.btn-rounded, full-calendar.fc .btn-rounded.fc-button-primary {
   border-radius: 50px;
 }

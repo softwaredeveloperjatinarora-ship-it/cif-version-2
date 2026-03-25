@@ -38,13 +38,13 @@ import * as XLSX from 'xlsx';
 })
 export class ViewBookingsComponent implements OnInit {
 
-  // ── ViewChildren (modal templates) ──────────────────────────────────────────
+
   @ViewChild('viewDescModal2')           viewDescModal2!:           TemplateRef<any>;
   @ViewChild('ViewUpdateStatusModal')    ViewUpdateStatusModal!:    TemplateRef<any>;
   @ViewChild('PaymentReceiptUploadModal') PaymentReceiptUploadModal!: TemplateRef<any>;
   @ViewChild('table') table!: ElementRef;
 
-  // ── DI via inject() ──────────────────────────────────────────────────────────
+
   private readonly CIFwebService  = inject(LpuCIFWebService);
   private readonly modalService   = inject(NgbModal);
   private readonly router         = inject(Router);
@@ -55,15 +55,15 @@ export class ViewBookingsComponent implements OnInit {
   private readonly datePipe       = inject(DatePipe);
   private readonly cdr            = inject(ChangeDetectorRef);
   private readonly destroyRef     = inject(DestroyRef);
-  // ✅ SSR guard — prevents JSON.parse('') crash on server side
+
   private readonly platformId     = inject(PLATFORM_ID);
 
-  // ── Table & pagination ───────────────────────────────────────────────────────
+
   BookingData:      any[] = [];
   tmpsBookingData:  any[] = [];
   headHtmlData:     any[] = [];
   columns:          any;
-  // dataSource kept for API parity (applyFilter uses it)
+
   dataSource:       any[] = [];
 
   currentPage              = 1;
@@ -75,7 +75,7 @@ export class ViewBookingsComponent implements OnInit {
     'noOfSamples', 'totalCharges', 'remarks', 'bookingRequestDate',
   ];
 
-  // ── Session / user ───────────────────────────────────────────────────────────
+
   TypeId        = 'CIF';
   user_Email:   any;
   userId:       any;
@@ -91,7 +91,7 @@ export class ViewBookingsComponent implements OnInit {
   qrCodeUrl!:   string;
   sessionData:  any[] = [];
 
-  // ── Route params ─────────────────────────────────────────────────────────────
+
   id:            any;
   status:        any;
   type:          any;
@@ -100,7 +100,7 @@ export class ViewBookingsComponent implements OnInit {
   course:        any;
   keyNote:       any;
 
-  // ── Misc ─────────────────────────────────────────────────────────────────────
+
   loadingIndicator = false;
   BookingCase:     any;
   paymentData:     any;
@@ -108,17 +108,17 @@ export class ViewBookingsComponent implements OnInit {
   selectedId!:     number;
   InstrumentId:    any;
 
-  // ── Sample status ────────────────────────────────────────────────────────────
+
   SampleStatusData:  any;
   dataSourceSamples: any;
   ToGetSampleforId:           any;
   ToGetSampleforInstrumentId: any;
 
-  // ── Payment proof ─────────────────────────────────────────────────────────────
+
   uploadProofStatusData: any[] = [];
   filteredData:          any[] = [];
 
-  // ── File upload ───────────────────────────────────────────────────────────────
+
   ReceiptRemarks  = '';
   FileDataX:      string | null = null;
   fileDataX:      any;
@@ -126,9 +126,9 @@ export class ViewBookingsComponent implements OnInit {
   fileName:       any;
   fileChosen:     { [key: number]: boolean } = {};
 
-  // ── Lifecycle ────────────────────────────────────────────────────────────────
+
   ngOnInit(): void {
-    // ✅ SSR guard — all browser/cookie code skipped during server-side render
+
     if (!isPlatformBrowser(this.platformId)) { return; }
 
     this.serverUrl = 'https://files.lpu.in/umsweb/CIFDocuments/';
@@ -157,7 +157,7 @@ export class ViewBookingsComponent implements OnInit {
     this.ResponseUrl = `${window.location.origin}${window.location.pathname
       .split('/').slice(0, -1).join('/')}/ViewBookings`;
 
-    // ✅ Defer to avoid NG0100 ExpressionChangedAfterChecked
+
     Promise.resolve().then(() => {
       this.getParams();
       this.getBookingDetails();
@@ -167,7 +167,7 @@ export class ViewBookingsComponent implements OnInit {
     });
   }
 
-  // ── Route query params → decode payment status ────────────────────────────────
+
   getParams(): void {
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -203,7 +203,7 @@ export class ViewBookingsComponent implements OnInit {
       });
   }
 
-  // ── Computed: filtered booking list ──────────────────────────────────────────
+
   get filteredBookingData(): any[] {
     if (!this.searchQuery.trim()) { return this.BookingData; }
     const term = this.searchQuery.toLowerCase();
@@ -214,7 +214,7 @@ export class ViewBookingsComponent implements OnInit {
     );
   }
 
-  // ── API: all bookings for user ────────────────────────────────────────────────
+
   getBookingDetails(): void {
     this.loadingIndicator = true;
     const startTime = Date.now();
@@ -236,12 +236,12 @@ export class ViewBookingsComponent implements OnInit {
           }
           this.stopLoader(startTime);
         },
-        // ✅ loader always reset on error
+
         error: err => { console.error(err); this.loadingIndicator = false; },
       });
   }
 
-  // ── Pagination helpers ────────────────────────────────────────────────────────
+
   getTotalPages(): number {
     return Math.ceil(this.tmpsBookingData.length / this.itemsPerPage);
   }
@@ -259,7 +259,7 @@ export class ViewBookingsComponent implements OnInit {
     this.currentPage  = 1;
   }
 
-  // ── Search ────────────────────────────────────────────────────────────────────
+
   search(): void {
     const query = this.searchQuery.toLowerCase();
     this.tmpsBookingData = this.BookingData.filter(item =>
@@ -268,7 +268,7 @@ export class ViewBookingsComponent implements OnInit {
     this.currentPage = 1;
   }
 
-  // ── Excel export ──────────────────────────────────────────────────────────────
+
   exportToExcel(): void {
     const fileName    = 'Booking_Details_report.xlsx';
     const exportedData = this.BookingData.map(item => ({
@@ -292,7 +292,7 @@ export class ViewBookingsComponent implements OnInit {
     link.click();
   }
 
-  // ── Mat-table filter (kept for API parity) ────────────────────────────────────
+
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     if (this.dataSource && (this.dataSource as any).filter !== undefined) {
@@ -304,14 +304,14 @@ export class ViewBookingsComponent implements OnInit {
     window.open(this.serverUrl + fileName, '_blank');
   }
 
-  // ── Payment modal ─────────────────────────────────────────────────────────────
+
   openPaymentModal(a: any): void {
     this.BookingCase = a;
     this.modalService.open(this.viewDescModal2, { size: 'sm' })
       .result.then(() => {}).catch(() => {});
   }
 
-  // ── Payment gateway ───────────────────────────────────────────────────────────
+
   VerifyData(BookingCase: any): void {
     this.loadingIndicator = true;
     const startTime = Date.now();
@@ -358,7 +358,7 @@ export class ViewBookingsComponent implements OnInit {
     }).then(result => { if (result.isConfirmed) window.open(url); });
   }
 
-  // ── Sample status ─────────────────────────────────────────────────────────────
+
   fetchAllSampleStatus(): void {
     this.CIFwebService.GetAllSampleStatus()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -398,7 +398,7 @@ export class ViewBookingsComponent implements OnInit {
     }
   }
 
-  // ── Payment proof ─────────────────────────────────────────────────────────────
+
   private fetchPaymentProofDetailsForUser(): void {
     this.CIFwebService.GetBookingPaymentProofDetails(this.userId)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -424,7 +424,7 @@ export class ViewBookingsComponent implements OnInit {
     );
   }
 
-  // ── Receipt upload modal ──────────────────────────────────────────────────────
+
   openReceiptUploadModal(booking: any): void {
     this.BookingCase = booking;
     this.modalService.open(this.PaymentReceiptUploadModal, { size: 'lg', centered: true })
@@ -499,7 +499,7 @@ export class ViewBookingsComponent implements OnInit {
       });
   }
 
-  // ── Shared loader helper ──────────────────────────────────────────────────────
+
   private stopLoader(startTime: number): void {
     const remaining = Math.max(2500 - (Date.now() - startTime), 0);
     setTimeout(() => {

@@ -1,0 +1,76 @@
+
+<div class="row mt-4">
+    <div class="main-heading text-center">
+        <h1>Recover Account</h1>
+    </div>
+</div>
+
+
+@if (isLoading()) {
+<div class="fullscreen-loader">
+    <div class="loader-content">
+        <span class="text-danger fs-3">Processing...</span><br />
+        <div class="spinner-grow text-danger" style="width: 8rem; height: 8rem;"></div>
+    </div>
+</div>
+}
+
+
+<div class="container BottomMargin">
+
+    <h2 class="text-center mb-4">Account Recovery</h2>
+
+    @if (currentStep() === 1) {
+    <h4>Enter Email</h4>
+
+    <form [formGroup]="emailForm">
+        <input type="email" formControlName="email" placeholder="Enter Email" />
+
+        @if (emailForm.controls.email.touched && emailForm.controls.email.invalid) {
+        <small>Valid email required</small>
+        }
+
+        <button (click)="checkEmail()" [disabled]="emailForm.invalid">Next</button>
+    </form>
+    }
+
+    @if (currentStep() === 2) {
+    <h4>Verify {{ idProofType() }}</h4>
+
+    <form [formGroup]="idProofForm">
+        <input type="password" formControlName="idProofNumber" placeholder="Enter ID Proof" />
+
+        @if (idProofForm.invalid && idProofForm.touched) {
+        <small>Required</small>
+        }
+
+        <button (click)="previousStep()">Back</button>
+        <button (click)="verifyIdProof()" [disabled]="idProofForm.invalid">Next</button>
+    </form>
+    }
+
+    @if (currentStep() === 3) {
+    <h4>Reset Password</h4>
+
+    <form [formGroup]="resetPasswordForm">
+        <input type="password" formControlName="password" placeholder="New Password" />
+        <input type="password" formControlName="confirmPassword" placeholder="Confirm Password" />
+
+        @if (resetPasswordForm.controls.password.invalid && resetPasswordForm.controls.password.touched) {
+        <small>Min 8 characters</small>
+        }
+
+        <button (click)="previousStep()">Back</button>
+        <button (click)="resetPassword()" [disabled]="resetPasswordForm.invalid">
+            Reset Password
+        </button>
+    </form>
+    }
+
+    @if (errorMessage()) {
+    <p class="text-danger mt-3">
+        {{ errorMessage() }}
+    </p>
+    }
+
+</div>

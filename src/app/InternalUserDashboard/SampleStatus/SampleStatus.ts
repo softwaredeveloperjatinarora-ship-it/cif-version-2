@@ -24,9 +24,9 @@ import { LpuCIFWebService } from '../../services/lpu-cifweb.service';
 import { StorageService } from '../../services/storage.service';
 import { AuthService } from '../../services/auth.service';
 
-// ---------------------------------------------------------------------------
-// Interfaces
-// ---------------------------------------------------------------------------
+
+
+
 
 export interface SampleStatusRow {
   bookingId: string;

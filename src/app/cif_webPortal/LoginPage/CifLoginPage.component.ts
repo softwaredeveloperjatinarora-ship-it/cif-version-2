@@ -28,7 +28,7 @@ import { NgbCarousel } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-CifLoginPage',
-  standalone: true,                          // ← Angular 14+ standalone API
+  standalone: true,                          
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
@@ -41,7 +41,7 @@ import { NgbCarousel } from "@ng-bootstrap/ng-bootstrap";
 })
 export class CifLoginPageComponent implements OnInit {
 
-  // ─── DI via inject() (Angular 14+, preferred in standalone) ─────────────────
+  
   private readonly fb             = inject(FormBuilder);
   private readonly cifWebService  = inject(LpuCIFWebService);
   private readonly authService    = inject(AuthService);
@@ -50,12 +50,12 @@ export class CifLoginPageComponent implements OnInit {
   private readonly router         = inject(Router);
   private readonly cookieService  = inject(CookieService);
 
-  // ─── Signals (replaces plain boolean fields for OnPush friendliness) ─────────
+  
   readonly showPassword    = signal(false);
   readonly loadingIndicator = signal(false);
   readonly isLoading       = signal(true);
 
-  // ─── Plain reactive state ────────────────────────────────────────────────────
+  
   submitted          = false;
   loginError: string | null = null;
   isLoginFailed      = false;
@@ -64,28 +64,28 @@ export class CifLoginPageComponent implements OnInit {
   userData: any;
   email_value        = '';
 
-  // ─── Instruments / carousel state ───────────────────────────────────────────
+  
   instrumentsData:    any[] = [];
   tmpsInstrumentsData: any[] = [];
   loadingStates:      boolean[] = [];
   chunkedEvents:      any[][] = [];
 
-  // ─── ViewChild refs ──────────────────────────────────────────────────────────
+  
   @ViewChild('facilitiesSection') facilitiesSection!: ElementRef;
 
-  // ─── Reactive form ───────────────────────────────────────────────────────────
+  
   formdata = this.fb.group({
     Email:     ['', [Validators.required, Validators.minLength(5)]],
     password:  ['', [Validators.required, Validators.minLength(5)]],
     UserRoleS: ['', Validators.required],
   });
 
-  // ─── Getters (identical API to Angular 13 version) ──────────────────────────
+  
   get email(): AbstractControl | null      { return this.formdata.get('Email'); }
   get passwordText(): AbstractControl | null { return this.formdata.get('password'); }
   get userRole(): AbstractControl | null   { return this.formdata.get('UserRoleS'); }
 
-  // ─── Lifecycle ───────────────────────────────────────────────────────────────
+  
   ngOnInit(): void {
     this.cookieService.delete('InternalUserAuthData');
     this.authSession.clearSession();
@@ -96,7 +96,7 @@ export class CifLoginPageComponent implements OnInit {
     this.chunkedEvents = this.chunkArray(this.events, 3);
   }
 
-  // ─── UI helpers ─────────────────────────────────────────────────────────────
+  
   togglePasswordVisibility(): void {
     this.showPassword.update(v => !v);
   }
@@ -122,7 +122,7 @@ export class CifLoginPageComponent implements OnInit {
     this.router.navigateByUrl('Home');
   }
 
-  // ─── Image callbacks ─────────────────────────────────────────────────────────
+  
   onImageLoad(index: number): void {
     this.loadingStates[index] = false;
   }
@@ -132,7 +132,7 @@ export class CifLoginPageComponent implements OnInit {
     this.loadingStates[index] = false;
   }
 
-  // ─── Form submission ─────────────────────────────────────────────────────────
+  
   onSubmit(): void {
     this.submitted = true;
 
@@ -145,7 +145,7 @@ export class CifLoginPageComponent implements OnInit {
     this.authoriseUser(Email!, password!, parseInt(UserRoleS!, 10));
   }
 
-  // ─── Auth flow ───────────────────────────────────────────────────────────────
+  
   authoriseUser(id: string, key: string, role: number): void {
     const formData = new FormData();
     formData.append('Email', id);
@@ -199,7 +199,7 @@ export class CifLoginPageComponent implements OnInit {
         this.storageService.saveUser(data);
         this.setUserData(response);
       },
-      error: () => { /* silent – handled upstream */ },
+      error: () => {  },
     });
   }
 
@@ -294,7 +294,7 @@ export class CifLoginPageComponent implements OnInit {
     });
   }
 
-  // ─── Instruments ─────────────────────────────────────────────────────────────
+  
   getAllInstruments(): void {
     this.loadingIndicator.set(true);
     const startTime = Date.now();
@@ -326,20 +326,20 @@ export class CifLoginPageComponent implements OnInit {
     });
   }
 
-  // ─── Events carousel helpers ─────────────────────────────────────────────────
+  
   chunkArray<T>(arr: T[], size: number): T[][] {
     return arr.reduce<T[][]>((acc, _, i) =>
       i % size ? acc : [...acc, arr.slice(i, i + size)], []);
   }
 
-  // ─── Private helpers ─────────────────────────────────────────────────────────
+  
   private _resetForm(): void {
     this.formdata.reset();
     this.formdata.patchValue({ UserRoleS: '' });
     this.submitted = false;
   }
 
-  // ─── Static data ─────────────────────────────────────────────────────────────
+  
   readonly events = [
     { img: 'https://www.lpu.in/lpu-assets/images/cif/summer-training-programme-2025.webp', title: 'ANRF Sponsored Summer Training Programme', date: '(2 June - 11 July 2025)' },
     { img: 'https://www.lpu.in/lpu-assets/images/cif/event-10.jpg', title: 'Discovering the Crystalline and Nano world using X-ray Diffraction and Particle Size and Zeta Potential Analyzer: A National Workshop', date: '(24 - 26 April 2025)' },

@@ -29,20 +29,20 @@ import { AuthService } from '../../services/auth.service';
 })
 export class SearchPaymentsComponent implements OnInit {
 
-  // ── ViewChildren ─────────────────────────────────────────────────────────────
+
   @ViewChild('viewDescModal2') viewDescModal2!: TemplateRef<any>;
   @ViewChild('table') table!: ElementRef;
 
-  // ── DI via inject() ───────────────────────────────────────────────────────────
+
   private readonly CIFwebService = inject(LpuCIFWebService);
   private readonly modalService  = inject(NgbModal);
   private readonly cookieService = inject(CookieService);
   private readonly cdr           = inject(ChangeDetectorRef);
   private readonly destroyRef    = inject(DestroyRef);
-  // ✅ SSR guard — prevents JSON.parse('') crash during server-side render
+
   private readonly platformId    = inject(PLATFORM_ID);
 
-  // ── Table / pagination ────────────────────────────────────────────────────────
+
   BookingStatusData:      any[] = [];
   tmpsBookingStatusData:  any[] = [];
   headHtmlData:           any[] = [];
@@ -57,7 +57,7 @@ export class SearchPaymentsComponent implements OnInit {
     'noOfSamples', 'totalCharges', 'remarks', 'bookingRequestDate',
   ];
 
-  // ── User / session ────────────────────────────────────────────────────────────
+
   UserRole:       any;
   UserId:         any;
   user_Email:     any;
@@ -69,7 +69,7 @@ export class SearchPaymentsComponent implements OnInit {
   candidateName:  any;
   ServerUrl!:     string;
 
-  // ── UI state ──────────────────────────────────────────────────────────────────
+
   loadingIndicator = false; 
   BookingCase:     any;
   PaymentReceipt:  any;
@@ -79,7 +79,7 @@ export class SearchPaymentsComponent implements OnInit {
   selectedId!:     number;
   InstrumentId:    any;
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────────
+
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) { return; }
 
@@ -109,7 +109,7 @@ export class SearchPaymentsComponent implements OnInit {
     });
   }
 
-  // ── Search ────────────────────────────────────────────────────────────────────
+
   search(): void {
     const query = this.searchQuery.toLowerCase();
     this.tmpsBookingStatusData = this.BookingStatusData.filter(item =>
@@ -128,7 +128,7 @@ export class SearchPaymentsComponent implements OnInit {
     );
   }
 
-  // ── API: paid bookings ────────────────────────────────────────────────────────
+
   getBookingDetails(): void {
     this.loadingIndicator = true;
     const startTime = Date.now();
@@ -162,7 +162,7 @@ export class SearchPaymentsComponent implements OnInit {
       });
   }
 
-  // ── Pagination ────────────────────────────────────────────────────────────────
+
   getTotalPages(): number {
     return Math.ceil(this.tmpsBookingStatusData.length / this.itemsPerPage);
   }
@@ -175,7 +175,7 @@ export class SearchPaymentsComponent implements OnInit {
   nextPage(): void { if (this.currentPage < this.getTotalPages()) this.currentPage++; }
   prevPage(): void { if (this.currentPage > 1) this.currentPage--; }
 
-  // ── Excel export ──────────────────────────────────────────────────────────────
+
   exportToExcel(): void {
     const fileName    = 'Booking_Details_report.xlsx';
     const exportedData = this.BookingStatusData.map(item => ({
@@ -196,7 +196,7 @@ export class SearchPaymentsComponent implements OnInit {
     link.click();
   }
 
-  // ── Material table filter (kept for API parity) ───────────────────────────────
+
   applyFilter(event: Event): void {
     const val = (event.target as HTMLInputElement).value.trim().toLowerCase();
     if (this.dataSource && (this.dataSource as any).filter !== undefined) {
@@ -204,14 +204,14 @@ export class SearchPaymentsComponent implements OnInit {
     }
   }
 
-  // ── Receipt modal ─────────────────────────────────────────────────────────────
+
   paymentReceiptScreen(data: any): void {
     this.PaymentReceipt = data;
     this.modalService.open(this.viewDescModal2, { size: 'sm' })
       .result.then(() => {}).catch(() => {});
   }
 
-  // ── Print receipt ─────────────────────────────────────────────────────────────
+
   printReceipt(): void {
     const modalContent = document.getElementById('ReceiptData');
     if (!modalContent) { console.error('Modal content not found'); return; }
@@ -223,7 +223,7 @@ export class SearchPaymentsComponent implements OnInit {
     const iframeDoc = iframe.contentWindow?.document;
     if (!iframeDoc) { console.error('Failed to open iframe document'); return; }
 
-    // Collect all CSS rules from page stylesheets
+
     const styles = Array.from(document.styleSheets)
       .map(sheet => {
         try {
@@ -255,7 +255,7 @@ export class SearchPaymentsComponent implements OnInit {
     };
   }
 
-  // ── Private: consistent loader shutdown ───────────────────────────────────────
+
   private stopLoader(startTime: number): void {
     const remaining = Math.max(1500 - (Date.now() - startTime), 0);
     setTimeout(() => {

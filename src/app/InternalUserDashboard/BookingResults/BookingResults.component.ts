@@ -35,14 +35,14 @@ import { AuthService } from '../../services/auth.service';
 })
 export class BookingResultsComponent implements OnInit {
 
-  // ── ViewChildren ──────────────────────────────────────────────────────────
+
   @ViewChild('viewDescModal2') viewDescModal2!: TemplateRef<any>;
   @ViewChild('table') table!: ElementRef;
 
-  // ── DI via inject() ───────────────────────────────────────────────────────
-  // ✅ Only services actually used in logic are injected.
-  //    AuthService, StorageService, FormBuilder, ActivatedRoute were injected
-  //    in the original but never called — removed entirely.
+
+
+
+
   private readonly CIFwebService = inject(LpuCIFWebService);
   private readonly modalService  = inject(NgbModal);
   private readonly AuthSession   = inject(LoginSessionService);
@@ -50,10 +50,10 @@ export class BookingResultsComponent implements OnInit {
   private readonly cookieService = inject(CookieService);
   private readonly cdr           = inject(ChangeDetectorRef);
   private readonly destroyRef    = inject(DestroyRef);
-  // ✅ SSR guard — prevents JSON.parse('') crash during server-side render
+
   private readonly platformId    = inject(PLATFORM_ID);
 
-  // ── Table / pagination ────────────────────────────────────────────────────
+
   BookingData:     any[] = [];
   tmpsBookingData: any[] = [];
   ResultData:      any[] = [];
@@ -70,14 +70,14 @@ export class BookingResultsComponent implements OnInit {
   itemsPerPage         = 10;
   itemsPerPageOptions: number[] = [5, 10, 15, 20, 25];
 
-  // ── User / session ────────────────────────────────────────────────────────
+
   UserRole:      any;
   UserId:        any;
   user_Email:    any;
   candidateName: any;
   ServerUrl!:    string;
 
-  // ── UI state ──────────────────────────────────────────────────────────────
+
   loadingIndicator = false;   // ✅ typed boolean — prevents NG0100
   searchQuery      = '';
   BookingCase:     any;
@@ -86,9 +86,9 @@ export class BookingResultsComponent implements OnInit {
   uploadEnabled!:  boolean;
   Remarks:         any;
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
+
   ngOnInit(): void {
-    // ✅ SSR guard — all browser/cookie logic skipped on the server
+
     if (!isPlatformBrowser(this.platformId)) { return; }
 
     this.ServerUrl = 'https://files.lpu.in/umsweb/CIFDocuments/';
@@ -112,16 +112,16 @@ export class BookingResultsComponent implements OnInit {
       return;
     }
 
-    // ✅ Defer first API call to avoid NG0100 ExpressionChangedAfterChecked.
-    //    loadingIndicator is set synchronously inside getBookingDetails();
-    //    deferring ensures Angular's first CD pass is already complete.
+
+
+
     Promise.resolve().then(() => {
       this.getBookingDetails();
       this.cdr.detectChanges();
     });
   }
 
-  // ── Search ────────────────────────────────────────────────────────────────
+
   search(): void {
     const query = this.searchQuery.toLowerCase();
     this.tmpsBookingData = this.BookingData.filter(item =>
@@ -140,7 +140,7 @@ export class BookingResultsComponent implements OnInit {
     );
   }
 
-  // ── API: all bookings for the user ────────────────────────────────────────
+
   getBookingDetails(): void {
     this.loadingIndicator = true;
     const startTime = Date.now();
@@ -160,12 +160,12 @@ export class BookingResultsComponent implements OnInit {
           }
           this.stopLoader(startTime);
         },
-        // ✅ loader always resets on error — prevents infinite spinner
+
         error: err => { console.error(err); this.loadingIndicator = false; },
       });
   }
 
-  // ── Pagination ────────────────────────────────────────────────────────────
+
   getTotalPages(): number {
     return Math.ceil(this.tmpsBookingData.length / this.itemsPerPage);
   }
@@ -183,7 +183,7 @@ export class BookingResultsComponent implements OnInit {
     this.currentPage  = 1;
   }
 
-  // ── Excel export ──────────────────────────────────────────────────────────
+
   exportToExcel(): void {
     const fileName    = 'Booking_Details_report.xlsx';
     const exportedData = this.BookingData.map(item => ({
@@ -204,7 +204,7 @@ export class BookingResultsComponent implements OnInit {
     link.click();
   }
 
-  // ── Mat-table filter (kept for API parity) ────────────────────────────────
+
   applyFilter(event: Event): void {
     const val = (event.target as HTMLInputElement).value.trim().toLowerCase();
     if (this.dataSource && (this.dataSource as any).filter !== undefined) {
@@ -212,7 +212,7 @@ export class BookingResultsComponent implements OnInit {
     }
   }
 
-  // ── Open result modal — fetches result data first ─────────────────────────
+
   openPaymentModal(a: any): void {
     this.loadingIndicator = true;
     const startTime = Date.now();
@@ -238,24 +238,24 @@ export class BookingResultsComponent implements OnInit {
           }
           this.stopLoader(startTime);
         },
-        // ✅ loader always resets on error
+
         error: err => { console.error(err); this.loadingIndicator = false; },
       });
   }
 
-  // ── Download excel sheet ──────────────────────────────────────────────────
-  // ✅ Original logic preserved exactly: opens ServerUrl + excelSheet in new tab
+
+
   ExcelSheetDownload(a: any): void {
     window.open(this.ServerUrl + a[0].excelSheet, '_blank');
   }
 
-  // ── Download result file ──────────────────────────────────────────────────
-  // ✅ Original logic preserved exactly: opens ServerUrl + resultFile in new tab
+
+
   VerifyData(a: any): void {
     window.open(this.ServerUrl + a[0].resultFile, '_blank');
   }
 
-  // ── Private: consistent loader shutdown ──────────────────────────────────
+
   private stopLoader(startTime: number): void {
     const remaining = Math.max(1500 - (Date.now() - startTime), 0);
     setTimeout(() => {

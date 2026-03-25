@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, DOCUMENT, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, DOCUMENT, ElementRef, Inject, OnInit, signal, ViewChild } from '@angular/core';
 import { FormBuilder, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import swal from 'sweetalert2';
@@ -11,7 +11,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { CifMenuBarComponent } from '../../InternalUserDashboard/cif-menu-bar/cif-menu-bar.component';
 import { CommonModule } from '@angular/common';
 import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
-// import { CifMenuBarModule } from "../../InternalUserDashboard/cif-menu-bar/cif-menu-bar.module";
+
 
 
 @Component({
@@ -29,11 +29,16 @@ export class OurTermsConditionsComponent implements OnInit {
   MobileN: any;
   SupervisorName: any;
 
+
+
+  readonly loadingIndicator = signal(false);
+  readonly isLoading       = signal(true);
+
+
   @ViewChild('facilitiesSection') facilitiesSection!: ElementRef;
-  loadingIndicator: boolean = false; // Initialized to false, set to true on API call
   i: any;
 
-  // Method to scroll to the Facilities section
+
   gotoFacilities() {
     this.facilitiesSection.nativeElement.scrollIntoView({ behavior: 'smooth' });
   }
@@ -42,7 +47,7 @@ export class OurTermsConditionsComponent implements OnInit {
   tmpsInstrumentsDataData: any[] = []; tmpsResultData: any[] = [];
   InstrumentId: any; instrumentName: any = ''; UserRole: any; UserId: any; uploadEnabled: boolean | undefined; Remarks: any; dataSource: any;
   Description: any; ImageUrl: any;
-  loadingStates: boolean[] = []; ServerUrl: any; isLoading: boolean = false; loadedCount: number = 0;
+  loadingStates: boolean[] = []; ServerUrl: any;   loadedCount: number = 0;
 
   constructor(
     private CIFwebService: LpuCIFWebService,
@@ -91,9 +96,9 @@ export class OurTermsConditionsComponent implements OnInit {
   }
 
   getAllInstruments(): void {
-      this.loadingIndicator = true;
-    this.isLoading = true;
-    const startTime = new Date().getTime();
+    this.loadingIndicator.set(true);
+    const startTime = Date.now();
+  
 
     this.CIFwebService.GetAllInstrumentsData().subscribe({
       next: response => {
@@ -106,18 +111,19 @@ export class OurTermsConditionsComponent implements OnInit {
           this.tmpsInstrumentsDataData = [];
           this.loadingStates = [];
         }
-         const elapsed = new Date().getTime() - startTime;
+        const elapsed = new Date().getTime() - startTime;
         const remainingDelay = Math.max(500 - elapsed, 0);
 
         setTimeout(() => {
-          this.loadingIndicator = false;
-          this.isLoading = false;
+         this.loadingIndicator.set(false);
+         this.isLoading.set(false);
+          
           this.cdRef.detectChanges();
         }, remainingDelay);
       },
       error: err => {
-        this.loadingIndicator = false;
-        this.isLoading = false;
+           this.loadingIndicator.set(false);
+         this.isLoading.set(false);
         this.cdRef.detectChanges();
         console.error(err);
       }
@@ -125,7 +131,7 @@ export class OurTermsConditionsComponent implements OnInit {
 
   }
 
-  // added on 21-aug-25
+
   chunkedEvents: any[][] = [];
 
 
@@ -134,7 +140,7 @@ export class OurTermsConditionsComponent implements OnInit {
       (i % size ? acc : [...acc, arr.slice(i, i + size)]), []);
   }
   serverUrl: any = 'https://www.lpu.in/lpu-assets/images/cif/';
-   events = [
+  events = [
     {
       img: 'https://www.lpu.in/lpu-assets/images/cif/summer-training-programme-2025.webp',
       title: 'ANRF Sponsored Summer Training Programme',

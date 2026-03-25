@@ -16,24 +16,24 @@ import Swal from 'sweetalert2';
 })
 export class CifMenuBarComponent implements OnInit {
 
-  // ── DI via inject() ───────────────────────────────────────────────────────
+
   private readonly router        = inject(Router);
   private readonly cookieService = inject(CookieService);
   private readonly AuthSession   = inject(LoginSessionService);
   private readonly platformId    = inject(PLATFORM_ID);
 
-  // ── State ─────────────────────────────────────────────────────────────────
+
   UserSessionData:  any;
   UserRole:         any;
-  user_Email:       any;
-  supervisorName:   any;
-  departmentName:   any;
-  candidateName:    any;
-  showBlink         = true;
+  User_Email:       any;
+  SupervisorName:   any;
+  DepartmentName:   any;
+  CandidateName:    any;
+  ShowBlink         = true;
   isNavbarCollapsed = true;
   loadingIndicator  = false;
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
+
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) { return; }
 
@@ -51,10 +51,10 @@ export class CifMenuBarComponent implements OnInit {
     try {
       const c             = JSON.parse(raw);
       this.UserRole       = c.UserRole;
-      this.user_Email     = c.EmailId;
-      this.supervisorName = c.SupervisorName;
-      this.departmentName = c.DepartmentName;
-      this.candidateName  = c.CandidateName;
+      this.User_Email     = c.EmailId;
+      this.SupervisorName = c.SupervisorName;
+      this.DepartmentName = c.DepartmentName;
+      this.CandidateName  = c.CandidateName;
     } catch {
       this.cookieService.delete('InternalUserAuthData');
       this.router.navigate(['']);
@@ -82,7 +82,7 @@ export class CifMenuBarComponent implements OnInit {
     }
   }
 
-  // ── Sample address dialog ─────────────────────────────────────────────────
+
   openSampleInstructions(): void {
     Swal.fire({
       title: 'Send Samples at the following Address:',
@@ -102,7 +102,7 @@ export class CifMenuBarComponent implements OnInit {
     });
   }
 
-  // ── Logout ────────────────────────────────────────────────────────────────
+
   LogoutUser(): void {
     this.loadingIndicator = true;
     this.cookieService.delete('InternalUserAuthData');

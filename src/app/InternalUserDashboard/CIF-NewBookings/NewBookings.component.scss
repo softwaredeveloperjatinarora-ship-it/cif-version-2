@@ -1,4 +1,4 @@
-/* ── Badge wrap (allow text to wrap inside badges) ──────────────────────────── */
+/* ── Badge text wrapping ─────────────────────────────────────────────────── */
 .bottomMargin {
   margin-bottom: 20rem;
 }
@@ -18,21 +18,10 @@
   }
 }
 
-/* ── Legacy layout helpers ──────────────────────────────────────────────────── */
-.label {
-  height: 3.125rem;
-  width: 76.875rem;
-  background-color: brown;
-  color: white;
-  margin-top: 0.625rem;
-}
-
-.box {
-  height: 29.375rem;
-  width: 76.875rem;
-  border-style: outset;
-  margin-top: 0;
-  margin-bottom: 20rem;
+/* ── Typography ──────────────────────────────────────────────────────────── */
+label {
+  font-weight: bold;
+  color: brown;
 }
 
 h4 {
@@ -40,25 +29,7 @@ h4 {
   font-weight: bold;
 }
 
-.field {
-  display: inline-flex;
-  margin-left: 12.5rem;
-  margin-top: 0.5rem;
-  width: 50rem;
-  height: 5rem;
-}
-
-label {
-  font-weight: bold;
-  color: brown;
-}
-
-.details {
-  width: 21.875rem;
-  margin-left: 2.5rem;
-}
-
-/* ── Form control borders ───────────────────────────────────────────────────── */
+/* ── Form controls ───────────────────────────────────────────────────────── */
 select,
 textarea,
 input {
@@ -66,28 +37,11 @@ input {
   box-shadow: 0 0 4px 3px rgba(0, 0, 0, 0.2);
 }
 
-/* ── Legacy button helpers ──────────────────────────────────────────────────── */
-.btt {
-  width: 21.875rem;
-  margin-top: 2.25rem;
-  margin-left: 22.5rem;
-}
-
-/* ── Delete/action button ───────────────────────────────────────────────────── */
-.buttonx {
-  background-color: #fd6c04 !important;
-  color: white;
-  box-shadow: 0 0 4px 3px rgba(0, 0, 0, 0.2);
-}
-
-/* ── Data table ─────────────────────────────────────────────────────────────── */
+/* ── Table ───────────────────────────────────────────────────────────────── */
 table {
   border-collapse: collapse;
   width: 100%;
 }
-
-.pd  { padding: 0 15px; }
-.ml15 { margin-right: 15px; }
 
 th,
 td {
@@ -108,7 +62,14 @@ tr:hover {
   background-color: #ddd;
 }
 
-/* ── Floating cart widget ───────────────────────────────────────────────────── */
+/* ── Delete / action button ──────────────────────────────────────────────── */
+.buttonx {
+  background-color: #fd6c04 !important;
+  color: white;
+  box-shadow: 0 0 4px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* ── Floating cart ───────────────────────────────────────────────────────── */
 .floating-cart {
   position: fixed;
   top: 5.5rem;
@@ -129,5 +90,9 @@ tr:hover {
 
 .cart-text {
   margin-left: 10px;
-  font-size: 16px;
+  font-size: 1rem;
 }
+
+/* ── Utility ─────────────────────────────────────────────────────────────── */
+.pd  { padding: 0 15px; }
+.ml15 { margin-right: 15px; }

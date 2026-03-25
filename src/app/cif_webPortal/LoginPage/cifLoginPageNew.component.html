@@ -8,16 +8,16 @@
       </div>
   
       <div class="row">
-        <!-- Left Image -->
+        
         <div class="col-md-6 d-none d-lg-block mt-5">
           <img src="https://www.lpu.in/lpu-assets/images/cif/login-left.png" alt="Login Image" />
         </div>
   
-        <!-- Login Form -->
+        
         <div class="col-md-6 login-div">
           <div class="cif-login">
             <form [formGroup]="formdata" (ngSubmit)="onSubmit()" class="forms-sample" novalidate>
-              <!-- Login ID -->
+              
               <div class="mb-4 cif-input-group">
                 <label for="loginid" class="form-label">Login ID</label>
                 <input
@@ -34,7 +34,7 @@
                 </div>
               </div>
   
-              <!-- Password -->
+              
               <div class="mb-4 cif-input-group position-relative">
                 <label for="password" class="form-label">Password</label>
                 <input
@@ -57,7 +57,7 @@
                 </div>
               </div>
   
-              <!-- User Role -->
+              
               <div class="mb-4 cif-input-group">
                 <label for="User RoleS" class="form-label">Choose Role</label>
                 <select
@@ -76,12 +76,12 @@
                 </div>
               </div>
   
-              <!-- Login Error -->
+              
               <div *ngIf="loginError" class="text-danger text-center mb-3">
                 {{ loginError }}
               </div>
   
-              <!-- Submit Button -->
+              
               <div class="mb-4 text-center">
                 <button type="submit" class="lpu-btn border-0 px-5 mb-3" [disabled]="formdata.invalid">
                   Submit
@@ -94,19 +94,19 @@
                 </div>
               </div>
   
-              <!-- Staff Login -->
+              
               <div class="d-flex justify-content-center">
                 <a routerLink="/StaffLogins" class="link-btn" style="color: #ef7d00 !important;">Staff Login</a>
               </div>
             </form>
           </div>
   
-          <!-- Register Link -->
+          
           <div class="d-flex justify-content-between mt-3 mb-4">
             Don't have an account? <a class="reg-link" routerLink="/Register"><strong>Register</strong></a>
           </div>
   
-          <!-- Terms and Conditions -->
+          
           <div class="mt-3 mb-4">
             By logging in you agree with
             <a routerLink="/CifTermsConditions">terms and conditions</a> and

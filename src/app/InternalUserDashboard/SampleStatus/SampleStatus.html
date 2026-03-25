@@ -1,6 +1,6 @@
 <app-cif-menu-bar />
 
-<!-- Full-screen loader -->
+
 @if (loadingIndicator()) {
   <div class="fullscreen-loader">
     <div class="custom-spinner-overlay">
@@ -21,7 +21,7 @@
           <hr />
           <div class="row mt-2 d-flex justify-content-center">
 
-            <!-- Export Button -->
+            
             <div class="col-sm-2 text-start">
               <div class="mb-3">
                 <button
@@ -33,14 +33,14 @@
               </div>
             </div>
 
-            <!-- Title -->
+            
             <div class="col-sm-4 text-center">
               <div class="mb-1 text-start">
                 <h2>Samples Received with Condition Details</h2>
               </div>
             </div>
 
-            <!-- Search -->
+            
             <div class="col-sm-3 text-start">
               <input
                 [ngModel]="searchQuery()"
@@ -83,7 +83,7 @@
                 </tbody>
               </table>
 
-              <!-- Pagination -->
+              
               <div class="pagination">
                 <a (click)="prevPage()" [class.disabled]="currentPage() === 1">
                   <i class="mdi mdi-chevron-left fs-2"></i>
@@ -104,7 +104,7 @@
 
   } @else {
 
-    <!-- No Data State -->
+    
     <div class="card card-warning text-center p-2 mb-4">
       <hr />
       <div class="row mb-4">
@@ -121,7 +121,7 @@
 </div>
 
 
-<!-- View Result Modal Template -->
+
 <ng-template #viewDescModal2 let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Get Result Screen</h5>

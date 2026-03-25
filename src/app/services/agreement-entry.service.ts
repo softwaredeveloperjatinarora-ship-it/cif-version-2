@@ -14,13 +14,13 @@ export class AgreementEntryService {
   constructor(private http: HttpClient,private storageService: StorageService) {}
 
   getRunningSession(): Observable<any> {
-   // debugger
+
     let token = this.storageService.getUser();
     let headers = new HttpHeaders()
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GetRunningSession',
      {headers}
@@ -33,7 +33,7 @@ export class AgreementEntryService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GetIndustryInterfaceMainBroadAreas',
      {headers}
@@ -46,20 +46,20 @@ export class AgreementEntryService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GetMetricBySessionId?sessionId='+type,
      {headers}
     );
   }
 
-  //AreaofCollaboration
+
   getActivityByAoC(dataSoft:any): Observable<any> {
     let token = this.storageService.getUser();
     let headers = new HttpHeaders()
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/Planning/GetAreaofCollaboration',dataSoft,
      {headers}
@@ -71,7 +71,7 @@ export class AgreementEntryService {
     let headers = new HttpHeaders()
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/Planning/GetAreaofCollaborationByActivityId',dataSoft,
      {headers}
@@ -84,7 +84,7 @@ export class AgreementEntryService {
     let headers = new HttpHeaders()
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GetSchoolandDivisions?type='+type,
      {headers}
@@ -97,7 +97,7 @@ export class AgreementEntryService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GetDisplayAllemployee',
      {headers}
@@ -110,7 +110,7 @@ export class AgreementEntryService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GetDisplayemployeeByHeadUID',
      {headers}
@@ -124,7 +124,7 @@ export class AgreementEntryService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GetDisplayemployeeByEmpDepartment?empCode='+empCode,
      {headers}
@@ -139,7 +139,7 @@ export class AgreementEntryService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GeteGovDivisionMaster',
      {headers}
@@ -153,7 +153,7 @@ export class AgreementEntryService {
     .set('Authorization', 'Bearer ' + token)
     .set('Accept', '*/*',);
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/Planning/AddMouAgreementMaster',dataSoft,
      {headers}
@@ -168,7 +168,7 @@ export class AgreementEntryService {
     .set('Authorization', 'Bearer ' + token)
     .set('Accept', '*/*',);
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/Planning/AddMouAgreementBasicDetails',dataSoft,
      {headers}
@@ -183,7 +183,7 @@ export class AgreementEntryService {
     .set('Authorization', 'Bearer ' + token)
     .set('Accept', '*/*',);
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/StudentGrievance/AddStudentGrievanceRemarks',dataSoft,
      {headers}
@@ -197,7 +197,7 @@ export class AgreementEntryService {
     .set('Authorization', 'Bearer ' + token)
     .set('Accept', '*/*',);
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/Planning/AddMouAgreementPlannedActivity',dataSoft,
      {headers}
@@ -211,7 +211,7 @@ export class AgreementEntryService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GetMouAgreementMaster',
      {headers}
@@ -224,7 +224,7 @@ export class AgreementEntryService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GetMouAgreementMasterCreatedby',
      {headers}
@@ -237,7 +237,7 @@ export class AgreementEntryService {
     let headers = new HttpHeaders()
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/Planning/UpdateMouAgreementMaster',dataSoft,
      {headers}
@@ -250,7 +250,7 @@ export class AgreementEntryService {
     let headers = new HttpHeaders()
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/Planning/VerifyMouNotingSheet',dataSoft,
      {headers}
@@ -262,7 +262,7 @@ export class AgreementEntryService {
     let headers = new HttpHeaders()
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/Planning/GetOBPNotingSheetData',dataSoft,
      {headers}
@@ -274,7 +274,7 @@ export class AgreementEntryService {
     let headers = new HttpHeaders()
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GetMouAgreementMasterApproved',
      {headers}
@@ -287,7 +287,7 @@ export class AgreementEntryService {
     let headers = new HttpHeaders()
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GetMouAgreementMasterApprovedById?id='+mouId,
      {headers}
@@ -300,7 +300,7 @@ export class AgreementEntryService {
     let headers = new HttpHeaders()
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GetMouAgreementMasterAll?type=Y',
      {headers}

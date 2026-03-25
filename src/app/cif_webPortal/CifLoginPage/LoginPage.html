@@ -1,0 +1,124 @@
+<app-top-bar (facilitiesClicked)="gotoFacilities()"></app-top-bar>
+
+<section class="section">
+  <div class="container">
+    <div class="heading-wraper mb-5">
+      <div class="main-head">
+        <h1>Central Instrumentation Facility - Login</h1>
+      </div>
+    </div>
+    
+    <div class="row">
+      <!-- Left Image -->
+      <div class="col-md-6 d-none d-lg-block mt-5">
+        <img src="https://www.lpu.in/lpu-assets/images/cif/login-left.png" alt="CIF Login" />
+      </div>
+      
+      <!-- Login Form -->
+      <div class="col-md-6 login-div">
+        <div class="cif-login">
+          <h2 class="mb-4 text-center">
+            <span>Internal</span> User <span>Login</span>
+          </h2>
+          
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- Email Field -->
+            <div class="mb-4 cif-input-group">
+              <label class="form-label" for="loginid">Login ID</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                placeholder="Enter Login ID/ Email" 
+                formControlName="email"
+                id="loginid"
+                autocomplete="email" />
+              @if (loginFormControl('email').invalid && loginFormControl('email').touched) {
+                <span class="text-danger">ID is required</span>
+              }
+            </div>
+
+            <!-- Password Field -->
+            <div class="mb-4 cif-input-group">
+              <label class="form-label" for="password">Password</label>
+              <div class="position-relative">
+                <input 
+                  [type]="showPassword() ? 'text' : 'password'" 
+                  class="form-control" 
+                  placeholder="Enter password" 
+                  formControlName="password" 
+                  id="password"
+                  autocomplete="current-password" />
+                <i 
+                  class="input-eye input-eye-slash position-absolute" 
+                  style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"
+                  (click)="togglePasswordVisibility()"
+                  [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"></i>
+              </div>
+              @if (loginFormControl('password').invalid && loginFormControl('password').touched) {
+                <span class="text-danger">Password is required</span>
+              }
+            </div>
+
+            <!-- Role Selection -->
+            <div class="mb-4 cif-input-group">
+              <label class="form-check-label" for="userRole">Choose Role</label>
+              <select 
+                class="form-select" 
+                formControlName="userRole"
+                id="userRole"
+                (change)="onRoleChange($event)">
+                <option value="">Select Role</option>
+                <option value="Student">Student</option>
+                <option value="Staff">Staff</option>
+              </select>
+              @if (loginFormControl('userRole').invalid && loginFormControl('userRole').touched) {
+                <span class="text-danger">Role is required</span>
+              }
+            </div>
+
+            <div class="row mt-3 mb-2">
+              <div class="col-sm-6">
+                <h5><span class="mt-4">* All Fields Required</span></h5>
+              </div>
+            </div>
+
+            <div class="mb-3 mt-2">
+              <button 
+                type="submit" 
+                class="btn btn-primary me-2 mb-2 mb-md-0"
+                [disabled]="loginForm.invalid || isLoading()">
+                {{ isLoading() ? 'Logging in...' : 'Login' }}
+              </button>
+            </div>
+
+            <!-- Navigation Links -->
+            <div class="d-flex justify-content-between">
+              <a routerLink="/Login" class="link-btn justify-content-start">User Login</a>
+              <a routerLink="/recoverAccount" class="link-btn justify-content-end" style="color: #ef7d00 !important;">
+                Recover Account
+              </a>
+            </div>
+            <div class="d-flex justify-content-center">
+              <a routerLink="/StaffLogins" class="link-btn" style="color: #ef7d00 !important;">
+                Staff Login
+              </a>
+            </div>
+          </form>
+
+          <!-- Register Link -->
+          <div class="mt-3 mb-4">
+            Don't have an account? 
+            <a class="reg-link" routerLink="/Register"><strong>Register</strong></a>
+          </div>
+          
+          <!-- Terms -->
+          <div class="mt-3 mb-4">
+            By logging in you agree with 
+            <a href="/CifTermsConditions">terms and conditions</a> and 
+            <a href="/CifTermsConditions">privacy policy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

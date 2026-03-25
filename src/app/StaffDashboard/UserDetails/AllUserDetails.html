@@ -1,6 +1,6 @@
 <app-StaffMenu-bar></app-StaffMenu-bar>
 
-<!-- Full Screen Loader -->
+
 @if (showLoader()) {
   <div class="fullscreen-loader">
     <div class="loader-spinner"></div>
@@ -15,10 +15,10 @@
         <div class="card-body">
           <hr />
 
-          <!-- Controls Row -->
+          
           <div class="row d-flex justify-content-center">
 
-            <!-- Export Button -->
+            
             <div class="col-sm-2">
               <div class="mb-3">
                 <button
@@ -31,7 +31,7 @@
               </div>
             </div>
 
-            <!-- Status Filter -->
+            
             <div class="col-sm-5">
               <select
                 [(ngModel)]="selectedStatus"
@@ -45,7 +45,7 @@
               </select>
             </div>
 
-            <!-- Search Box -->
+            
             <div class="col-sm-5 mb-4">
               <input
                 [(ngModel)]="searchQuery"
@@ -60,7 +60,7 @@
             <hr />
           </div>
 
-          <!-- Search Result Count -->
+          
           <div class="row m-4 p-2">
             @if (searchQuery) {
               <span class="fs-3 themeClr">
@@ -70,7 +70,7 @@
             }
           </div>
 
-          <!-- Record / Page Count -->
+          
           <div class="row">
             <div class="m-1">
               <span class="text-dark m-3 fs-5 p-2 fw-bolder" style="border: 1px solid #ef7d00;">
@@ -79,7 +79,7 @@
             </div>
           </div>
 
-          <!-- Data Table -->
+          
           @if (tmpsUserDetailsData().length > 0) {
             <div class="table-responsive mt-4 mb-4">
               <table id="BookingDetailsDataTable" #table>
@@ -130,10 +130,10 @@
                 </tbody>
               </table>
 
-              <!-- Pagination Bar -->
+              
               <div class="pagination-bar">
 
-                <!-- Items per page -->
+                
                 <div class="pagination-size">
                   <label class="pagination-size-label">Rows per page:</label>
                   <select
@@ -149,12 +149,12 @@
                   </select>
                 </div>
 
-                <!-- Record info -->
+                
                 <span class="pagination-info">
                   {{ getPageRangeLabel() }}
                 </span>
 
-                <!-- Prev / Next -->
+                
                 <div class="pagination-controls">
                   <button
                     class="btn btn-sm btn-outline-secondary pagination-btn"
@@ -200,7 +200,7 @@
   </div>
 }
 
-<!-- Result Upload Modal -->
+
 <ng-template #viewDescModal2 let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Result Upload Screen</h5>

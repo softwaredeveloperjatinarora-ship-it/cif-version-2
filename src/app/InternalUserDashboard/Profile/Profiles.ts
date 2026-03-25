@@ -25,9 +25,9 @@ import { StorageService } from '../../services/storage.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
-// ---------------------------------------------------------------------------
-// Interfaces
-// ---------------------------------------------------------------------------
+
+
+
 
 interface CookieAuthData {
   UserRole: string;

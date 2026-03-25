@@ -6,7 +6,7 @@ import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
-// Third Party
+
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as XLSX from 'xlsx';
@@ -107,29 +107,29 @@ export class StaffActionBookingsComponent implements OnInit {
     }
   }
 
-//   VerifyData(booking: any) {
-//     if (!this.fileStatus) return;
 
-//     const payload = {
-//       BookingId: booking.bookingId,
-//       UserEmailId, booking.userId,
-//       FileName: this.fileName,
-//       FileData: this.FileData,
-//       CreatedBy, this.user_Email,
-//       Remarks: booking.remarks || ''
-//     };
 
-//     this.cifService.UploadBookingResult(payload).subscribe({
-//       next: (res) => {
-//         if (res[0].msg === 'Success') {
-//           Swal.fire('Success', 'Result Uploaded', 'success').then(() => {
-//             this.modalService.dismissAll();
-//             this.loadInitialData();
-//           });
-//         }
-//       }
-//     });
-//   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

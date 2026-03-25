@@ -26,14 +26,14 @@ export class FeedbackDetailsComponent implements OnInit {
   private router = inject(Router);
   private cookieService = inject(CookieService);
 
-  // State Management using Signals
+  
   allFeedbackData = signal<any[]>([]);
   searchQuery = signal<string>('');
   currentPage = signal<number>(1);
   itemsPerPage = signal<number>(10);
   showLoader = signal<boolean>(true);
 
-  // Computed: Automatically filters data when searchQuery or allFeedbackData changes
+  
   filteredData = computed(() => {
     const query = this.searchQuery().toLowerCase();
     const data = this.allFeedbackData();
@@ -44,7 +44,7 @@ export class FeedbackDetailsComponent implements OnInit {
     );
   });
 
-  // Computed: Slices the filtered data for the current page
+  
   paginatedData = computed(() => {
     const start = (this.currentPage() - 1) * this.itemsPerPage();
     const end = start + this.itemsPerPage();
@@ -95,7 +95,7 @@ export class FeedbackDetailsComponent implements OnInit {
     });
   }
 
-  // Pagination Controls
+  
   changePage(delta: number) {
     const next = this.currentPage() + delta;
     if (next >= 1 && next <= this.totalPages()) {
@@ -104,7 +104,7 @@ export class FeedbackDetailsComponent implements OnInit {
   }
 
   onPageSizeChange() {
-    this.currentPage.set(1); // Reset to first page when page size changes
+    this.currentPage.set(1); 
   }
 
   exportToExcel(): void {

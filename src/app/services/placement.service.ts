@@ -5,9 +5,9 @@ import { StorageService } from './storage.service';
 
 const AUTH_API = 'https://projectsapi.lpu.in/';
 
-// const httpOptions = {
-//   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-// };
+
+
+
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +21,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Placement/Get',
      {headers}
@@ -35,7 +35,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GetPlanningSession',
      {headers}
@@ -48,7 +48,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Placement/GetAuthenticationBatchYear?type='+type,
      {headers}
@@ -61,7 +61,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Placement/GetCompanyBatchWise?batchYear='+batchYear,
      {headers}
@@ -76,7 +76,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Planning/GetQueryType',
      {headers}
@@ -90,7 +90,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Placement/GetCompanyAuthenticationBatchWise?batchYear='+batchYear+'&type='+type,
      {headers}
@@ -103,7 +103,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Placement/GetStreamByBatchYear?batchYear='+batchYear + '&companyId='+companyId,
      {headers}
@@ -116,7 +116,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Placement/GetStreamByAuthBatchYear?batchYear='+batchYear + '&companyId='+companyId+'&type='+type,
      {headers}
@@ -129,7 +129,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Placement/GetSoftSkillPlacementDrive?batchYear='+batchYear + '&companyId='+companyId + '&stream='+stream,
      {headers}
@@ -142,7 +142,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Placement/GetAuthSoftSkillPlacementDrive?batchYear='+batchYear + '&companyId='+companyId + '&stream='+stream+'&type='+type,
      {headers}
@@ -156,7 +156,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Placement/GetRoundData',
      {headers}
@@ -170,7 +170,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Placement/GetPlacementStudentsDriveAttendanceDetails?driveId='+driveId+'&roundId='+roundId,
      {headers}
@@ -183,7 +183,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/Placement/GetMouDashboardData?sessionId='+sessionId,
      {headers}
@@ -197,7 +197,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/Placement/AddPlacementSoftSkillData',dataSoft,
      {headers}
@@ -211,7 +211,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/Planning/RunQuery',dataSoft,
      {headers}
@@ -224,7 +224,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/Planning/RunLinkedQuery',dataSoft,
      {headers}
@@ -239,7 +239,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/Placement/UpdatePlacementDataForFinalSubmit',dataSoft,
      {headers}
@@ -252,7 +252,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/Placement/GetPlacementSoftSkillRequestDetailShow',dataSoft,
      {headers}
@@ -267,7 +267,7 @@ export class PlacementService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.post(
       AUTH_API + 'api/Planning/AddFeedbackForm',dataSoft,
      {headers}

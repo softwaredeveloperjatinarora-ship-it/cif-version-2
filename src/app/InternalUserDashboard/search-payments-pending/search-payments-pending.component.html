@@ -1,6 +1,6 @@
 <app-cif-menu-bar></app-cif-menu-bar>
 
-<!-- ── Loading overlay ──────────────────────────────────────────────────────── -->
+
 @if (loadingIndicator) {
   <div class="fullscreen-loader">
     <div class="custom-spinner-overlay">
@@ -13,9 +13,7 @@
 
 <div class="container-fluid">
 
-  <!-- ══════════════════════════════════════════════════════════
-       DATA VIEW — shown when records exist
-  ═══════════════════════════════════════════════════════════ -->
+  
   @if (BookingStatusData.length > 0) {
     <div class="row">
       <div class="col-12 bottom-space">
@@ -30,7 +28,7 @@
             </div>
             <hr class="border-1 border-dark opacity-100" />
 
-            <!-- Controls: Export | Title | Search -->
+            
             <div class="row d-flex justify-content-center align-items-center mb-4">
               <div class="col-4 mb-2 mb-md-0 text-end">
                 <button (click)="exportToExcel()"
@@ -44,10 +42,7 @@
               </div>
               <div class="col-4">
                 <div class="col-4">
-                  <!--
-                    ✅ [(ngModel)] valid — FormsModule is in imports[].
-                       Plain string property; no reactive form needed here.
-                  -->
+                  
                   <input [(ngModel)]="searchQuery"
                          (keyup)="search()"
                          type="text"
@@ -60,7 +55,7 @@
 
             <hr />
 
-            <!-- ── Data table ────────────────────────────────────────── -->
+            
             @if (tmpsBookingStatusData.length > 0) {
               <div class="table-responsive">
                 <table class="table table-hover table-bordered" id="bookingDataTable">
@@ -76,10 +71,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <!--
-                      ✅ @for replaces *ngFor — track by bookingId (stable unique key).
-                         No ng-container wrapper needed.
-                    -->
+                    
                     @for (payment of getCurrentPageData(); track payment.bookingId) {
                       <tr>
                         <td class="d-none d-md-table-cell">{{ payment.bookingId }}</td>
@@ -89,10 +81,7 @@
                         </td>
                         <td class="d-none d-lg-table-cell">{{ payment.requestDate }}</td>
 
-                        <!--
-                          ✅ [ngSwitch] / *ngSwitchCase replaced with @if / @else if / @else.
-                             ngSwitch is deprecated in Angular 20 new control flow.
-                        -->
+                        
                         <td>
                           @if (payment.paymentStatus === 'success') {
                             <div class="status-badge success">
@@ -119,11 +108,9 @@
                           }
                         </td>
 
-                        <!-- Upload Receipt -->
+                        
                         <td>
-                          <!--
-                            ✅ *ngIf / ng-template #uploadBtn replaced with @if / @else
-                          -->
+                          
                           @if (hasProofUploaded(payment.bookingId)) {
                             <span class="badge bg-success">
                               <i class="feather icon-check-circle me-1"></i> Uploaded
@@ -140,7 +127,7 @@
                           }
                         </td>
 
-                        <!-- Print -->
+                        
                         <td>
                           <button class="btn btn-outline-dark btn-sm"
                                   (click)="paymentReceiptScreen(payment)">
@@ -153,12 +140,12 @@
                 </table>
               </div>
 
-              <!-- ── Pagination ─────────────────────────────────────── -->
+              
               <div class="pagination-wrapper mt-4">
                 <nav aria-label="Page navigation">
                   <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
 
-                    <!-- Items per page selector -->
+                    
                     <div class="page-size-selector">
                       <label for="pageSize" class="form-label mb-0 me-2">Items per Page:</label>
                       <select id="pageSize"
@@ -176,7 +163,7 @@
                       </span>
                     </div>
 
-                    <!-- Page navigation -->
+                    
                     <ul class="pagination mb-0">
                       <li class="page-item" [class.disabled]="currentPage === 1">
                         <a class="page-link"
@@ -205,7 +192,7 @@
               </div>
 
             } @else {
-              <!-- No results after search -->
+              
               <div class="text-center py-5">
                 <p class="fs-2 text-center">Try Search With Different Text.</p>
               </div>
@@ -217,7 +204,7 @@
     </div>
 
   } @else {
-    <!-- ── No data at all ──────────────────────────────────────────────── -->
+    
     <div class="card card-warning text-center p-2 mb-4">
       <hr />
       <div class="row mb-4">
@@ -230,12 +217,10 @@
     </div>
   }
 
-</div><!-- /.container-fluid -->
+</div>
 
 
-<!-- ══════════════════════════════════════════════════════════════════════════
-     MODAL: Payment Receipt (Print View)
-═══════════════════════════════════════════════════════════════════════════ -->
+
 <ng-template #viewDescModal2 let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Payment Receipt</h5>
@@ -285,7 +270,7 @@
         </div>
         <hr style="border: 2px solid black;" />
 
-        <!-- Payment Status -->
+        
         <div class="row mb-2">
           <div class="col-6 fw-bold">Payment Status:</div>
           <div class="col-6">
@@ -309,9 +294,7 @@
 </ng-template>
 
 
-<!-- ══════════════════════════════════════════════════════════════════════════
-     MODAL: Payment Screen (Confirm & Pay)
-═══════════════════════════════════════════════════════════════════════════ -->
+
 <ng-template #viewDescModal5 let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Payment Screen</h5>
@@ -353,9 +336,7 @@
 </ng-template>
 
 
-<!-- ══════════════════════════════════════════════════════════════════════════
-     MODAL: Payment Receipt Upload
-═══════════════════════════════════════════════════════════════════════════ -->
+
 <ng-template #PaymentReceiptUploadModal let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Payment Receipt Upload</h5>
@@ -368,13 +349,13 @@
         <form id="paymentReceiptForm">
           <div class="row">
 
-            <!-- Booking ID -->
+            
             <div class="col-12 col-md-6 mb-3">
               <label class="form-label fw-bold">Booking ID</label>
               <div class="form-control-plaintext">{{ BookingCase?.bookingId }}</div>
             </div>
 
-            <!-- Payment Amount -->
+            
             <div class="col-12 col-md-6 mb-3">
               <label class="form-label fw-bold">Payment Amount</label>
               <div class="form-control-plaintext">
@@ -382,7 +363,7 @@
               </div>
             </div>
 
-            <!-- File Upload -->
+            
             <div class="col-12 col-md-6 mb-3">
               <label for="paymentReceiptFile" class="form-label fw-bold">
                 Payment Receipt File
@@ -396,15 +377,12 @@
               <div class="form-text">Maximum file size: 1MB</div>
             </div>
 
-            <!-- Remarks -->
+            
             <div class="col-12 col-md-6 mb-3">
               <label for="receiptRemarks" class="form-label fw-bold">
                 Comments/Remarks
               </label>
-              <!--
-                ✅ [(ngModel)] valid — FormsModule is in imports[].
-                   name attribute required when using ngModel inside a <form>.
-              -->
+              
               <input class="form-control"
                      type="text"
                      id="receiptRemarks"
@@ -414,7 +392,7 @@
             </div>
           </div>
 
-          <!-- Submit -->
+          
           <div class="row mt-3">
             <div class="col-12 text-center">
               <button type="submit"

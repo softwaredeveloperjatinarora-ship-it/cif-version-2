@@ -1,10 +1,5 @@
 <app-cif-menu-bar></app-cif-menu-bar>
-
-<!-- ── Loading overlay ──────────────────────────────────────────────────────── -->
-<!--
-  ✅ @if replaces *ngIf — Angular 20 control flow.
-     Inner duplicate *ngIf="loadingIndicator" on custom-spinner-overlay removed.
--->
+ 
 @if (loadingIndicator) {
   <div class="fullscreen-loader">
     <div class="custom-spinner-overlay">
@@ -17,16 +12,14 @@
 
 <div class="container-fluid BottomSpace">
 
-  <!-- ══════════════════════════════════════════════════════════
-       DATA VIEW — shown when booking records exist
-  ═══════════════════════════════════════════════════════════ -->
+ 
   @if (BookingStatusData.length > 0) {
     <div class="row">
       <div class="col-12 stretch-card">
         <div class="card-body">
           <hr />
 
-          <!-- Controls: Export | Title | Search -->
+  
           <div class="row mt-2 d-flex justify-content-center">
             <div class="col-sm-2 text-start">
               <div class="mb-3">
@@ -43,9 +36,7 @@
               </div>
             </div>
             <div class="col-sm-3 text-start">
-              <!--
-                ✅ [(ngModel)] valid — FormsModule is in imports[].
-              -->
+              
               <input [(ngModel)]="searchQuery"
                      (keyup)="search()"
                      id="search"
@@ -57,7 +48,7 @@
             </div>
           </div>
 
-          <!-- Marquee notice -->
+          
           <marquee class="fs-2"
                    onmouseover="this.stop();"
                    onmouseout="this.start();"
@@ -67,7 +58,7 @@
           </marquee>
           <hr />
 
-          <!-- ── Data table ──────────────────────────────────────────── -->
+          
           @if (tmpsBookingStatusData.length > 0) {
             <div class="table-responsive mt-4 mb-4">
               <table id="BookinglDataTable" #table>
@@ -82,10 +73,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <!--
-                    ✅ @for replaces *ngFor on <ng-container>.
-                       track by bookingId — stable unique key.
-                  -->
+               
                   @for (row of getCurrentPageData(); track row.bookingId) {
                     <tr>
                       <td class="fw-bold d-none d-sm-table-cell">{{ row.bookingId }}</td>
@@ -96,10 +84,7 @@
                         {{ row.bookingRequestDate | date:'dd/MM/yyyy' }}
                       </td>
 
-                      <!--
-                        ✅ *ngIf / ng-template #NoResult replaced with @if / @else.
-                           Condition preserved exactly: resultFile != null → completed.
-                      -->
+                     
                       <td class="fw-bold">
                         @if (row.resultFile != null) {
                           <span class="text-success">Test Completed<br /></span>
@@ -116,7 +101,7 @@
                 </tbody>
               </table>
 
-              <!-- Pagination -->
+              
               <div class="pagination">
                 <a href="javascript:void(0)"
                    (click)="prevPage()"
@@ -133,7 +118,7 @@
             </div>
 
           } @else {
-            <!-- No search results -->
+            
             <p class="fs-2 text-danger text-center">Try Search With Different Text.</p>
           }
 
@@ -142,7 +127,7 @@
     </div>
 
   } @else {
-    <!-- ── No bookings at all ───────────────────────────────────────────── -->
+    
     <div class="card card-warning text-center p-2 mb-4">
       <hr />
       <div class="row mb-4">
@@ -155,14 +140,7 @@
     </div>
   }
 
-</div><!-- /.container-fluid -->
-
-
-<!-- ══════════════════════════════════════════════════════════════════════════
-     MODAL: Get Result Screen
-     Note: ResultData is fetched inside openPaymentModal() before this opens,
-           so ResultData is guaranteed to be populated when the modal renders.
-═══════════════════════════════════════════════════════════════════════════ -->
+</div> 
 <ng-template #viewDescModal2 let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Get Result Screen</h5>
@@ -190,9 +168,7 @@
                     <td class="fs-5 p-4" style="width:20%">{{ BookingCase?.bookingId }}</td>
                     <td class="fs-5 p-4" style="width:20%">{{ BookingCase?.instrumentName }}</td>
                     <td class="fs-5">
-                      <!--
-                        ✅ this.ResultData → ResultData (no 'this' in templates)
-                      -->
+                      
                       <button type="button" class="btn btn-dark me-2"
                               (click)="ExcelSheetDownload(ResultData)">
                         Download Sheet

@@ -41,18 +41,26 @@ export const routes: Routes = [
     path: 'NewBookings',
     loadComponent: () => import('./InternalUserDashboard/CIF-NewBookings/NewBookings.component').then(m => m.NewBookingsComponent)
   },
+
+
+
+
+
+  {
+    path: 'recoverAccount',
+    loadComponent: () => import('./cif_webPortal/RecoverAccount/RecoverAccount').then(m => m.RecoverAccountComponent)
+  },
   {
     path: 'Register',
     loadComponent: () => import('./cif_webPortal/RegisterPage/CifRegisterPage.component').then(m => m.CifRegisterPageComponent)
   },
   {
-    path: 'Login',
-    loadComponent: () => import('./cif_webPortal/LoginPage/CifLoginPage.component').then(m => m.CifLoginPageComponent)
+    path: 'LpuLogin',
+    loadComponent: () => import('./cif_webPortal/CifLoginPage/LoginPage').then(m => m.LoginPageComponent)
   },
   {
-    path: 'ourInstruments/:Name/:id/:categoryId',
-    loadComponent: () =>
-      import('./cif_webPortal/CifInstruments/CifInstruments.component').then((m) => m.CifInstrumentsComponent),
+    path: 'Login',
+    loadComponent: () => import('./cif_webPortal/LoginPage/CifLoginPage.component').then(m => m.CifLoginPageComponent)
   },
   {
     path: 'ourInstruments/:Name/:id/:categoryId',

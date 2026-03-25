@@ -72,11 +72,11 @@ div.apexcharts-canvas {
   }
 
   .apexcharts-yaxistooltip-left:before {
-    /*rtl:ignore*/
+    
     border-left-color: $dropdown-border-color;
   }
   .apexcharts-yaxistooltip-left:after {
-    /*rtl:ignore*/
+    
     border-left-color: rgba($dropdown-bg, .8);
   }
 

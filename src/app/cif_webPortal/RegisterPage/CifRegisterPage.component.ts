@@ -28,7 +28,7 @@ import { LoginSessionService } from '../../services/login-session.service';
 import { CookieService } from 'ngx-cookie-service';
 import { NgbCarousel } from "@ng-bootstrap/ng-bootstrap";
 
-// ─── Password-match cross-field validator ─────────────────────────────────────
+
 const passwordMatchValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
   const pw  = group.get('Password')?.value;
   const cpw = group.get('ConfirmPassword')?.value;
@@ -36,7 +36,7 @@ const passwordMatchValidator: ValidatorFn = (group: AbstractControl): Validation
     group.get('ConfirmPassword')?.setErrors({ mismatch: true });
     return { mismatch: true };
   }
-  // clear mismatch error if they now match (but keep other errors)
+
   const cpwCtrl = group.get('ConfirmPassword');
   if (cpwCtrl?.hasError('mismatch')) {
     const { mismatch, ...rest } = cpwCtrl.errors ?? {};
@@ -60,29 +60,29 @@ const passwordMatchValidator: ValidatorFn = (group: AbstractControl): Validation
 })
 export class CifRegisterPageComponent implements OnInit {
 
-  // ── DI via inject() ──────────────────────────────────────────────────────────
+
   private readonly cifWebService = inject(LpuCIFWebService);
   private readonly fb            = inject(FormBuilder);
   private readonly router        = inject(Router);
 
-  // ── Signals ──────────────────────────────────────────────────────────────────
+
   readonly loadingIndicator  = signal(false);
   readonly isLoading         = signal(true);
 
-  // ── Plain state ───────────────────────────────────────────────────────────────
+
   isForm1Submitted    = false;
   serverConnectionError = false;
 
-  // ── Instruments / events ─────────────────────────────────────────────────────
+
   instrumentsData:     any[] = [];
   tmpsInstrumentsData: any[] = [];
   loadingStates:       boolean[] = [];
   chunkedEvents:       any[][] = [];
 
-  // ── ViewChild ─────────────────────────────────────────────────────────────────
+
   @ViewChild('facilitiesSection') facilitiesSection!: ElementRef;
 
-  // ── Reactive form (inline initialisation — no LoadForm() needed) ──────────────
+
   readonly cifUserForm = this.fb.group(
     {
       EmailId:         ['', [Validators.required, Validators.email, Validators.maxLength(150)]],
@@ -101,16 +101,16 @@ export class CifRegisterPageComponent implements OnInit {
     { validators: passwordMatchValidator }
   );
 
-  // ── Shorthand getter for template validation (identical API to Angular 14) ────
+
   get form1() { return this.cifUserForm.controls; }
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────────
+
   ngOnInit(): void {
     this.getAllInstruments();
     this.chunkedEvents = this.chunkArray(this.events, 3);
   }
 
-  // ── Form actions ──────────────────────────────────────────────────────────────
+
   OnReset(): void {
     this.cifUserForm.reset({
       EmailId: '', CandidateName: '', Supervisorname: '',
@@ -178,7 +178,7 @@ export class CifRegisterPageComponent implements OnInit {
     });
   }
 
-  // ── Navigation helpers ────────────────────────────────────────────────────────
+
   gotoFacilities(): void {
     this.facilitiesSection?.nativeElement.scrollIntoView({ behavior: 'smooth' });
   }
@@ -191,14 +191,14 @@ export class CifRegisterPageComponent implements OnInit {
 
   gotoHome(): void { this.router.navigateByUrl('Home'); }
 
-  // ── Image callbacks ───────────────────────────────────────────────────────────
+
   onImageLoad(index: number): void  { this.loadingStates[index] = false; }
   onImageError(event: Event, index: number): void {
     (event.target as HTMLImageElement).src = '/image.jpg';
     this.loadingStates[index] = false;
   }
 
-  // ── Sample instructions modal ─────────────────────────────────────────────────
+
   openSampleInstructions(): void {
     swal.fire({
       title: 'Send Samples at Following Address:',
@@ -215,7 +215,7 @@ export class CifRegisterPageComponent implements OnInit {
     });
   }
 
-  // ── Instruments ───────────────────────────────────────────────────────────────
+
   getAllInstruments(): void {
     this.loadingIndicator.set(true);
     const startTime = Date.now();
@@ -242,13 +242,13 @@ export class CifRegisterPageComponent implements OnInit {
     });
   }
 
-  // ── Event carousel helpers ────────────────────────────────────────────────────
+
   chunkArray<T>(arr: T[], size: number): T[][] {
     return arr.reduce<T[][]>((acc, _, i) =>
       i % size ? acc : [...acc, arr.slice(i, i + size)], []);
   }
 
-  // ── Static data ───────────────────────────────────────────────────────────────
+
   readonly events = [
     { img: 'https://www.lpu.in/lpu-assets/images/cif/summer-training-programme-2025.webp', title: 'ANRF Sponsored Summer Training Programme', date: '(2 June - 11 July 2025)' },
     { img: 'https://www.lpu.in/lpu-assets/images/cif/event-10.jpg', title: 'Discovering the Crystalline and Nano world using X-ray Diffraction and Particle Size and Zeta Potential Analyzer: A National Workshop', date: '(24 – 26 April 2025)' },

@@ -16,13 +16,13 @@ import Swal from 'sweetalert2';
 })
 export class StaffMenuComponent implements OnInit {
 
-  // ── DI via inject() ───────────────────────────────────────────────────────
+
   private readonly router        = inject(Router);
   private readonly cookieService = inject(CookieService);
   private readonly AuthSession   = inject(LoginSessionService);
   private readonly platformId    = inject(PLATFORM_ID);
 
-  // ── State ─────────────────────────────────────────────────────────────────
+
   UserSessionData:  any;
   UserRole:         any;
   user_Email:       any;
@@ -33,7 +33,7 @@ export class StaffMenuComponent implements OnInit {
   isNavbarCollapsed = true;
   loadingIndicator  = false;
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
+
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) { return; }
 
@@ -82,7 +82,7 @@ export class StaffMenuComponent implements OnInit {
     }
   }
 
-  // ── Sample address dialog ─────────────────────────────────────────────────
+
   openSampleInstructions(): void {
     Swal.fire({
       title: 'Send Samples at the following Address:',
@@ -102,7 +102,7 @@ export class StaffMenuComponent implements OnInit {
     });
   }
 
-  // ── Logout ────────────────────────────────────────────────────────────────
+
   LogoutUser(): void {
     this.loadingIndicator = true;
     this.cookieService.delete('StaffUserAuthData');

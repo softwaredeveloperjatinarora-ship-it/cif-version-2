@@ -72,7 +72,7 @@ const ALLOWED_EMPLOYEE_IDS = new Set([
 })
 export class StaffUserLoginComponent implements OnInit {
 
-  // ── DI via inject() ───────────────────────────────────────────────────────
+
   private readonly fb                  = inject(FormBuilder);
   private readonly authService         = inject(AuthService);
   private readonly storageService      = inject(StorageService);
@@ -82,18 +82,18 @@ export class StaffUserLoginComponent implements OnInit {
   private readonly cookieService       = inject(CookieService);
   private readonly mouDocumentsService = inject(MouDocumentsService);
 
-  // ── Template refs ─────────────────────────────────────────────────────────
+
   @ViewChild('facilitiesSection') facilitiesSection!: ElementRef;
 
-  // ── Signals (state) ───────────────────────────────────────────────────────
+
   readonly submitted    = signal(false);
   readonly showPassword = signal(false);
   readonly errMessage   = signal('');
 
-  // ── Reactive Form ─────────────────────────────────────────────────────────
+
   formdata!: FormGroup;
 
-  // ── Private state (not needed in template) ────────────────────────────────
+
   private secretKey    = '';
   private employeeCode = '';
   private emailId      = '';
@@ -104,13 +104,13 @@ export class StaffUserLoginComponent implements OnInit {
   private departmentName = '';
   private userRole       = 'Admin-User';
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
+
   ngOnInit(): void {
     this.authSession.clearSession();
     this.buildForm();
   }
 
-  // ── Form Helpers ──────────────────────────────────────────────────────────
+
   private buildForm(): void {
     this.formdata = this.fb.group({
       Email:    ['', [Validators.required, Validators.minLength(5)]],
@@ -128,7 +128,7 @@ export class StaffUserLoginComponent implements OnInit {
     return this.formdata.get('password');
   }
 
-  // ── UI Actions ────────────────────────────────────────────────────────────
+
   togglePasswordVisibility(): void {
     this.showPassword.update(v => !v);
   }
@@ -137,7 +137,7 @@ export class StaffUserLoginComponent implements OnInit {
     this.facilitiesSection?.nativeElement.scrollIntoView({ behavior: 'smooth' });
   }
 
-  // ── Submit ────────────────────────────────────────────────────────────────
+
   onSubmit(): void {
     this.submitted.set(true);
     if (this.formdata.invalid) return;
@@ -145,14 +145,14 @@ export class StaffUserLoginComponent implements OnInit {
     const { Email, password } = this.formdata.value;
     this.secretKey = password ?? '';
 
-    // Encode credentials before passing to token service
+
     const encodedEmail    = btoa(Email    ?? '');
     const encodedPassword = btoa(password ?? '');
 
     this.getToken(encodedEmail, encodedPassword);
   }
 
-  // ── Auth Flow ─────────────────────────────────────────────────────────────
+
   private getToken(encodedEmail: string, encodedPassword: string): void {
     this.authService
       .loginInternalUser(atob(encodedEmail), atob(encodedPassword))
@@ -175,7 +175,7 @@ export class StaffUserLoginComponent implements OnInit {
 
         const emp: EmployeeRecord = response.item1[0];
 
-        // Store employee data locally
+
         this.candidateName  = emp.employeeName;
         this.employeeCode   = emp.employeeCode;
         this.department     = emp.department;
@@ -234,7 +234,7 @@ export class StaffUserLoginComponent implements OnInit {
     this.router.navigate(['/StaffActionBookings']);
   }
 
-  // ── Error Handling ────────────────────────────────────────────────────────
+
   private handleLoginFailure(error: unknown): void {
     console.error('Login failure:', error);
     this.cookieService.delete('StaffUserAuthData');
@@ -248,7 +248,7 @@ export class StaffUserLoginComponent implements OnInit {
     });
   }
 
-  // ── Store Internal User (called separately if needed) ─────────────────────
+
   storeInternalUserInDatabase(): void {
     const formData = new FormData();
     formData.append('UserEmail',      this.emailId);

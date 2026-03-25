@@ -19,7 +19,7 @@ export class StudentGrievanceServicesService {
     let headers = new HttpHeaders()
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/StudentGrievance/Get',
      {headers}

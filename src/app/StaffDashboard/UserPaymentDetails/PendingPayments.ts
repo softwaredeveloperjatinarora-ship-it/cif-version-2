@@ -40,9 +40,6 @@ import { LoginSessionService } from '../../services/login-session.service';
 })
 export class StaffPendingPaymentsComponent implements OnInit {
 
-  // ─── Injected Services ──────────────────────────────────────────────────────
-  // DestroyRef captured at field level (injection context) so it can be passed
-  // into takeUntilDestroyed() inside regular methods.
   private readonly destroyRef    = inject(DestroyRef);
   private readonly cifWebService = inject(LpuCIFWebService);
   private readonly authSession   = inject(LoginSessionService);
@@ -50,23 +47,17 @@ export class StaffPendingPaymentsComponent implements OnInit {
   private readonly cookieService = inject(CookieService);
   private readonly fb            = inject(FormBuilder);
 
-  // ─── View References ─────────────────────────────────────────────────────────
   @ViewChild('table')              tableRef!: ElementRef;
   @ViewChild('viewDescModal2')     viewDescModal2!: TemplateRef<unknown>;
   @ViewChild('PendingPaymentModal') PendingPaymentModal!: TemplateRef<unknown>;
 
-  // ─── Signals ──────────────────────────────────────────────────────────────────
   readonly loadingIndicator    = signal<boolean>(false);
-  /** Master list — never mutated after load */
   readonly AllPaymentData      = signal<any[]>([]);
-  /** Filtered / searched working list */
   readonly tmpsAllPaymentData  = signal<any[]>([]);
   readonly currentPage         = signal<number>(1);
-  /** 0 = "All" */
   readonly itemsPerPage        = signal<number>(10);
   readonly selectedStatus      = signal<string>('');
 
-  // ─── Computed ────────────────────────────────────────────────────────────────
   readonly totalPages = computed(() => {
     const size = this.itemsPerPage();
     if (size === 0) return 1;
@@ -80,13 +71,11 @@ export class StaffPendingPaymentsComponent implements OnInit {
     return this.tmpsAllPaymentData().slice(start, start + size);
   });
 
-  // ─── Non-reactive State ───────────────────────────────────────────────────────
   private originalData: any[] = [];
 
   UserRole   = '';
   user_Email = '';
 
-  // Receipt / modal state
   PaymentReceipt: any;
   BookingCase:    any;
 
@@ -95,16 +84,13 @@ export class StaffPendingPaymentsComponent implements OnInit {
   CurrentcandidateName: any;
   CurrentrequestDate:   any;
 
-  // Search
   searchQuery = '';
 
-  // ─── Reactive Form ────────────────────────────────────────────────────────────
   readonly paymentForm = this.fb.group({
     amount:  [null as number | null, [Validators.required, Validators.min(0)]],
     remarks: ['',                     Validators.required],
   });
 
-  // ─── Lifecycle ────────────────────────────────────────────────────────────────
   ngOnInit(): void {
     const raw = this.cookieService.get('StaffUserAuthData');
     if (raw) {
@@ -115,7 +101,6 @@ export class StaffPendingPaymentsComponent implements OnInit {
     this.loadPaymentDetails();
   }
 
-  // ─── Data Loading ─────────────────────────────────────────────────────────────
   loadPaymentDetails(): void {
     this.loadingIndicator.set(true);
     const startTime = Date.now();
@@ -147,12 +132,10 @@ export class StaffPendingPaymentsComponent implements OnInit {
       });
   }
 
-  // ─── Search ───────────────────────────────────────────────────────────────────
   search(): void {
     this.applyFilters();
   }
 
-  // ─── Status Filter ────────────────────────────────────────────────────────────
   onStatusChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
     this.selectedStatus.set(value);
@@ -165,14 +148,12 @@ export class StaffPendingPaymentsComponent implements OnInit {
 
     let result = [...this.originalData];
 
-    // Status filter
     if (status === 'null') {
       result = result.filter(item => item.paymentStatus == null || item.paymentStatus === 'null');
     } else if (status !== '') {
       result = result.filter(item => item.paymentStatus === status);
     }
 
-    // Search filter
     if (query) {
       result = result.filter(item =>
         Object.values(item).some(val =>
@@ -185,7 +166,6 @@ export class StaffPendingPaymentsComponent implements OnInit {
     this.currentPage.set(1);
   }
 
-  // ─── Pagination ───────────────────────────────────────────────────────────────
   getTotalRecords(): number { return this.tmpsAllPaymentData().length; }
   getTotalPages():   number { return this.totalPages(); }
 
@@ -219,7 +199,6 @@ export class StaffPendingPaymentsComponent implements OnInit {
     return `${start} – ${end} of ${total}`;
   }
 
-  // ─── Export ───────────────────────────────────────────────────────────────────
   exportToExcel(): void {
     const paymentLabel = (status: string | null): string => {
       if (status === 'success') return 'Success';
@@ -257,7 +236,6 @@ export class StaffPendingPaymentsComponent implements OnInit {
     link.remove();
   }
 
-  // ─── Modals ───────────────────────────────────────────────────────────────────
   paymentReceiptScreen(data: any): void {
     this.PaymentReceipt = data;
     this.modalService.open(this.viewDescModal2, { size: 'lg' }).result.catch(() => {});
@@ -276,11 +254,9 @@ export class StaffPendingPaymentsComponent implements OnInit {
     this.modalService.open(this.PendingPaymentModal, { size: 'lg' }).result.catch(() => {});
   }
 
-  // ─── Form Submit ──────────────────────────────────────────────────────────────
   onUpdatePayment(): void {
     if (this.paymentForm.valid) {
       const paymentDetails = this.paymentForm.value;
-      // TODO: call API with paymentDetails
       console.log('Payment details to update:', paymentDetails);
     }
   }
@@ -293,7 +269,6 @@ export class StaffPendingPaymentsComponent implements OnInit {
     });
   }
 
-  // ─── Print Receipt ────────────────────────────────────────────────────────────
   printReceipt(): void {
     const modalContent = document.getElementById('ReceiptData');
     if (!modalContent) { console.error('Modal content not found'); return; }

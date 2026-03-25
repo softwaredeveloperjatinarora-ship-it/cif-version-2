@@ -20,7 +20,7 @@ import { StorageService } from '../../services/storage.service';
 import { AuthService } from '../../services/auth.service';
 
 
-// ── Module-level constant (unchanged from original) ───────────────────────────
+
 const FILE_SIZE_LIMIT = 5_148_576; // 5 MB
 
 @Component({
@@ -39,13 +39,13 @@ const FILE_SIZE_LIMIT = 5_148_576; // 5 MB
 })
 export class FailedPaymentsComponent implements OnInit {
 
-  // ── ViewChildren ──────────────────────────────────────────────────────────
+
   @ViewChild('viewDescModal2')           viewDescModal2!:           TemplateRef<any>;
   @ViewChild('viewDescModal5')           viewDescModal5!:           TemplateRef<any>;
   @ViewChild('PaymentReceiptUploadModal') PaymentReceiptUploadModal!: TemplateRef<any>;
   @ViewChild('table') table!: ElementRef;
 
-  // ── DI via inject() ───────────────────────────────────────────────────────
+
   private readonly CIFwebService  = inject(LpuCIFWebService);
   private readonly modalService   = inject(NgbModal);
   private readonly AuthSession    = inject(LoginSessionService);
@@ -54,10 +54,10 @@ export class FailedPaymentsComponent implements OnInit {
   private readonly formBuilder    = inject(FormBuilder);
   private readonly cdr            = inject(ChangeDetectorRef);
   private readonly destroyRef     = inject(DestroyRef);
-  // ✅ SSR guard — prevents JSON.parse('') crash on server side
+
   private readonly platformId     = inject(PLATFORM_ID);
 
-  // ── Table / pagination ────────────────────────────────────────────────────
+
   BookingStatusData:     any[] = [];
   tmpsBookingStatusData: any[] = [];
   headHtmlData:          any[] = [];
@@ -72,7 +72,7 @@ export class FailedPaymentsComponent implements OnInit {
   itemsPerPage         = 5;
   itemsPerPageOptions: number[] = [5, 10, 15, 20, 25];
 
-  // ── Session / user ────────────────────────────────────────────────────────
+
   UserRole:       any;
   UserId:         any;
   user_Email:     any;
@@ -83,7 +83,7 @@ export class FailedPaymentsComponent implements OnInit {
   departmentName  = '';
   candidateName   = '';
 
-  // ── UI state ──────────────────────────────────────────────────────────────
+
   loadingIndicator = false;    // ✅ typed boolean — prevents NG0100
   serverUrl        = 'https://files.lpu.in/umsweb/CIFDocuments/';
   ServerUrl:       any;
@@ -95,12 +95,12 @@ export class FailedPaymentsComponent implements OnInit {
   uploadEnabled!:  boolean;
   Remarks:         any;
 
-  // ── Modal / booking data ──────────────────────────────────────────────────
+
   BookingCase:    any;
   PaymentReceipt: any;
   paymentData:    any;
 
-  // ── Route params ──────────────────────────────────────────────────────────
+
   id:            any;
   status:        any;
   type:          any;
@@ -109,12 +109,12 @@ export class FailedPaymentsComponent implements OnInit {
   course:        any;
   keyNote:       any;
 
-  // ── Payment proof status ──────────────────────────────────────────────────
+
   paymentProofStatus: {
     [bookingId: string]: { hasProof: boolean; proofFile?: string; isApproved?: string }
   } = {};
 
-  // ── File upload ───────────────────────────────────────────────────────────
+
   ReceiptRemarks   = '';
   FileDataX:       string | null = null;
   fileDataX:       any;
@@ -124,9 +124,9 @@ export class FailedPaymentsComponent implements OnInit {
   validationForm1!: FormGroup;
   isForm1Submitted = false;
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
+
   ngOnInit(): void {
-    // ✅ SSR guard — all browser/cookie logic skipped during server-side render
+
     if (!isPlatformBrowser(this.platformId)) { return; }
 
     const raw = this.cookieService.get('InternalUserAuthData');
@@ -155,21 +155,21 @@ export class FailedPaymentsComponent implements OnInit {
 
     this.ServerUrl = 'https://files.lpu.in/umsweb/CIFDocuments/';
 
-    // ✅ Build ResponseUrl using same logic as original
+
     const baseUrl = `${window.location.origin}${
       window.location.pathname.split('/').slice(0, -1).join('/')}`;
     this.ResponseUrl = `${baseUrl}/FailedPayments`;
 
-    // ✅ Defer to avoid NG0100 ExpressionChangedAfterChecked.
-    //    loadingIndicator is set synchronously inside getBookingDetails();
-    //    deferring ensures Angular's first CD pass is already complete.
+
+
+
     Promise.resolve().then(() => {
       this.getBookingDetails();
       this.cdr.detectChanges();
     });
   }
 
-  // ── Form helpers ──────────────────────────────────────────────────────────
+
   private initializeForm(): void {
     this.validationForm1 = this.formBuilder.group({
       ReceiptRemarks: ['', Validators.required],
@@ -186,7 +186,7 @@ export class FailedPaymentsComponent implements OnInit {
     });
   }
 
-  // ── Search ────────────────────────────────────────────────────────────────
+
   search(): void {
     const query = this.searchQuery.toLowerCase();
     this.tmpsBookingStatusData = this.BookingStatusData.filter(item =>
@@ -205,7 +205,7 @@ export class FailedPaymentsComponent implements OnInit {
     );
   }
 
-  // ── API: failed-only bookings ─────────────────────────────────────────────
+
   getBookingDetails(): void {
     this.loadingIndicator = true;
     const startTime = Date.now();
@@ -217,7 +217,7 @@ export class FailedPaymentsComponent implements OnInit {
           if (response.item1?.length > 0) {
             this.BookingStatusData = response.item1;
             this.dataSource        = response.item1;
-            // ✅ Filter: only 'failure' status records
+
             this.tmpsBookingStatusData = response.item1.filter(
               (item: { paymentStatus: any }) => item.paymentStatus === 'failure'
             );
@@ -233,12 +233,12 @@ export class FailedPaymentsComponent implements OnInit {
           }
           this.stopLoader(startTime);
         },
-        // ✅ loader always resets on error — prevents infinite spinner
+
         error: err => { console.error(err); this.loadingIndicator = false; },
       });
   }
 
-  // ── API: payment proof per booking ────────────────────────────────────────
+
   private fetchPaymentProofDetailsForBookings(): void {
     const bookingIds = this.tmpsBookingStatusData
       .map((item: any) => item.bookingId)
@@ -285,7 +285,7 @@ export class FailedPaymentsComponent implements OnInit {
     return this.paymentProofStatus[bookingId];
   }
 
-  // ── Pagination ────────────────────────────────────────────────────────────
+
   getTotalPages(): number {
     return Math.ceil(this.tmpsBookingStatusData.length / this.itemsPerPage);
   }
@@ -299,7 +299,7 @@ export class FailedPaymentsComponent implements OnInit {
   prevPage(): void { if (this.currentPage > 1) this.currentPage--; }
   onItemsPerPageChange(): void { this.currentPage = 1; }
 
-  // ── Excel export ──────────────────────────────────────────────────────────
+
   exportToExcel(): void {
     const fileName    = 'Booking_Details_report.xlsx';
     const exportedData = this.BookingStatusData.map(item => ({
@@ -320,7 +320,7 @@ export class FailedPaymentsComponent implements OnInit {
     link.click();
   }
 
-  // ── Mat-table filter (kept for API parity) ────────────────────────────────
+
   applyFilter(event: Event): void {
     const val = (event.target as HTMLInputElement).value.trim().toLowerCase();
     if (this.dataSource && (this.dataSource as any).filter !== undefined) {
@@ -328,7 +328,7 @@ export class FailedPaymentsComponent implements OnInit {
     }
   }
 
-  // ── Modals ────────────────────────────────────────────────────────────────
+
   paymentReceiptScreen(data: any): void {
     this.PaymentReceipt = data;
     this.modalService.open(this.viewDescModal2, { size: 'sm' })
@@ -348,7 +348,7 @@ export class FailedPaymentsComponent implements OnInit {
       .result.then(() => {}).catch(() => {});
   }
 
-  // ── Route params → decode payment callback ────────────────────────────────
+
   getParams(): void {
     this.ResponseUrl = window.location.href;
     this.route.queryParamMap
@@ -385,7 +385,7 @@ export class FailedPaymentsComponent implements OnInit {
       });
   }
 
-  // ── Payment gateway ───────────────────────────────────────────────────────
+
   VerifyData(BookingCase: any): void {
     const formData = new FormData();
     formData.append('BookingId',    BookingCase.bookingId);
@@ -431,7 +431,7 @@ export class FailedPaymentsComponent implements OnInit {
     }).then(result => { if (result.isConfirmed) window.open(url); });
   }
 
-  // ── File upload ───────────────────────────────────────────────────────────
+
   onFileXSelected(event: any, id: number): void {
     this.fileChosen[id] = event.target.files.length > 0;
     const target        = event.target as HTMLInputElement;
@@ -517,7 +517,7 @@ export class FailedPaymentsComponent implements OnInit {
       });
   }
 
-  // ── File download ─────────────────────────────────────────────────────────
+
   downloadFile(fileName: string): void {
     this.onDownloadFile(this.serverUrl + fileName);
   }
@@ -551,7 +551,7 @@ export class FailedPaymentsComponent implements OnInit {
       });
   }
 
-  // ── Print receipt ─────────────────────────────────────────────────────────
+
   printReceipt(): void {
     const modalContent = document.getElementById('ReceiptData');
     if (!modalContent) { console.error('Modal content not found'); return; }
@@ -587,7 +587,7 @@ export class FailedPaymentsComponent implements OnInit {
     };
   }
 
-  // ── Private: consistent loader shutdown ──────────────────────────────────
+
   private stopLoader(startTime: number): void {
     const remaining = Math.max(1500 - (Date.now() - startTime), 0);
     setTimeout(() => {

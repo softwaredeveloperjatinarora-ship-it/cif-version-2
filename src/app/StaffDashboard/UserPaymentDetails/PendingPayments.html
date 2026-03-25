@@ -1,6 +1,5 @@
 <app-StaffMenu-bar></app-StaffMenu-bar>
 
-<!-- Full Screen Loader -->
 @if (loadingIndicator()) {
   <div class="fullscreen-loader">
     <div class="loader-spinner"></div>
@@ -20,10 +19,8 @@
 
         <div class="card-body">
 
-          <!-- Controls Row -->
           <div class="row d-flex justify-content-center align-items-center">
 
-            <!-- Export -->
             <div class="col-sm-3">
               <div class="mb-3">
                 <button
@@ -36,14 +33,12 @@
               </div>
             </div>
 
-            <!-- Filter label -->
             <div class="col-sm-3">
               <div class="mb-3 text-center">
                 <label class="fs-5">Select Payment to filter</label>
               </div>
             </div>
 
-            <!-- Status Filter — plain <select>, no ng-select dependency -->
             <div class="col-sm-3">
               <select
                 [value]="selectedStatus()"
@@ -57,7 +52,6 @@
               </select>
             </div>
 
-            <!-- Search -->
             <div class="col-sm-3 mb-4">
               <input
                 [(ngModel)]="searchQuery"
@@ -74,7 +68,6 @@
 
           <hr />
 
-          <!-- Search result label -->
           <div class="row m-4 p-2">
             @if (searchQuery) {
               <span class="fs-3 themeClr">
@@ -84,7 +77,6 @@
             }
           </div>
 
-          <!-- Record / page count -->
           <div class="row">
             <div class="m-1">
               <span class="text-dark m-3 fs-5 p-2 fw-bolder" style="border: 1px solid #ef7d00;">
@@ -93,7 +85,6 @@
             </div>
           </div>
 
-          <!-- Table -->
           @if (tmpsAllPaymentData().length > 0) {
             <div class="table-responsive mt-4 mb-4 p-4">
               <table id="AdminPendingPayments" #table>
@@ -159,10 +150,8 @@
                 </tbody>
               </table>
 
-              <!-- Pagination Bar -->
               <div class="pagination-bar">
 
-                <!-- Rows per page -->
                 <div class="pagination-size">
                   <label class="pagination-size-label">Rows per page:</label>
                   <select
@@ -178,10 +167,8 @@
                   </select>
                 </div>
 
-                <!-- Range info -->
                 <span class="pagination-info">{{ getPageRangeLabel() }}</span>
 
-                <!-- Prev / Next -->
                 <div class="pagination-controls">
                   <button
                     class="btn btn-sm btn-outline-secondary pagination-btn"
@@ -203,7 +190,7 @@
                   </button>
                 </div>
 
-              </div><!-- /pagination-bar -->
+              </div> 
             </div>
           } @else {
             <p class="fs-2 text-center">No Data Available.</p>
@@ -215,7 +202,6 @@
   </div>
 
 } @else {
-  <!-- No data state -->
   <div class="text-center BottomSpace">
       <hr />
         <div class="row d-flex justify-content-center">
@@ -234,7 +220,6 @@
 }
 
 
-<!-- ═══ Receipt Modal ═══════════════════════════════════════════════════════ -->
 <ng-template #viewDescModal2 let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Get Result Screen</h5>
@@ -252,34 +237,29 @@
 
           <button class="btn btn-primary mb-3" (click)="printReceipt()">Print Receipt</button>
 
-          <!-- Name -->
           <div class="row"><hr />
             <div class="col-6"><span>Name</span></div>
             <div class="col-6"><span class="text-danger">{{ PaymentReceipt?.candidateName }}</span></div>
           </div>
 
-          <!-- Booking Id -->
           <div class="row"><hr />
             <div class="col-6"><span class="me-4">Booking Id</span></div>
             <div class="col-6">{{ PaymentReceipt?.bookingId }}</div>
             <hr />
           </div>
 
-          <!-- Request Date -->
           <div class="row">
             <div class="col-6"><span>Request Date</span></div>
             <div class="col-6">{{ PaymentReceipt?.requestDate }}</div>
             <hr />
           </div>
 
-          <!-- Instrument Name -->
           <div class="row">
             <div class="col-6"><span class="text-black">Instrument Name</span></div>
             <div class="col-6"><p>{{ PaymentReceipt?.instrumentName }}</p></div>
             <hr />
           </div>
 
-          <!-- Amount -->
           <div class="row text-black">
             <div class="col-6"><p>Payable Amount</p></div>
             <div class="col-6">
@@ -290,7 +270,6 @@
             <hr style="border: 2px solid black;" />
           </div>
 
-          <!-- Payment Status -->
           <div class="row">
             <div class="col-6"><p>Payment Status</p></div>
             <div class="col-6">
@@ -324,7 +303,6 @@
 </ng-template>
 
 
-<!-- ═══ Pending Payment / Additional Payment Modal ══════════════════════════ -->
 <ng-template #PendingPaymentModal let-modal>
   <form [formGroup]="paymentForm" (ngSubmit)="onUpdatePayment()">
 

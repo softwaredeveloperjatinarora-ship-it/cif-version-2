@@ -16,7 +16,7 @@
   margin-right: 10px;
 }
 
-/* Center navbar on large screens */
+
 @media (min-width: 992px) {
   .navbar-nav {
     display: flex;
@@ -25,7 +25,7 @@
   }
 }
 
-/* Adjust navbar for small screens */
+
 @media (max-width: 768px) {
   .navbar-nav {
     flex-direction: column;
@@ -52,7 +52,7 @@
   to { visibility: hidden; }
 }
 
-/* Promo Banner */
+
 .promo-banner {
   width: 7rem !important;
   position: relative;
@@ -86,7 +86,7 @@
   background: #000;
 }
 
-/* Fullscreen loader */
+
 .fullscreen-loader {
   position: fixed;
   top: 0; left: 0;

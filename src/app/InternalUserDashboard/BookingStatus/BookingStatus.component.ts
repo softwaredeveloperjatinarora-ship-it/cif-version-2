@@ -29,17 +29,17 @@ import { AuthService } from '../../services/auth.service';
     DatePipe,
     CifMenuBarComponent,
   ],
-  templateUrl: './booking-status.component.html',
-  styleUrls: ['./booking-status.component.scss'],
+  templateUrl: './Booking-status.component.html',
+  styleUrls: ['./Booking-status.component.scss'],
   providers: [DatePipe],
 })
 export class BookingStatusComponent implements OnInit {
 
-  // ── ViewChildren ──────────────────────────────────────────────────────────
+
   @ViewChild('viewDescModal2') viewDescModal2!: TemplateRef<any>;
   @ViewChild('table') table!: ElementRef;
 
-  // ── DI via inject() ───────────────────────────────────────────────────────
+
   private readonly CIFwebService = inject(LpuCIFWebService);
   private readonly modalService  = inject(NgbModal);
   private readonly AuthSession   = inject(LoginSessionService);
@@ -47,10 +47,10 @@ export class BookingStatusComponent implements OnInit {
   private readonly cookieService = inject(CookieService);
   private readonly cdr           = inject(ChangeDetectorRef);
   private readonly destroyRef    = inject(DestroyRef);
-  // ✅ SSR guard — prevents JSON.parse('') crash during server-side render
+
   private readonly platformId    = inject(PLATFORM_ID);
 
-  // ── Table / pagination ────────────────────────────────────────────────────
+
   BookingStatusData:     any[] = [];
   tmpsBookingStatusData: any[] = [];
   ResultData:            any[] = [];
@@ -66,13 +66,13 @@ export class BookingStatusComponent implements OnInit {
   currentPage  = 1;
   itemsPerPage = 10;
 
-  // ── User / session ────────────────────────────────────────────────────────
+
   UserRole:     any;
   UserId:       any;
   user_Email:   any;
   ServerUrl!:   string;
 
-  // ── UI state ──────────────────────────────────────────────────────────────
+
   loadingIndicator = false;   // ✅ typed boolean — prevents NG0100
   searchQuery      = '';
   BookingCase:     any;
@@ -81,9 +81,9 @@ export class BookingStatusComponent implements OnInit {
   uploadEnabled!:  boolean;
   Remarks:         any;
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
+
   ngOnInit(): void {
-    // ✅ SSR guard — all browser/cookie logic is skipped on the server
+
     if (!isPlatformBrowser(this.platformId)) { return; }
 
     this.ServerUrl = 'https://files.lpu.in/umsweb/CIFDocuments/';
@@ -101,22 +101,22 @@ export class BookingStatusComponent implements OnInit {
       this.UserRole  = c.userRole?.length > 0 ? c.userRole : 'Internal User';
       this.user_Email = c.EmailId;
     } catch {
-      // Cookie is corrupt — redirect to login
+
       this.cookieService.delete('InternalUserAuthData');
       this.router.navigate(['/Home']);
       return;
     }
 
-    // ✅ Defer first API call to avoid NG0100 ExpressionChangedAfterChecked.
-    //    loadingIndicator is set synchronously inside getBookingDetails();
-    //    deferring ensures Angular's first CD pass is already complete.
+
+
+
     Promise.resolve().then(() => {
       this.getBookingDetails();
       this.cdr.detectChanges();
     });
   }
 
-  // ── Search ────────────────────────────────────────────────────────────────
+
   search(): void {
     const query = this.searchQuery.toLowerCase();
     this.tmpsBookingStatusData = this.BookingStatusData.filter(item =>
@@ -135,7 +135,7 @@ export class BookingStatusComponent implements OnInit {
     );
   }
 
-  // ── API: booking status list ──────────────────────────────────────────────
+
   getBookingDetails(): void {
     this.loadingIndicator = true;
     const startTime = Date.now();
@@ -156,12 +156,12 @@ export class BookingStatusComponent implements OnInit {
           }
           this.stopLoader(startTime);
         },
-        // ✅ loader always resets on error — prevents infinite spinner
+
         error: err => { console.error(err); this.loadingIndicator = false; },
       });
   }
 
-  // ── Pagination ────────────────────────────────────────────────────────────
+
   getTotalPages(): number {
     return Math.ceil(this.tmpsBookingStatusData.length / this.itemsPerPage);
   }
@@ -174,13 +174,13 @@ export class BookingStatusComponent implements OnInit {
   nextPage(): void { if (this.currentPage < this.getTotalPages()) this.currentPage++; }
   prevPage(): void { if (this.currentPage > 1) this.currentPage--; }
 
-  // ── Excel export ──────────────────────────────────────────────────────────
+
   exportToExcel(): void {
     const fileName    = 'Booking_Details_report.xlsx';
     const exportedData = this.BookingStatusData.map(item => ({
       BookingId:      item.bookingId,
       InstrumentName: item.instrumentName,
-      // ✅ Original logic preserved exactly: trim last word from assignedTo
+
       AssignedTo:     item.assignedTo.split(' ').slice(0, -1).join(' '),
       AssignedDate:   item.assignedOn,
       Samples:        item.noOfSamples,
@@ -202,7 +202,7 @@ export class BookingStatusComponent implements OnInit {
     link.click();
   }
 
-  // ── Mat-table filter (kept for API parity) ────────────────────────────────
+
   applyFilter(event: Event): void {
     const val = (event.target as HTMLInputElement).value.trim().toLowerCase();
     if (this.dataSource && (this.dataSource as any).filter !== undefined) {
@@ -210,7 +210,7 @@ export class BookingStatusComponent implements OnInit {
     }
   }
 
-  // ── Open result modal — fetches result data first ─────────────────────────
+
   openPaymentModal(a: any): void {
     this.BookingCase = a;
 
@@ -240,19 +240,19 @@ export class BookingStatusComponent implements OnInit {
       });
   }
 
-  // ── Download excel sheet from result modal ────────────────────────────────
-  // ✅ Original logic preserved: opens ServerUrl + excelSheet in new tab
+
+
   ExcelSheetDownload(a: any): void {
     window.open(this.ServerUrl + a[0].excelSheet, '_blank');
   }
 
-  // ── Download result file from result modal ────────────────────────────────
-  // ✅ Original logic preserved: opens ServerUrl + resultFile in new tab
+
+
   VerifyData(a: any): void {
     window.open(this.ServerUrl + a[0].resultFile, '_blank');
   }
 
-  // ── Private: consistent loader shutdown ──────────────────────────────────
+
   private stopLoader(startTime: number): void {
     const remaining = Math.max(1500 - (Date.now() - startTime), 0);
     setTimeout(() => {

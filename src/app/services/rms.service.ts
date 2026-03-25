@@ -5,9 +5,9 @@ import { StorageService } from './storage.service';
 
 const AUTH_API = 'https://projectsapi.lpu.in/';
 
-// const httpOptions = {
-//   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-// };
+
+
+
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +21,7 @@ export class RMSService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/RMS/Get',
      {headers}
@@ -34,7 +34,7 @@ export class RMSService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/RMS/GetInvolvementData',
      {headers}
@@ -47,7 +47,7 @@ export class RMSService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/RMSTouch/GetParentRMSByDealingOfficial',
      {headers}
@@ -60,7 +60,7 @@ export class RMSService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/RMSTouch/GetParentRMSChatByMessageId?messageId='+messageId+'',
      {headers}
@@ -75,7 +75,7 @@ export class RMSService {
     .set('Authorization', 'Bearer ' + token)
     .set('Content-Type', 'application/json'); 
 
-    //httpOptions.headers.set('Authentication', 'Bearer ' + token);
+
     return this.http.get(
       AUTH_API + 'api/RMS/GetPendancyHeadWise',
      {headers}
@@ -84,7 +84,7 @@ export class RMSService {
   }
 
     
-  // getModeratorBoard(): Observable<any> {
-  //   return this.http.get(API_URL + 'mod', { responseType: 'text' });
-  // }
+
+
+
 }

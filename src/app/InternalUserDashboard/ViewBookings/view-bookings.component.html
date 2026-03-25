@@ -296,13 +296,13 @@
         <form id="paymentReceiptForm">
           <div class="row">
 
-            <!-- Booking ID -->
+            
             <div class="col-12 col-md-6 mb-3">
               <label class="form-label fw-bold">Booking ID</label>
               <div class="form-control-plaintext">{{ BookingCase?.bookingId }}</div>
             </div>
 
-            <!-- Payment Amount -->
+            
             <div class="col-12 col-md-6 mb-3">
               <label class="form-label fw-bold">Payment Amount</label>
               <div class="form-control-plaintext">
@@ -310,7 +310,7 @@
               </div>
             </div>
 
-            <!-- File Upload -->
+            
             <div class="col-12 col-md-6 mb-3">
               <label for="paymentReceiptFile" class="form-label fw-bold">
                 Payment Receipt File
@@ -321,7 +321,7 @@
               <div class="form-text">Maximum file size: 10MB</div>
             </div>
 
-            <!-- Remarks -->
+            
             <div class="col-12 col-md-6 mb-3">
               <label for="receiptRemarks" class="form-label fw-bold">Comments/Remarks</label>
 
@@ -330,7 +330,7 @@
             </div>
           </div>
 
-          <!-- Submit -->
+          
           <div class="row mt-3">
             <div class="col-12 text-center">
               <button type="submit" class="btn btn-primary" [disabled]="!fileChosen[BookingCase?.bookingId]"

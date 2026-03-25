@@ -1,7 +1,7 @@
-<!-- ── Top Bar ─────────────────────────────────────────────────────────────── -->
+
 <app-top-bar (facilitiesClicked)="gotoFacilities()" />
 
-<!-- ── Sticky sidebar bar ────────────────────────────────────────────────────── -->
+
 <div class="sticky-bar">
   <ul>
     <li class="apply-now-outer">
@@ -49,7 +49,7 @@
   </ul>
 </div>
 
-<!-- ── Full-screen loader ─────────────────────────────────────────────────────── -->
+
 @if (loadingIndicator()) {
   <div class="fullscreen-loader">
     @if (isLoading()) {
@@ -62,7 +62,7 @@
   </div>
 }
 
-<!-- ── Registration Section ───────────────────────────────────────────────────── -->
+
 <section class="section">
   <div class="container">
 
@@ -75,24 +75,24 @@
 
     <div class="row">
 
-      <!-- Left illustration (desktop only) -->
+      
       <div class="col-md-6 d-none d-lg-block">
         <img src="https://www.lpu.in/lpu-assets/images/cif/login-left.png" alt="CIF Registration" />
       </div>
 
-      <!-- Registration form column -->
+      
       <div class="col-md-6 reg-div">
         <form [formGroup]="cifUserForm" (ngSubmit)="Onsubmit()" class="forms-sample">
           <div class="cif-register">
             <div class="row">
 
-              <!-- Sign-in prompt -->
+              
               <div class="col-md-12 mb-3">
                 If you already have an account, just
                 <a class="login-link" routerLink="/Login"><strong>sign in</strong></a>
               </div>
 
-              <!-- Email -->
+              
               <div class="col-md-6 mb-3">
                 <label for="EmailId">Email</label>
                 <input type="email" id="EmailId" formControlName="EmailId" class="form-control"
@@ -109,7 +109,7 @@
                 }
               </div>
 
-              <!-- Candidate Name -->
+              
               <div class="col-md-6 mb-3">
                 <label for="CandidateName">Name</label>
                 <input type="text" id="CandidateName" formControlName="CandidateName" class="form-control"
@@ -122,7 +122,7 @@
                 }
               </div>
 
-              <!-- Supervisor Name -->
+              
               <div class="col-md-6 mb-3">
                 <label for="SupervisorName">Supervisor Name</label>
                 <input type="text" id="SupervisorName" formControlName="Supervisorname" class="form-control"
@@ -135,7 +135,7 @@
                 }
               </div>
 
-              <!-- Mobile -->
+              
               <div class="col-md-6 mb-3">
                 <label for="MobileNumber">Mobile</label>
                 <input type="text" id="MobileNumber" formControlName="MobileNumber" class="form-control"
@@ -152,7 +152,7 @@
                 }
               </div>
 
-              <!-- Organization -->
+              
               <div class="col-md-6 mb-3">
                 <label for="InstituteName">Organization</label>
                 <input type="text" id="InstituteName" formControlName="InstituteName" class="form-control"
@@ -165,7 +165,7 @@
                 }
               </div>
 
-              <!-- Department -->
+              
               <div class="col-md-6 mb-3">
                 <label for="DepartmentName">Department</label>
                 <input type="text" id="DepartmentName" formControlName="DepartmentName" class="form-control"
@@ -178,7 +178,7 @@
                 }
               </div>
 
-              <!-- ID Proof Type -->
+              
               <div class="col-md-6 mb-3">
                 <label for="IdProofType">ID Proof Type</label>
                 <select id="IdProofType" formControlName="IdProofType" class="form-select"
@@ -196,7 +196,7 @@
                 }
               </div>
 
-              <!-- ID Proof Number -->
+              
               <div class="col-md-6 mb-3">
                 <label for="IdProofNumber">ID Proof Number</label>
                 <input type="text" id="IdProofNumber" formControlName="IdProofNumber" class="form-control"
@@ -209,7 +209,7 @@
                 }
               </div>
 
-              <!-- Address -->
+              
               <div class="col-md-12 mb-3">
                 <label for="Address">Address</label>
                 <textarea id="Address" formControlName="Address" class="form-control"
@@ -223,7 +223,7 @@
                 }
               </div>
 
-              <!-- Password -->
+              
               <div class="col-md-6 mb-3">
                 <label for="Password">Password</label>
                 <input type="password" id="Password" formControlName="Password" class="form-control"
@@ -240,7 +240,7 @@
                 }
               </div>
 
-              <!-- Confirm Password -->
+              
               <div class="col-md-6 mb-3">
                 <label for="ConfirmPassword">Confirm Password</label>
                 <input type="password" id="ConfirmPassword" formControlName="ConfirmPassword" class="form-control"
@@ -257,7 +257,7 @@
                 }
               </div>
 
-              <!-- Role -->
+              
               <div class="col-md-6 mb-3">
                 <label for="UserRole">Role</label>
                 <select id="UserRole" formControlName="UserRole" class="form-select"
@@ -273,9 +273,9 @@
                 }
               </div>
 
-            </div><!-- /.row -->
+            </div>
 
-            <!-- Actions -->
+            
             <div class="col-md-12 mb-4 text-center">
               <button type="submit" class="btn btn-primary border-0 px-5"
                       [disabled]="cifUserForm.invalid">
@@ -287,14 +287,14 @@
               </button>
             </div>
 
-          </div><!-- /.cif-register -->
+          </div>
         </form>
-      </div><!-- /.col reg-div -->
-    </div><!-- /.row -->
-  </div><!-- /.container -->
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- ── Facilities Section ─────────────────────────────────────────────────────── -->
+
 <section class="section bg-dark-yellow" #facilitiesSection>
   <div class="container">
 
@@ -357,7 +357,7 @@
   </div>
 </section>
 
-<!-- ── Events & Happenings Section ───────────────────────────────────────────── -->
+
 <section class="section bg-dark-yellow">
   <div class="container">
 

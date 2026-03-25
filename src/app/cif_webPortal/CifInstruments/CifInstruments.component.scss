@@ -26,7 +26,7 @@
     align-items: center;
 }
 
-/* CSS file (e.g., styles.css) */
+
 .instrument-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);  
@@ -63,7 +63,7 @@
 // }
 
 .accordion-icon {
-    font-family: Arial, sans-serif; /* Fallback for text icons */
+    font-family: Arial, sans-serif; 
     transition: all 0.3s ease;
     font-size: 1.5 rem;
   }
@@ -81,7 +81,7 @@
   }
   
 .accordion-item {
-    border-bottom: 1px solid #ddd; /* Container handles last border */ 
+    border-bottom: 1px solid #ddd;  
     margin-bottom: 10px;
     border-radius: 4px;
   }

@@ -3,14 +3,14 @@
 <section class="login-section d-flex align-items-center">
   <div class="container BottomSpace">
 
-    <!-- Page Heading -->
+    
     <div class="heading-wrapper LoginCards text-center">
       <h1 class="fs-2 text-maroon">Central Instrumentation Facility - Staff Login</h1>
     </div>
 
     <div class="row align-items-center justify-content-between gap-5">
 
-      <!-- Illustration (desktop only) -->
+      
       <div class="col-lg-6 d-none d-lg-block text-center">
         <img
           src="https://www.lpu.in/lpu-assets/images/cif/login-left.png"
@@ -18,7 +18,7 @@
           alt="Staff Portal Illustration" />
       </div>
 
-      <!-- Login Card -->
+      
       <div class="col-md-12 col-lg-5">
         <div class="login-card shadow-lg p-4 p-md-5 rounded-4">
 
@@ -26,7 +26,7 @@
             <h2 class="fw-bold text-maroon">Staff Login</h2>
           </div>
 
-          <!-- Error Alert -->
+          
           @if (errMessage().length > 0) {
             <div class="alert alert-danger py-2 mb-4">
               <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errMessage() }}
@@ -35,7 +35,7 @@
 
           <form [formGroup]="formdata" (ngSubmit)="onSubmit()">
 
-            <!-- Staff User ID -->
+            
             <div class="mb-3">
               <label class="form-label fw-semibold" for="loginid">Staff User Id</label>
               <div class="input-group">
@@ -58,7 +58,7 @@
               }
             </div>
 
-            <!-- Password -->
+            
             <div class="mb-4">
               <label class="form-label fw-semibold" for="password">Password</label>
               <div class="input-group position-relative">
@@ -87,7 +87,7 @@
               }
             </div>
 
-            <!-- Submit -->
+            
             <div class="d-grid mt-4">
               <button
                 type="submit"
