@@ -1,0 +1,138 @@
+<nav class="navbar navbar-expand-lg mb-4">
+  <div class="container-fluid">
+    <button
+      class="navbar-toggler"
+      type="button"
+      (click)="toggleNavbar()"
+      [attr.aria-expanded]="!isNavbarCollapsed()"
+      aria-controls="navbarNav"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div
+      id="navbarNav"
+      class="navbar-collapse"
+      [class.collapse]="isNavbarCollapsed()"
+    >
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+        <!-- Tests & Results -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="nav-underline">Tests &amp; Results</span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="goto('AssignTestCifA')">Assign Test</a></li>
+            <li><a class="dropdown-item" (click)="goto('ViewBookingsAdmins')">Upload Results</a></li>
+          </ul>
+        </li>
+
+        <!-- User & Payments -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            User &amp; Payments
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="goto('PendingPaymentsA')">All Payments</a></li>
+            <li><a class="dropdown-item" (click)="goto('UserDetail')">All Users</a></li>
+            <li><a class="dropdown-item" (click)="goto('AUploadProof')">All Uploaded Proof</a></li>
+          </ul>
+        </li>
+
+        <!-- Instruments -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            Instruments
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="goto('AdminInstrumentAction')">Change State</a></li>
+            <li><a class="dropdown-item" (click)="goto('AdminUploadImage')">Upload Image</a></li>
+          </ul>
+        </li>
+
+        <!-- Sample & Feedback -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            Sample &amp; Feedback
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="goto('SampleStatusAdmin')">Update Sample Status</a></li>
+            <li><a class="dropdown-item" (click)="goto('UserFeedbackdetails')">User Feedbacks</a></li>
+          </ul>
+        </li>
+
+        <!-- CIF Events -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            CIF Events
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="goto('AllCIFEvents')">All Events</a></li>
+            <li><a class="dropdown-item" (click)="goto('EventUploads')">Add New</a></li>
+          </ul>
+        </li>
+
+        <!-- Logout -->
+        <li class="nav-item">
+          <a class="nav-link logout-link" (click)="logoutUser()">Logout</a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Page Title -->
+<div class="container-fluid d-flex justify-content-center align-items-center">
+  <div class="mx-auto mt-4 mb-4 text-start">
+    <h1 class="mb-0">Central Instrumentation Facility Admin Panel</h1>
+  </div>
+</div>
+
+<!-- Info Cards -->
+<div class="container-fluid mt-4">
+  <div class="row">
+
+    <!-- Candidate Info -->
+    <div class="col-md-4 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <div class="row d-flex justify-content-around">
+            <label class="col-md-6 form-label info-label">Candidate Name</label>
+            <label class="col-md-6 form-label info-value">{{ candidateName() }}</label>
+          </div>
+          <div class="row d-flex justify-content-around">
+            <label class="col-md-6 form-label info-label">Department Code</label>
+            <label class="col-md-6 form-label info-value">
+              {{ (supervisorName()?.length ?? 0) > 4 ? supervisorName() : 'N/A' }}
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Title Card -->
+    <div class="col-md-4 grid-margin">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="text-success text-center mt-1 mb-4">CIF Admin Dashboard</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Department Info -->
+    <div class="col-md-4 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <div class="row d-flex justify-content-around">
+            <label class="col-md-5 form-label info-label">Department Name</label>
+            <label class="col-md-7 form-label info-value">{{ departmentName() }}</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -17,21 +17,21 @@ import Swal from 'sweetalert2';
 export class CifMenuBarComponent implements OnInit {
 
 
-  private readonly router        = inject(Router);
+  private readonly router = inject(Router);
   private readonly cookieService = inject(CookieService);
-  private readonly AuthSession   = inject(LoginSessionService);
-  private readonly platformId    = inject(PLATFORM_ID);
+  private readonly AuthSession = inject(LoginSessionService);
+  private readonly platformId = inject(PLATFORM_ID);
 
 
-  UserSessionData:  any;
-  UserRole:         any;
-  User_Email:       any;
-  SupervisorName:   any;
-  DepartmentName:   any;
-  CandidateName:    any;
-  ShowBlink         = true;
+  UserSessionData: any;
+  UserRole: any;
+  User_Email: any;
+  SupervisorName: any;
+  DepartmentName: any;
+  CandidateName: any;
+  ShowBlink = true;
   isNavbarCollapsed = true;
-  loadingIndicator  = false;
+  loadingIndicator = false;
 
 
   ngOnInit(): void {
@@ -49,19 +49,19 @@ export class CifMenuBarComponent implements OnInit {
     }
 
     try {
-      const c             = JSON.parse(raw);
-      this.UserRole       = c.UserRole;
-      this.User_Email     = c.EmailId;
+      const c = JSON.parse(raw);
+      this.UserRole = c.UserRole;
+      this.User_Email = c.EmailId;
       this.SupervisorName = c.SupervisorName;
       this.DepartmentName = c.DepartmentName;
-      this.CandidateName  = c.CandidateName;
+      this.CandidateName = c.CandidateName;
     } catch {
       this.cookieService.delete('InternalUserAuthData');
       this.router.navigate(['']);
     }
   }
 
- 
+
   goto(path: string): void {
     this.router.navigate(['/' + path]);
   }

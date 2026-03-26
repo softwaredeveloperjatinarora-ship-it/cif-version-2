@@ -1,11 +1,21 @@
 <app-StaffMenu-bar></app-StaffMenu-bar>
 
-@if (loadingIndicator()) {
+<!-- @if (loadingIndicator()) {
   <div class="fullscreen-loader">
     <div class="loader-spinner"></div>
     <div class="loader-text">Loading, please wait...</div>
   </div>
-}
+} -->
+
+  @if (loadingIndicator()) {
+  <div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+      <div class="custom-spinner-content text-center">
+        <img src="assets/images/spinner.gif" alt="Loading..." />
+      </div>
+    </div>
+  </div>
+  }
 
 @if (AllPaymentData().length > 0) {
   <div class="container-fluid BottomSpace">

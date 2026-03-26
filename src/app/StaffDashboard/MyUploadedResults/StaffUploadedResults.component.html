@@ -1,0 +1,153 @@
+<app-StaffMenu-bar></app-StaffMenu-bar>
+
+<!-- @if (loadingIndicator()) {
+  <div class="fullscreen-loader">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Loading, please wait...</div>
+  </div>
+} -->
+
+  @if (loadingIndicator()) {
+  <div class="fullscreen-loader">
+      <div class="custom-spinner-overlay">
+        <div class="custom-spinner-content text-center">
+          <img src="assets/images/spinner.gif" alt="Loading..." />
+        </div>
+      </div>
+  </div>
+}
+
+<div class="card border-0 shadow-sm mb-3">
+    <hr/>
+  <div class="card-body text-center">
+    <h2 class="fw-bold themeClr">My Uploaded Results</h2>
+  </div>
+  <hr/>
+</div>
+
+ 
+<div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="row align-items-center mb-3">
+          <div class="col-md-2">
+            <button (click)="exportToExcel()" class="btn btn-dark w-100" [disabled]="bookingData().length === 0">
+              Export to Excel
+            </button>
+          </div>
+          <div class="col-md-3">
+            <input [ngModel]="searchQuery()" (input)="updateSearch($event)" type="text" class="form-control" placeholder="Search..." />
+          </div>
+          
+          <div class="col-md-7 d-flex justify-content-end align-items-center">
+            <label class="me-2 fw-bold">Items per page:</label>
+            <select class="form-select w-auto me-3" [ngModel]="itemsPerPage()" (change)="onPageSizeChange($event)">
+              @for (size of pageSizeOptions; track size) {
+                <option [value]="size">{{ size }}</option>
+              }
+            </select>
+            
+            <button (click)="prevPage()" [disabled]="currentPage() === 1" class="btn btn-outline-dark btn-sm me-1">
+              <i class="mdi mdi-chevron-left"></i> Prev
+            </button>
+            <span class="mx-2 fw-bold">{{ currentPage() }} / {{ totalPages() }}</span>
+            <button (click)="nextPage()" [disabled]="currentPage() === totalPages()" class="btn btn-outline-dark btn-sm">
+              Next <i class="mdi mdi-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        @if (searchQuery()) {
+        <div class="alert alert-light border mb-3">
+          <span class="fs-5">
+            Search Result: <span class="text-muted">Found {{ filteredData().length }} Records</span>
+          </span>
+        </div>
+        }
+
+        <div class="mb-3">
+          <span class="badge border border-primary text-dark p-2 fs-6" style="background-color: #fff9f2;">
+            Record Count: {{ filteredData().length }} | Total Pages: {{ totalPages() }}
+          </span>
+        </div>
+
+        @if (currentPageData().length > 0) {
+        <div class="table-responsive">
+          <table class="table table-hover align-middle" #table>
+            <thead class="table-dark">
+              <tr>
+                <th>User Email Id</th>
+                <th>Reg. Number</th>
+                <th>Mobile Number</th>
+                <th>Booking ID</th>
+                <th>Instrument</th>
+                <th>Request Sheet</th>
+                <th>Request Date</th>
+                <th>Uploaded Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of currentPageData(); track row.bookingId) {
+              <tr>
+                <td>{{ row.testUserId || 'NA' }}</td>
+                <td>{{ row.IdProofNumber || 'NA' }}</td>
+                <td>{{ row.mobileNumber || 'NA' }}</td>
+                <td>{{ row.bookingId }}</td>
+                <td>{{ row.instrumentName }}</td>
+                <td>
+                  @if (row.testSampleFile) {
+                    <button class="btn btn-sm btn-outline-dark" (click)="downloadFile(row.testSampleFile)">View</button>
+                  } @else {
+                    <span class="badge bg-light text-dark">N/A</span>
+                  }
+                </td>
+                <td>{{ row.testDate | date:'dd-MMM-yyyy hh:mm a' }}</td>
+                <td>
+                  @if (row.uploadedResult) {
+                    <button class="btn btn-sm btn-primary" (click)="downloadFile(row.uploadedResult)">View</button>
+                  } @else {
+                    <span class="badge bg-light text-dark">N/A</span>
+                  }
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-flex justify-content-center align-items-center mt-4">
+ 
+
+          <div class="col-md-12 d-flex justify-content-end align-items-center">
+            <label class="me-2 fw-bold text-danger">Items per page:</label>
+            <select class="form-select w-auto me-3" [ngModel]="itemsPerPage()" (change)="onPageSizeChange($event)">
+              @for (size of pageSizeOptions; track size) {
+                <option [value]="size">{{ size }}</option>
+              }
+            </select>
+            
+            <button (click)="prevPage()" [disabled]="currentPage() === 1" class="btn btn-outline-dark btn-sm me-1">
+              <i class="mdi mdi-chevron-left"></i> Prev
+            </button>
+            <span class="mx-2 fw-bold text-danger">{{ currentPage() }} / {{ totalPages() }}</span>
+            <button (click)="nextPage()" [disabled]="currentPage() === totalPages()" class="btn btn-outline-dark btn-sm">
+              Next <i class="mdi mdi-chevron-right"></i>
+            </button>
+          </div>
+          
+         
+          
+        </div>
+
+
+        } @else {
+        <div class="text-center py-5">
+          <h3 class="text-danger">No Result(s) Uploaded!</h3>
+          <p class="text-muted">Try adjusting your search or check back later.</p>
+        </div>
+        }
+
+      </div>
+    </div>
+  </div>
+</div>

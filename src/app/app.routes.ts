@@ -44,8 +44,6 @@ export const routes: Routes = [
 
 
 
-
-
   {
     path: 'recoverAccount',
     loadComponent: () => import('./cif_webPortal/RecoverAccount/RecoverAccount').then(m => m.RecoverAccountComponent)
@@ -88,10 +86,6 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
 
-
-
-
-
   {
     path: 'StaffLogins',
     loadComponent: () => import('./cif_webPortal/StaffLogin/StaffLogin').then(m => m.StaffUserLoginComponent)
@@ -112,4 +106,29 @@ export const routes: Routes = [
     path: 'SampleStatusS',
     loadComponent: () => import('./StaffDashboard/SampleStatus/SampleStatusDetails').then(m => m.StaffUpdateSampleStatusComponent)
   },
+  {
+    path: 'MyUploads',
+    loadComponent: () => import('./StaffDashboard/MyUploadedResults/StaffUploadedResults').then(m => m.MyUploadedResultsComponent)
+  },
+
+
+  // Admin portal
+  {
+    path: 'adminLoginX',
+    loadComponent: () => import('./AdminPortal/StaffLogin/StaffLogin').then(m => m.AdminLoginComponent)
+  },
+
+    {
+    path: 'AdminDashboards',
+    loadComponent: () => import('./AdminPortal/AdminAssignTest/AdminAssignTest.component').then(m => m.AdminAssignTestComponent)
+  },
+  {
+    path: 'AdminInstrumentPrice',
+    loadComponent: () => import('./AdminPortal/UpdatePrices/UpdateInstrumentPrice').then(m => m.AdminUpdateInstrumentPrice)
+  },
+  {
+    path: 'ViewBookingsAdmins',
+    loadComponent: () => import('./AdminPortal/AViewBookings/ViewBookingsAdmin').then(m => m.AdminActionBookingsComponent)
+  },
 ];
+

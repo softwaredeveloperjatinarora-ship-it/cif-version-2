@@ -1,0 +1,62 @@
+// ── CSS custom properties ──────────────────────────────────────────────────
+:host {
+  --cif-orange:      #ef7d00;
+  --cif-orange-dark: #c96800;
+}
+
+// ── Full-screen loading overlay ────────────────────────────────────────────
+.fullscreen-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.custom-spinner-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.custom-spinner-content img {
+  width: 80px;
+  height: 80px;
+}
+
+// ── Theme colour (matches legacy .themeClr) ────────────────────────────────
+.themeClr {
+  color: var(--cif-orange);
+}
+
+// ── Record / items-per-page badge border ──────────────────────────────────
+.record-badge {
+  border: 1px solid var(--cif-orange);
+  padding: 8px 12px;
+}
+
+// ── Table header accent ────────────────────────────────────────────────────
+.bg-dark-yellow thead th {
+  background-color: #fdf3e3;
+  border-bottom: 2px solid var(--cif-orange);
+}
+
+// ── Pagination link states ─────────────────────────────────────────────────
+.pagination a {
+  cursor: pointer;
+}
+
+.pagination a.disabled {
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+// ── Advanced search panel ──────────────────────────────────────────────────
+.btn-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

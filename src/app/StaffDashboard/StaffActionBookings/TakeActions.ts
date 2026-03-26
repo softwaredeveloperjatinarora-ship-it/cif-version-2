@@ -36,7 +36,7 @@ export class StaffActionBookingsComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private document = inject(DOCUMENT);
 
-  loadingIndicator = signal(false);
+  readonly loadingIndicator    = signal<boolean>(false);
   allBookings = signal<any[]>([]);
   selectedStatus = signal<string>('All');
   
@@ -63,6 +63,7 @@ export class StaffActionBookingsComponent implements OnInit {
 
   loadInitialData() {
     this.loadingIndicator.set(true);
+    const startTime = Date.now();
      
     this.cifService.GetAllBooking().subscribe({
       next: (res) => {
@@ -72,7 +73,9 @@ export class StaffActionBookingsComponent implements OnInit {
         } else {
           this.NoResults = 'No Details';
         }
-        this.loadingIndicator.set(false);
+        const delay = Math.max(1500 - (Date.now() - startTime), 0);
+        setTimeout(() => this.loadingIndicator.set(false), delay);
+;
       },
       error: () => {
         this.loadingIndicator.set(false);

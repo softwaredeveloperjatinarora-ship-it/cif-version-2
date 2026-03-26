@@ -1,0 +1,166 @@
+<!-- <app-AdminMenu></app-AdminMenu> -->
+<app-admin-dashboard></app-admin-dashboard>
+<div class="admin-container">
+  @if (loading()) {
+    <div class="loader-overlay">
+      <div class="spinner-container">
+        <div class="spinner"></div>
+        <p>Syncing Prices...</p>
+      </div>
+    </div>
+  }
+
+  <div class="container py-4">
+    <div class="form-card">
+      <header class="header">
+        <h2>Update Instrument <span>Pricing</span></h2>
+      </header>
+
+      <form [formGroup]="formdata" (ngSubmit)="submitUpdate()">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">User Type</label>
+            <select class="form-select" formControlName="userRole" (change)="onUserRoleChange()">
+              <option value="Select">-- Select Role --</option>
+              <option value="400000">Internal User</option>
+              <option value="400001">External Academia</option>
+              <option value="400002">Industry User</option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Instrument</label>
+            <select class="form-select" formControlName="instrument" (change)="onInstrumentChange()">
+              <option value="Select">-- Select Instrument --</option>
+              @for (item of instruments(); track item.instrumentId) {
+                <option [value]="item.instrumentId + '-' + item.instrumentName">{{item.instrumentName}}</option>
+              }
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Analysis Type</label>
+            <select class="form-select" formControlName="analysisId" (change)="onAnalysisChange()">
+              <option value="Select">-- Select Analysis --</option>
+              @for (a of analyses(); track a.analysisId) {
+                <option [value]="a.analysisId">{{a.analysisType}}</option>
+              }
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Duration/Unit</label>
+            <select class="form-select" formControlName="duration" (change)="onDurationChange()">
+              <option value="Select">-- Select Unit --</option>
+              @for (d of durations(); track d.analysisId) {
+                <option [value]="d.analysisId">{{d.typeName}}</option>
+              }
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Current Price</label>
+            <div class="input-group">
+              <span class="input-group-text">₹</span>
+              <input type="text" class="form-control bg-light" formControlName="currentPrice" readonly>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">New Price</label>
+            <div class="input-group">
+              <span class="input-group-text border-warning">₹</span>
+              <input type="number" class="form-control border-warning" formControlName="updatedPrice" placeholder="Enter Amount">
+            </div>
+          </div>
+
+          <div class="col-12 text-end mt-4">
+            <button type="submit" class="btn btn-primary px-5" [disabled]="formdata.invalid">
+              Confirm Update
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!--  
+
+<div class="dashboard-wrapper">
+  @if (loading()) {
+    <div class="loader-overlay">
+      <div class="spinner"></div>
+    </div>
+  }
+
+  <div class="container py-5">
+    <div class="glass-card">
+      <header class="form-header">
+        <h2>Update Instrument <span>Pricing</span></h2>
+        <p class="subtitle">Modify market rates for internal and external users</p>
+      </header>
+
+      <form [formGroup]="formdata" (ngSubmit)="submitUpdate()" class="modern-form">
+        <div class="grid-layout">
+          
+          <div class="form-group">
+            <label>User Category</label>
+            <select formControlName="userRole" (change)="onUserRoleChange()">
+              <option value="Select">Choose Category</option>
+              <option value="400000">Internal User</option>
+              <option value="400001">External Academia</option>
+              <option value="400002">Industry User</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Instrument</label>
+            <select formControlName="instrument" (change)="onInstrumentChange()">
+              <option value="Select">Select Instrument</option>
+              @for (item of instruments(); track item.instrumentId) {
+                <option [value]="item.instrumentId + '-' + item.instrumentName">{{item.instrumentName}}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Analysis Type</label>
+            <select formControlName="analysisId" (change)="onAnalysisChange()">
+              <option value="Select">Select Type</option>
+              @for (a of analyses(); track a.analysisId) {
+                <option [value]="a.analysisId">{{a.analysisType}}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Unit / Duration</label>
+            <select formControlName="duration" (change)="onDurationChange()">
+              <option value="Select">Select Unit</option>
+              @for (d of durations(); track d.analysisId) {
+                <option [value]="d.analysisId">{{d.typeName}}</option>
+              }
+            </select>
+          </div>
+
+          <div class="price-box">
+            <div class="form-group">
+              <label>Current Price (₹)</label>
+              <input type="text" formControlName="currentPrice" readonly class="readonly-input">
+            </div>
+            <div class="form-group">
+              <label>New Price (₹)</label>
+              <input type="number" formControlName="updatedPrice" placeholder="0.00" class="highlight-input">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" [disabled]="formdata.invalid" class="btn-submit">
+            Confirm Price Update
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> -->

@@ -1,12 +1,22 @@
 <app-StaffMenu-bar></app-StaffMenu-bar>
 
-
+<!-- 
 @if (showLoader()) {
   <div class="fullscreen-loader">
     <div class="loader-spinner"></div>
     <div class="loader-text">Fetching details, please wait...</div>
   </div>
-}
+} -->
+
+  @if (showLoader()) {
+  <div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+      <div class="custom-spinner-content text-center">
+        <img src="assets/images/spinner.gif" alt="Loading..." />
+      </div>
+    </div>
+  </div>
+  }
 
 @if (UserDetailsData().length > 0) {
   <div class="row">
