@@ -1,0 +1,103 @@
+<app-admin-dashboard></app-admin-dashboard>
+
+@if (showLoader()) {
+<div class="fullscreen-loader">
+    <div class="custom-spinner-content">
+        <img src="assets/images/spinner.gif" alt="Loading..." />
+    </div>
+</div>
+}
+
+<div class="row">
+    @if (userDetailsData().length > 0) {
+    <div class="col-12 stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="row d-flex justify-content-center mb-4">
+                    <div class="col-sm-4">
+                        <button (click)="exportToExcel()" class="btn btn-dark" [disabled]="filteredData().length === 0">
+                            Export to Excel
+                        </button>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <ng-select [items]="statusOptions" bindLabel="label" bindValue="value"
+                            placeholder="Select Status" [(ngModel)]="selectedStatus" (change)="currentPage.set(1)">
+                        </ng-select>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="Search..." [ngModel]="searchQuery()"
+                            (ngModelChange)="searchQuery.set($event); currentPage.set(1)" />
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center align-items-center mb-3">
+                    <span class="badge bg-danger ">Records: {{ filteredData().length }}</span>
+                    <div>
+                        Items per page:
+                        <select class="form-select d-inline-block w-auto" (change)="onItemsPerPageChange($event)">
+                            @for (option of itemsPerPageOptions; track option.value) {
+                            <option [value]="option.value">{{ option.label }}</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="pagination">
+                        <button class="btn btn-outline-primary" [disabled]="currentPage() === 1"
+                            (click)="currentPage.set(currentPage() - 1)">
+                            <i class="mdi mdi-chevron-left"></i>
+                        </button>
+                        <span class="mx-3">{{ currentPage() }} / {{ totalPages() }}</span>
+                        <button class="btn btn-outline-primary" [disabled]="currentPage() === totalPages()"
+                            (click)="currentPage.set(currentPage() + 1)">
+                            <i class="mdi mdi-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                 <div class="table-responsive shadow-sm rounded p-5">
+                    <table class=" table table-hover table-striped align-middle bg-white m-0">
+                        <thead class="bg-primary">
+                            <tr>
+                                <th>Candidate Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (row of paginatedData(); track row.emailId) {
+                            <tr>
+                                <td>{{ row.candidateName }}</td>
+                                <td>{{ row.emailId || 'NA' }}</td>
+                                <td>
+                                    @switch (row.userRole?.trim()) {
+                                    @case ('400000') { <span class="text-danger">Internal User</span> }
+                                    @case ('400001') { <span class="text-danger">External Academia</span> }
+                                    @case ('400002') { <span class="text-danger">Industry User</span> }
+                                    @default { <span>Unknown</span> }
+                                    }
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger" (click)="openLockModal(row)">
+                                        <i class="bi bi-lock"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            } @empty {
+                            <tr>
+                                <td colspan="4" class="text-center text-danger">No Records Found</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    } @else {
+    <div class="text-center p-5">
+        <h3 class="text-danger">No Data Available</h3>
+    </div>
+    }
+</div>

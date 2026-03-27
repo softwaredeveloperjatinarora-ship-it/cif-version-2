@@ -117,18 +117,50 @@ export const routes: Routes = [
     path: 'adminLoginX',
     loadComponent: () => import('./AdminPortal/StaffLogin/StaffLogin').then(m => m.AdminLoginComponent)
   },
-
+// A1
     {
-    path: 'AdminDashboards',
-    loadComponent: () => import('./AdminPortal/AdminAssignTest/AdminAssignTest.component').then(m => m.AdminAssignTestComponent)
+    path: 'AssignTestCifA',
+    loadComponent: () => import('./AdminPortal/A1/AdminAssignTest.component').then(m => m.AdminAssignTestComponent)
   },
-  {
-    path: 'AdminInstrumentPrice',
-    loadComponent: () => import('./AdminPortal/UpdatePrices/UpdateInstrumentPrice').then(m => m.AdminUpdateInstrumentPrice)
-  },
+  // A2
   {
     path: 'ViewBookingsAdmins',
-    loadComponent: () => import('./AdminPortal/AViewBookings/ViewBookingsAdmin').then(m => m.AdminActionBookingsComponent)
+    loadComponent: () => import('./AdminPortal/A2/ViewBookingsAdmin').then(m => m.AdminActionBookingsComponent)
+  },
+  // A3
+  {
+    path: 'PendingPaymentsA',
+    loadComponent: () => import('./AdminPortal/A3/AdminPendingPayments.component').then(m => m.AdminPendingPaymentsComponent)
+  },
+  //A4
+  {
+    path: 'AUploadProof',
+    loadComponent: () => import('./AdminPortal/A4/AUploadProofStatus.component').then(m => m.AUploadProofStatusComponent)
+  },
+  //A5
+  {
+    path: 'AdminInstrumentPrice',
+    loadComponent: () => import('./AdminPortal/A5/UpdateInstrumentPrice').then(m => m.AdminUpdateInstrumentPrice)
+  },
+  {
+    path: 'UserDetail',
+    loadComponent: () => import('./AdminPortal/A7/AllUserDetails').then(m => m.AdminUserDetailsComponent)
+  },
+  {
+    path: 'AdminUploadImage',
+    loadComponent: () => import('./AdminPortal/A8/UpdateInstrumentImage').then(m => m.UpdateInstrumentPriceComponent)
+  },
+  {
+    path: 'SampleStatusAdmin',
+    loadComponent: () => import('./AdminPortal/A9/UpdateSampleStatus').then(m => m.AdminUpdateSampleStatusComponent)
+  },
+  {
+    path: 'UserFeedbackdetails',
+    loadComponent: () => import('./AdminPortal/A10/UserFeedbacks').then(m => m.StaffUserFeedbackDetailsComponent)
+  },
+  {
+    path: 'AdminInstrumentAction',
+    loadComponent: () => import('./AdminPortal/A6/AdminActionInstrument').then(m => m.AdminActionInstrumentsComponent)
   },
 ];
 

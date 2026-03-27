@@ -28,7 +28,7 @@ import { AdminDashboardComponent } from '../AdminDashboard/AdminDashboard';
   styleUrls: ['./AdminAssignTest.component.scss']
 })
 export class AdminAssignTestComponent implements OnInit {
-  // Inject dependencies using inject() function (Angular 16+)
+
   private cifService = inject(LpuCIFWebService);
   private modalService = inject(NgbModal);
   private fb = inject(FormBuilder);
@@ -38,7 +38,7 @@ export class AdminAssignTestComponent implements OnInit {
   @ViewChild('viewDescModal2') viewDescModal2!: ElementRef;
   @ViewChild('editEventModal') editEventModal!: ElementRef;
 
-  // State Management using Signals (Angular 17+)
+
   allBookingData = signal<any[]>([]);
   searchQuery = signal<string>('');
   selectedStatus = signal<string>('');
@@ -48,19 +48,19 @@ export class AdminAssignTestComponent implements OnInit {
   loadingIndicator = signal<boolean>(false);
   showAdvancedSearch = signal<boolean>(false);
 
-  // Derived State (Computed Signals)
+
   filteredData = computed(() => {
     let data = [...this.allBookingData()];
     const query = this.searchQuery().toLowerCase();
 
-    // Text Search
+
     if (query) {
       data = data.filter(item => 
         Object.values(item).some(val => String(val).toLowerCase().includes(query))
       );
     }
 
-    // Advanced Filters
+
     if (this.selectedStatus()) {
       data = data.filter(item => 
         this.selectedStatus() === 'null' 
@@ -87,7 +87,7 @@ export class AdminAssignTestComponent implements OnInit {
 
   totalPages = computed(() => Math.ceil(this.filteredData().length / this.itemsPerPage()) || 1);
 
-  // Constants & Options
+
   statusOptions = [
     { label: 'All Payments', value: '' },
     { label: 'Paid', value: 'success' },
@@ -105,7 +105,7 @@ export class AdminAssignTestComponent implements OnInit {
     { label: '5', value: 5 }, { label: '10', value: 10 }, { label: 'All', value: 9999 }
   ];
 
-  // Local Variables for Modals
+
   BookingCase: any;
   AssignedTo: string = '';
   AssignedToNew: string = '';
@@ -141,7 +141,7 @@ export class AdminAssignTestComponent implements OnInit {
     }
   }
 
-  // Actions
+
   onItemsPerPageChange(event: any) {
     this.itemsPerPage.set(Number(event.target.value));
     this.currentPage.set(1);

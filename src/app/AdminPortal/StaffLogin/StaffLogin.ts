@@ -20,7 +20,7 @@ import { CookieService } from 'ngx-cookie-service';
 import swal from 'sweetalert2';
 
 import { LpuCIFWebService } from '../../services/lpu-cifweb.service';
-// import { TopBar } from "../top-bar/top-bar";
+
 import { AuthService } from '../../services/auth.service';
 import { StorageService } from '../../services/storage.service';
 import { LoginSessionService } from '../../services/login-session.service';
@@ -219,7 +219,7 @@ export class AdminLoginComponent implements OnInit {
     );
 
     this.errMessage.set('');
-    this.router.navigate(['/AdminDashboards']);
+    this.router.navigate(['/AssignTestCifA']);
   }
 
 

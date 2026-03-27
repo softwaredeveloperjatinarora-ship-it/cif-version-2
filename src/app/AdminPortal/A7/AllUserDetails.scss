@@ -1,0 +1,30 @@
+.fullscreen-loader {
+  position: fixed;
+  inset: 0; // Modern replacement for top/left/right/bottom: 0
+  background-color: rgba(255, 255, 255, 0.85);
+  z-index: 10000;
+  display: grid;
+  place-items: center; // Centers content perfectly
+
+  .custom-spinner-content {
+    img {
+      width: 80px;
+      height: auto;
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  
+  button {
+    border-radius: 4px;
+    padding: 5px 10px;
+  }
+}
+
+.table-responsive {
+  margin-top: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}

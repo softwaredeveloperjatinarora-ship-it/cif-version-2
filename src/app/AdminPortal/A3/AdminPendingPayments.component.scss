@@ -1,0 +1,49 @@
+/* Add to your component's SCSS file if you need custom colors */
+.text-success {
+    color: #28a745;
+    font-weight: 600;
+  }
+  
+  .text-danger {
+    color: #dc3545;
+    font-weight: 600;
+  }
+  
+  .text-warning {
+    color:   darkorange;
+    font-weight: 600;
+  }
+  
+  /* Highlight row on hover */
+  .table-responsive tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+ 
+  .badge {
+    font-weight: 600;
+    padding: 0.4em 0.6em;
+    font-size: 0.85rem;
+    border-radius: 0.5rem;
+  }
+  
+  
+  .bg-success {
+    background-color: #28a745 !important;
+    color: #fff !important;
+  }
+  
+  .bg-danger {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+  }
+  
+  .bg-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important; // Better contrast
+  }
+  
+  /* Highlight row on hover (unchanged) */
+  .table-responsive tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+   

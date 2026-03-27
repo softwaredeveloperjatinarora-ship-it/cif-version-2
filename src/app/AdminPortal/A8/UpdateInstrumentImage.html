@@ -1,0 +1,181 @@
+
+<app-admin-dashboard></app-admin-dashboard>
+
+
+
+
+<div class="container-fluid p-4">
+  <div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+      <h2 class="m-0">Update Instrument Details</h2>
+    </div>
+    <div class="col-md-6 text-end">
+      <input 
+        type="text" 
+        class="form-control d-inline-block w-50" 
+        placeholder="Search instruments..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)">
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="text-center my-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p>Loading Instruments...</p>
+    </div>
+  } @else {
+    <div class="table-responsive shadow-sm rounded p-5">
+      <table class=" table table-hover table-striped align-middle bg-white m-0">
+        <thead class="table-dark">
+          <tr>
+            <th>Instrument Name</th>
+            <th>Sample Excel</th>
+            <th>Image</th>
+            <th>Status</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of filteredData(); track item.instrumentId) {
+            <tr>
+              <td><strong>{{ item.instrumentName }}</strong></td>
+              <td>
+                @if (item.excelSheetUrl) {
+                  <button class="btn btn-outline-success btn-sm" (click)="downloadImage(item.excelSheetUrl)">
+                    <i class="bi bi-file-earmark-excel"></i>
+                  </button>
+                } @else { <span class="text-muted">N/A</span> }
+              </td>
+              <td>
+                @if (item.imageUrl) {
+                  <button class="btn btn-outline-info btn-sm" (click)="downloadImage(item.imageUrl)">
+                    View
+                  </button>
+                } @else { <span class="text-danger">No File</span> }
+              </td>
+              <td>
+                <span [class]="item.isActive ? 'badge bg-success' : 'badge bg-danger'">
+                  {{ item.isActive ? 'Available' : 'Unavailable' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-dark btn-sm" (click)="onSelect(item)">
+                  Take Action
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="text-center py-4">No instruments found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<ng-template #viewDescModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Modify Instrument</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label d-block">Instrument Status</label>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" [checked]="statusInstrument()"
+            (change)="statusInstrument.set(!statusInstrument())">
+          <label class="form-check-label">{{ statusInstrument() ? 'Active' : 'Inactive' }}</label>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <label class="form-label">Upload New Image</label>
+        <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*">
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.close()">Cancel</button>
+    <button type="button" class="btn btn-primary" [disabled]="!fileChosen()" (click)="updateDocument()">
+      Update Changes
+    </button>
+  </div>
+</ng-template>
+<!-- 
+@if (loadingIndicator()) {
+<div class="fullscreen-loader">
+  <div class="custom-spinner-overlay">
+    <div class="custom-spinner-content">
+      <img src="assets/images/spinner.gif" alt="Loading..." />
+    </div>
+  </div>
+</div>
+}
+
+<div class="container-fluid py-4">
+  <div class="row mb-4">
+    <h2 class="text-center">Update Instrument Details</h2>
+  </div>
+
+  <div class="row align-items-center mb-3">
+    <div class="col-md-4">
+      <button (click)="exportToExcel()" class="btn btn-dark" [disabled]="allInstruments().length === 0">
+        <i class="bi bi-download me-2"></i>Export to Excel
+      </button>
+    </div>
+    <div class="col-md-4 ms-auto">
+      <input [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" type="text" class="form-control"
+        placeholder="Search instruments..." />
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <ngx-datatable class="bootstrap table table-striped material" [rows]="filteredInstruments()"
+      [columnMode]="columnMode.force" [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [limit]="10">
+
+      @for (col of columns(); track col) {
+      <ngx-datatable-column [name]="col" [prop]="col"></ngx-datatable-column>
+      }
+
+      <ngx-datatable-column name="Actions" [sortable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <button class="btn btn-outline-primary btn-sm" (click)="onSelect(row)">
+            Take Action
+          </button>
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+  </div>
+</div>
+
+<ng-template #viewDescModal let-modal>
+  <div class="modal-header bg-light">
+    <h5 class="modal-title">Modify: {{ instrumentTitle() }}</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label d-block">Instrument Status</label>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" [checked]="statusInstrument()"
+            (change)="statusInstrument.set(!statusInstrument())">
+          <label class="form-check-label">{{ statusInstrument() ? 'Active' : 'Inactive' }}</label>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <label class="form-label">Upload New Image</label>
+        <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*">
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.close()">Cancel</button>
+    <button type="button" class="btn btn-primary" [disabled]="!fileChosen()" (click)="updateDocument()">
+      Update Changes
+    </button>
+  </div>
+</ng-template> -->

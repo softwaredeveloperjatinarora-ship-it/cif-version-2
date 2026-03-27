@@ -1,0 +1,79 @@
+<app-admin-dashboard></app-admin-dashboard>
+
+@if (showLoader()) {
+<div class="fullscreen-loader">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Fetching details, please wait...</div>
+</div>
+}
+
+<div class="container-fluid py-4">
+    @if (allFeedbackData().length > 0) {
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="row align-items-center mb-4">
+                <div class="col-sm-2">
+                    <button (click)="exportToExcel()" class="btn btn-dark w-100"
+                        [disabled]="filteredFeedback().length === 0">
+                        Export to Excel
+                    </button>
+                </div>
+                <div class="col-sm-5 text-center">
+                    <h4 class="m-0">All User Feedback Details</h4>
+                </div>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" placeholder="Search feedback..." [ngModel]="searchQuery()"
+                        (ngModelChange)="searchQuery.set($event); currentPage.set(1)">
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Candidate Info</th>
+                            <!-- <th>Instrument</th> -->
+                            <th>Feedback</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (row of paginatedData(); track $index) {
+                        <tr>
+                            <td>{{ ((currentPage() - 1) * itemsPerPage) + $index + 1 }}</td>
+                            <td>
+                                <div class="fw-bold">{{ row.candidateName }}</div>
+                                <small class="text-muted">{{ row.userEmailId }}</small>
+                            </td>
+                            <!-- <td>{{ row.instrumentName }}</td> -->
+                            <td class="text-wrap" style="max-width: 300px;">{{ row.comments }}</td>
+                            <td>{{ row.feedbackDate || 'NA' }}</td>
+                        </tr>
+                        } @empty {
+                        <tr>
+                            <td colspan="5" class="text-center text-danger py-4">No matching records found.</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-center align-items-center mt-3 gap-3">
+                <button class="btn btn-link p-0" (click)="prevPage()" [disabled]="currentPage() === 1">
+                    <i class="mdi mdi-chevron-left fs-2"></i>
+                </button>
+                <span class="text-danger fw-bold">{{ currentPage() }} / {{ totalPages() }}</span>
+                <button class="btn btn-link p-0" (click)="nextPage()" [disabled]="currentPage() === totalPages()">
+                    <i class="mdi mdi-chevron-right fs-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    } @else {
+    <div class="text-center mt-5 py-5">
+        <h3 class="text-danger">No Records Found</h3>
+        <p class="text-muted">The feedback database appears to be empty.</p>
+    </div>
+    }
+</div>

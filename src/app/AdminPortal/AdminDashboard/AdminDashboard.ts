@@ -11,7 +11,7 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-admin-dashboard',
-  standalone: true,                          // ✅ Angular 20: no NgModule needed
+  standalone: true,                          
   imports: [CommonModule],
   templateUrl: './AdminDashboard.html',
   styleUrl: './AdminDashboard.scss',
@@ -39,18 +39,20 @@ export class AdminDashboardComponent implements OnInit {
   ngOnInit(): void {
 
     const cookieRaw = this.cookieService.get('AdminAuthData');
-    if (!cookieRaw) {
-      Swal.fire({ title: 'Login Failed', icon: 'warning' });
-      this.router.navigate(['Home']);
-    }
-
-    const session = JSON.parse(cookieRaw);
-
+    if (cookieRaw) {
+       const session = JSON.parse(cookieRaw);
     this.userRole.set(session.userRole?.length > 0 ? session.userRole : 'Internal User');
-    this.userEmail.set(session.EmailId ?? '');
-    this.supervisorName.set(session.SupervisorName ?? null);
-    this.departmentName.set(session.DepartmentName ?? '');
-    this.candidateName.set(session.CandidateName ?? '');
+    this.userEmail.set(session.EmailId );
+    this.supervisorName.set(session.SupervisorName );
+    this.departmentName.set(session.DepartmentName );
+    this.candidateName.set(session.CandidateName );
+    }
+    else
+    {
+       Swal.fire({ title: 'Login Failed', icon: 'warning' });
+      this.router.navigate(['Home']);
+    
+    }
   }
 
   toggleNavbar(): void {

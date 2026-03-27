@@ -1,0 +1,302 @@
+<app-admin-dashboard></app-admin-dashboard>
+
+ 
+@if (loadingIndicator()) {
+<div class="fullscreen-loader">
+  <div class="custom-spinner-overlay">
+    <div class="custom-spinner-content text-center">
+      <img src="assets/images/spinner.gif" alt="Loading..." />
+    </div>
+  </div>
+</div>
+}
+
+@if (filteredData().length > 0 || originalData().length > 0) {
+<div class="row">
+  <div class="col-12 stretch-card">
+    <div class="card">
+      <hr />
+      <div class="row d-flex justify-content-center">
+        <h2 class="fs-1 text-center">Upload Results Page</h2>
+      </div>
+      <hr />
+
+      <div class="card-body">
+
+        <div class="row d-flex justify-content-center align-items-center mt-4 mb-2">
+
+          <div class="col-sm-4 col-3 text-end">
+            <button (click)="exportToExcel()" class="btn btn-dark" [disabled]="filteredData().length === 0">
+              Export to Excel
+            </button>
+          </div>
+
+          <div class="col-sm-4 col-3 mb-4 mt-3 text-center">
+            <input [value]="searchQuery()" (input)="onSearchQueryChange($any($event.target).value)" type="text"
+              class="form-control w-50" placeholder="Search Your Text Here" [disabled]="originalData().length === 0" />
+          </div>
+
+          <div class="col-md-4 col-3 mb-4 mt-3">
+            <button (click)="toggleAdvancedSearch()" class="btn btn-dark w-50">
+              {{ showAdvancedSearch() ? 'Hide Advanced' : 'Advanced Search' }}
+            </button>
+          </div>
+
+        </div>
+        <hr />
+
+        @if (showAdvancedSearch()) {
+        <div class="row mb-3 p-2 d-flex justify-content-center align-items-center bg-warning rounded">
+        
+          <div class="col-3 col-md-3 mb-3 mb-md-0">
+            <ng-select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)" [items]="statusOptions"
+              bindLabel="label" bindValue="value" placeholder="-- Select Status --"  class=""
+              [disabled]="originalData().length === 0">
+              <ng-template ng-option-tmp let-item="item">
+                @if (item.value === '') { <div>-- All Payments --</div> }
+                @if (item.value === 'success') { <div>Paid</div> }
+                @if (item.value === 'failure') { <div>Failure</div> }
+                @if (item.value === 'null') { <div>Pending</div> }
+              </ng-template>
+              <ng-template ng-label-tmp let-item="item">
+                @if (item.value === '') { <div>-- All Payments --</div> }
+                @if (item.value === 'success') { <div>Success</div> }
+                @if (item.value === 'failure') { <div>Failure</div> }
+                @if (item.value === 'null') { <div>Pending</div> }
+              </ng-template>
+            </ng-select>
+          </div>
+        
+          <div class="col-3 col-md-3 mb-3 mb-md-0">
+            <ng-select [ngModel]="isAssigned()" (ngModelChange)="isAssigned.set($event)" [items]="assignedOptions"
+              bindLabel="label" bindValue="value" placeholder="-- Select --"  
+              [disabled]="originalData().length === 0">
+              <ng-template ng-option-tmp let-item="item">
+                @if (item.value === '') { <div>-- All Tests --</div> }
+                @if (item.value === 'Assigned') { <div>All Assigned</div> }
+                @if (item.value === 'Pending') { <div>Not Assigned</div> }
+              </ng-template>
+              <ng-template ng-label-tmp let-item="item">
+                @if (item.value === '') { <div>-- All Tests --</div> }
+                @if (item.value === 'Assigned') { <div>All Assigned</div> }
+                @if (item.value === 'Pending') { <div>Not Assigned</div> }
+              </ng-template>
+            </ng-select>
+          </div>
+        
+        
+        <!-- <div class="row d-flex justify-content-center align-items-center"> -->
+          <div class="col-3 col-md-3 mt-2">
+            <button (click)="applyAdvancedSearch()" class="btn btn-dark " [disabled]="!hasAnySearchCriteria()">
+              Apply Filters
+            </button>
+          </div>
+          <div class="col-3 col-md-3 mt-2">
+            <button (click)="resetAdvancedSearch()" class="btn btn-dark">
+              Reset Filters
+            </button>
+          </div>
+        <!-- </div> -->
+
+        </div>
+        }
+
+        <div class="row m-4 p-2">
+          @if (hasAnySearchCriteria() || searchQuery()) {
+          <span class="fs-3 themeClr">
+            Search Result:–
+            <span class="text-muted">Found {{ filteredData().length }} Records</span>
+          </span>
+          }
+        </div>
+
+        @if (filteredData().length > 0) {
+        <div class="row d-flex justify-content-center align-items-center mb-3">
+
+          <div class="col-md-4 text-end">
+            <span class="text-dark fs-5 fw-bolder me-4 record-badge">
+              Records: {{ filteredData().length }}
+            </span>
+          </div>
+
+          <div class="col-md-4 text-start">
+            <span class="text-dark fs-5 fw-bolder me-4 record-badge">Items per page:</span>
+            <select class="form-select d-inline-block ms-2 record-badge" style="width: auto;"
+              [value]="isAllSelected() ? 'all' : itemsPerPage()" (change)="onItemsPerPageChange($event)">
+              @for (opt of itemsPerPageOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="col-md-4 text-center">
+            <div class="pagination d-flex align-items-center justify-content-center">
+              <a class="btn btn-outline-primary m-3" (click)="prevPage()" [class.disabled]="currentPage() === 1">
+                <i class="mdi mdi-chevron-left fs-4"></i>
+              </a>
+              <span class="fs-5 mt-4">{{ currentPage() }} / {{ totalPages() }}</span>
+              <a class="btn btn-outline-primary m-3" (click)="nextPage()"
+                [class.disabled]="currentPage() === totalPages()">
+                <i class="mdi mdi-chevron-right fs-4"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+        }
+
+        @if (filteredData().length > 0) {
+        <div class="table-responsive bg-dark-yellow mt-4 mb-4">
+          <table id="BookingDetailsDataTable" #table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th class="fw-bolder">Booking Id</th>
+                <th class="fw-bolder">Instrument Name</th>
+                <th class="fw-bolder">Sample Count</th>
+                <th class="fw-bolder">Total Charges</th>
+                <th class="fw-bolder">Request Sheet</th>
+                <th class="fw-bolder">Candidate Id</th>
+                <th class="fw-bolder">Candidate Name</th>
+                <th class="fw-bolder">Organisation Name</th>
+                <th class="fw-bolder">User Type</th>
+                <th class="fw-bolder">Payment Status</th>
+                <th class="fw-bolder">Payment Date</th>
+                <th class="fw-bolder">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of currentPageData(); track row.bookingId) {
+              <tr>
+                <td class="fw-bold">{{ row.bookingId }}</td>
+                <td class="fw-bold">{{ row.instrumentName }}</td>
+                <td class="fw-bold">{{ row.noOfSamples }}</td>
+                <td class="fw-bold">
+                  @if (row.totalCharges && row.totalCharges !== 'null') {
+                  {{ row.totalCharges | currency:'INR':'symbol' }}
+                  } @else {
+                  NA
+                  }
+                </td>
+                <td>
+                  @if (row.fileName) {
+                  <button class="btn btn-dark btn-sm ms-3" (click)="downloadFile(row.fileName!)">View</button>
+                  } @else {
+                  <span class="badge text-bg-info ms-3 fs-5">N/A</span>
+                  }
+                </td>
+                <td class="fw-bold">
+                  {{ row.userEmailId.length > 0 ? row.userEmailId : 'Internal User' }}
+                </td>
+                <td class="fw-bold">
+                  {{ (row.candidateName.length ) < 1 ? 'Internal User' : row.candidateName }} </td>
+                <td class="fw-bold">{{ row.organisationName }}</td>
+                <td class="fw-bold">{{ row.userRole }}</td>
+                <td>
+                  <span class="badge" [ngClass]="paymentBadgeClass(row.paymentStatus)">
+                    {{ paymentLabel(row.paymentStatus) }}
+                  </span>
+                </td>
+                <td class="fw-bold">
+                  <span class="badge" [ngClass]="paymentDateBadgeClass(row.paymentDate)">
+                    {{ (row.paymentDate && row.paymentDate !== 'null') ? row.paymentDate : '-NA-' }}
+                  </span>
+                </td>
+                <td class="fw-bold">
+                  @if (row.paymentStatus === 'success') {
+                  <button class="btn btn-dark btn-sm" (click)="openPaymentModal(row)">Upload</button>
+                  } @else {
+                  <span class="badge bg-success">NA</span>
+                  }
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-3 pagination d-flex justify-content-center align-items-center mt-3">
+            <a class="btn btn-outline-primary me-3" (click)="prevPage()" [class.disabled]="currentPage() === 1">
+              <i class="mdi mdi-chevron-left fs-4"></i>
+            </a>
+            <span class="fs-5">{{ currentPage() }} / {{ totalPages() }}</span>
+            <a class="btn btn-outline-primary ms-3" (click)="nextPage()"
+              [class.disabled]="currentPage() === totalPages()">
+              <i class="mdi mdi-chevron-right fs-4"></i>
+            </a>
+          </div>
+        </div>
+
+        } @else {
+        <p class="fs-2 text-danger text-center">No Grid Data Available.</p>
+        }
+
+      </div>
+    </div>
+  </div>
+</div>
+
+} @else {
+<div class="text-center">
+  <h3 class="text-center fs-2 m-5 text-danger pt-5">No Record!</h3>
+  <div class="row mt-4 mb-4">
+    <div class="col-sm-12 text-center">
+      <div class="mb-3 p-4">
+        <label class="form-label fs-4 text-danger">No Booking Found.</label>
+      </div>
+    </div>
+  </div>
+</div>
+}
+<ng-template #viewDescModal2 let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Result Upload Screen</h5>
+    <button type="button" class="btn-close" (click)="modal.close()" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    @if (bookingCase(); as bc) {
+    <div class="col-md-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="fs-5">Booking Id</th>
+                <th class="fs-5">Instrument Name</th>
+                <th class="fs-5">Upload File</th>
+                <th class="fs-5">Remarks (Any)</th>
+                <th class="fs-5">Upload Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="fs-5 p-4" style="width: 20%;">{{ bc.bookingId }}</td>
+                <td class="fs-5 p-4" style="width: 20%;">{{ bc.instrumentName }}</td>
+                <td class="fs-5">
+                  <input type="file" class="form-control" (change)="onFileSelected($event)" accept=".zip,.7z,.rar" />
+                  <div class="mt-2">
+                    <small class="text-muted themeClr">
+                      Allowed: .zip, .7z, .rar — Max 5 MB
+                    </small>
+                  </div>
+                </td>
+                <td class="fs-5 p-4" style="width: 20%;">
+                  <textarea [ngModel]="remarks()" (ngModelChange)="remarks.set($event)" rows="5" cols="30"
+                    class="form-control p-2" autocomplete="off">
+                    </textarea>
+                </td>
+                <td>
+                  <button type="button" class="btn btn-primary me-2" [disabled]="!fileStatus()"
+                    (click)="verifyData(bc)">
+                    Upload Result
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</ng-template>

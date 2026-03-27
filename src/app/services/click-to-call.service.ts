@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ClickToCallService {
   private readonly apiUrl = 'https://projectsapi.lpu.in/clicktocall/api/CTC/';
-  // private readonly apiUrl = 'https://websiteapi.lpu.in/clicktocall/api/CTC/';
+
 
   constructor(private http: HttpClient) {}
 

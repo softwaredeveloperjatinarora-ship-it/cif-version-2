@@ -1,0 +1,102 @@
+<app-admin-dashboard></app-admin-dashboard>
+
+<div class="container-fluid">
+  @if (loadingIndicator()) {
+  <div class="fullscreen-loader">
+    <img src="assets/images/spinner.gif" alt="Loading..." />
+  </div>
+  }
+
+  <div class="card mt-4">
+    <div class="card-body">
+      <div class="row align-items-center mb-4">
+        <div class="col-md-4">
+          <button (click)="exportToExcel()" class="btn btn-dark" [disabled]="instrumentData().length === 0">
+            Export to Excel
+          </button>
+        </div>
+        <div class="col-md-4 text-center">
+          <h4 class="fw-bold">Instrument Details</h4>
+        </div>
+        <div class="col-md-4">
+          <input [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" type="text" class="form-control"
+            placeholder="Search instruments...">
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover" #table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Template</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of paginatedData(); track row.instrumentId) {
+            <tr>
+              <td>{{ row.instrumentId }}</td>
+              <td>{{ row.instrumentName }}</td>
+              <td>
+                <button class="btn btn-outline-secondary btn-sm"
+                  (click)="onDownloadFile(serverUrl + row.sampleExcelSheetUrl)" [disabled]="!row.sampleExcelSheetUrl">
+                  <i class="bi bi-download"></i>
+                </button>          
+              </td>
+              <td>
+                <button class="btn btn-warning btn-sm" (click)="OpenReplaceModal(row)">
+                  <i class="bi bi-upload"></i> Replace
+                </button>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="4" class="text-center">No records found.</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <span>Total Records: {{ filteredData().length }}</span>
+        <div class="pagination-controls">
+          <button class="btn btn-sm btn-primary" (click)="prevPage()" [disabled]="currentPage() === 1">Prev</button>
+          <span class="mx-3">{{ currentPage() }} / {{ totalPages() }}</span>
+          <button class="btn btn-sm btn-primary" (click)="nextPage()"
+            [disabled]="currentPage() === totalPages()">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #viewDescModal2 let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Replace Excel Template</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    @if (BookingCase) {
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label>Instrument: <strong>{{ BookingCase.instrumentName }}</strong></label>
+      </div>
+      <div class="col-md-6 text-end">
+        <button class="btn btn-sm btn-info" (click)="onDownloadFile(serverUrl + BookingCase.sampleExcelSheetUrl)">
+          Download Existing
+        </button>
+      </div>
+      <div class="col-12 mt-3">
+        <input type="file" class="form-control" (change)="onFileXSelected($event)" accept=".xlsx, .xls">
+        <small class="text-muted">Max size: 1MB (XLSX/XLS)</small>
+      </div>
+    </div>
+    }
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" (click)="VerifyData(BookingCase)">Replace Sheet</button>
+  </div>
+</ng-template>

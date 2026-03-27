@@ -99,9 +99,9 @@ export class MyUploadedResultsComponent implements OnInit {
           const delay = Math.max(1500 - (Date.now() - startTime), 0);
           setTimeout(() => this.loadingIndicator.set(false), delay);
 
-        // const elapsed = Date.now() - startTime;
-        // const remainingDelay = Math.max(2500 - elapsed, 0);
-        // setTimeout(() => this.loadingIndicator.set(false), remainingDelay);
+
+
+
       },
       error: (err) => {
         console.error(err);

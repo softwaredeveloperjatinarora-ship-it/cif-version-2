@@ -1,0 +1,171 @@
+<app-admin-dashboard></app-admin-dashboard>
+
+@if (loadingIndicator()) {
+<div class="fullscreen-loader">
+  <div class="custom-spinner-overlay">
+    <div class="custom-spinner-content text-center">
+      <img src="assets/images/spinner.gif" alt="Loading..." class="img-fluid" style="width: 50px; height: 50px;"/>
+    </div>
+  </div>
+</div>
+}
+ 
+
+<div class="container-fluid  ">
+  @if (hasData)
+  {
+  <div class="row" >
+    <div class="container-fluid  border-5">
+      <div class="card-body p-4">
+        <hr class="border-1 border-dark opacity-100" />
+        <div class="row mb-4">
+          <h2 class="mb-3 text-center text-primary">Payment Proof Uploaded Details</h2>
+        </div>
+        <hr class="border-1 border-dark opacity-100" />
+        <div class="row g-3 align-items-center mb-4">
+          <div class="col-12 col-md-4 col-lg-3">
+            <button (click)="exportToExcel()" class="btn btn-dark w-35" [disabled]="!hasFilteredData">
+              <i class="bi bi-file-earmark-excel me-2"></i>Export to Excel
+            </button>
+          </div>
+
+          <div class="col-12 col-md-8 col-lg-9">
+            <div class="d-flex justify-content-">
+              <div class="w-24" style="max-width: 300px;">
+                <input [(ngModel)]="searchQuery" (keyup)="onSearch()" id="search" type="text" class="form-control"
+                  placeholder="Search records..." aria-label="Search" [disabled]="!hasFilteredData" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        @if (hasFilteredData)
+        { 
+        <div class="row d-flex justify-content-center align-items-center mb-3" > 
+          <div class="col-md-4 text-end">
+            <span class="text-dark fs-5 fw-bolder me-4" style="border:1px solid #ef7d00; padding: 8px 12px;">
+              Records: {{ getTotalRecords() }}
+            </span>
+          </div>
+          <div class="col-md-4 text-start">
+            <span class="text-dark fs-5 fw-bolder me-4" style="border:1px solid #ef7d00; padding: 8px 12px;">Items per
+              page:</span>
+            <select class="form-select d-inline-block ms-2"
+              style="width: auto; border:1px solid #ef7d00; padding: 8px 12px;"
+              [value]="isAllSelected ? 'all' : itemsPerPage" (change)="onItemsPerPageChange($event)"
+              [disabled]="!hasFilteredData">
+              <option *ngFor="let option of itemsPerPageOptions" [value]="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-4 text-center">
+            <div class="pagination">
+              <a class="btn btn-outline-primary m-3" (click)="prevPage()" [class.disabled]="currentPage === 1">
+                <i class="mdi mdi-chevron-left fs-4"></i>
+              </a>
+              <span class="fs-5 mt-4">{{ currentPage }} / {{ totalPages }}</span>
+              <a class="btn btn-outline-primary m-3" (click)="nextPage()" [class.disabled]="currentPage === totalPages">
+                <i class="mdi mdi-chevron-right fs-4"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- <ng-container *ngIf="hasFilteredData; else noRecordsTemplate"> -->
+          <div class="table-responsive">
+            <table id="SampleslDataTable" class="table table-hover table-striped table-bordered mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="fw-bolder ">Booking Id</th>
+                  <th class="fw-bolder ">User Id</th>
+                  <th class="fw-bolder ">Number of Samples</th>
+                  <th class="fw-bolder ">Total Charges</th>
+                  <th class="fw-bolder ">Uploaded Proof</th>
+                  <th class="fw-bolder ">Requested On</th>
+                  <th class="fw-bolder ">Proof Remarks</th>
+                  <th class="fw-bolder ">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                 @for (row of getCurrentPageData(); track row.bookingId) {
+                  <tr> 
+                <!-- <tr *ngFor="let row of getCurrentPageData(); let i = index"> -->
+                  <td class="fw-bold">{{ row.bookingId }}</td>
+                  <td class="fw-bold">{{ row.userId }}</td>
+                  <td class="fw-bold">{{ row.noOfSamples }}</td>
+                  <td class="fw-bold">{{ row.totalCharges }}</td>
+                  <td>
+                    @if(row.receiptProofFile)
+                    {
+                    <!-- <ng-container *ngIf="row.receiptProofFile; else NoFile"> -->
+                      <button class="btn btn-sm btn-dark" (click)="downloadFile(row.receiptProofFile)">
+                        View
+                      </button>
+                    }
+                    <!-- </ng-container> -->
+                    <!-- <ng-template #NoFile> -->
+                      @else{<span class="badge bg-info text-dark">N/A</span>}
+                    <!-- </ng-template> -->
+                  </td>
+                  <td class="text-danger">{{ row.requestDate }}</td>
+                  <td class="text-danger">{{ row.proofRemarks }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="{
+                          'bg-success': row.isProofApproved === '1',
+                          'bg-danger': row.isProofApproved === '0',
+                          'bg-warning text-dark': !row.proofApprovedOn || row.proofApprovedOn === 'null'
+                        }">
+                      {{ getStatusLabel(row.isProofApproved) }}
+                    </span>
+                  </td>
+                </tr>
+              }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="row">           <!-- </div> *ngIf="hasFilteredData"> -->
+            <div class="col-sm-3 pagination d-flex justify-content-center align-items-center mt-3">
+              <a class="btn btn-outline-primary me-3" (click)="prevPage()" [class.disabled]="currentPage === 1">
+                <i class="mdi mdi-chevron-left fs-4"></i>
+              </a>
+              <span class="fs-5">{{ currentPage }} / {{ totalPages }}</span>
+              <a class="btn btn-outline-primary ms-3" (click)="nextPage()"
+                [class.disabled]="currentPage === totalPages">
+                <i class="mdi mdi-chevron-right fs-4"></i>
+              </a>
+            </div>
+          </div>
+        <!-- </ng-container> -->
+      }
+      @else{
+        <!-- <ng-template #noRecordsTemplate> -->
+          <div class="text-center py-5">
+            <p class="text-danger fs-5 mb-0">Try Search With Different Text.</p>
+          </div>
+        <!-- </ng-template> -->
+      }
+      </div>
+    </div>
+  </div>
+  }
+  @else{
+  <!-- <ng-template #noDataTemplate> -->
+    <div class="card card-warning text-center  p-2 mb-4 ">
+      <hr />
+      <div class="row  mb-4  ">
+        <h3 class="text-center text-primary fs-2  mb-4 pb-4"> All Proof Page </h3>
+        <hr />
+        <div class="  text-center py-5 BottomSpace">
+          <p class="fs-4 text-danger ">No Details Found.</p>
+        </div>
+
+      </div>
+    </div>
+
+  <!-- </ng-template> -->
+}
+</div>

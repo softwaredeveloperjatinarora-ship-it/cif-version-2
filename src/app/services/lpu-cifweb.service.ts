@@ -52,9 +52,9 @@ export class LpuCIFWebService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Accept': '*/*',
-      'Authorization': `Bearer ${this.authToken}`
+      'Authorization': `Bearer ${token}`
     });
-    return this.http.post(this.api + 'api/Mou/DownloadMOUFiles/MOUDownloadFiles', payload, {
+    return this.http.post('https://projectsapi.lpu.in/api/Mou/DownloadMOUFiles/MOUDownloadFiles', payload, {
 
       headers: headers,
       responseType: 'blob'
@@ -472,5 +472,38 @@ export class LpuCIFWebService {
   }
 
  
+
+
+    CIFUpdateEventsStatus(dataSoft: FormData): Observable<any> {
+    var authToken = this.storageService.getUser();
+    let headers = new HttpHeaders()
+      .set('Authorization', 'Bearer ' + authToken)
+    return this.http.post(
+       `${this.api}/UpdateEventsStatus`, dataSoft, { headers });
+  }
+
+
+
+    ReplaceExcelSheetSample(newUserData: FormData): Observable<any> {
+    let token = this.storageService.getUser();
+    let headers = new HttpHeaders()
+      .set('Authorization', 'Bearer ' + token)
+    return this.http.post(
+      //  'https://localhost:7125/api/LpuCIF/ReplaceExcelSheetSample', newUserData, { headers }
+       `${this.api}/ReplaceExcelSheetSample`, newUserData, { headers }
+    );// for new user account creatinng
+  }
+
+
+  //   GetAllFeedbackdetails(): Observable<any> {
+  //   let token = this.storageService.getUser();
+  //   let headers = new HttpHeaders()
+  //     .set('Authorization', 'Bearer ' + this.authToken)
+  //     .set('Content-Type', 'application/json');
+  //   return this.http.get(
+  //     `${this.api}/GetAllUserFeedbacks`, { headers }
+  //     // 'https://projectsapi.lpu.in/api/LpuCIF/GetAllUserFeedbacks', { headers }
+  //   );
+  // }
 }
 

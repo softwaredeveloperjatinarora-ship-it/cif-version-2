@@ -27,7 +27,7 @@ import { MouDocumentsService } from '../../services/mou-documents.service';
 import { AdminDashboardComponent } from '../AdminDashboard/AdminDashboard';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { Subject, takeUntil } from 'rxjs';
-// ── Strongly-typed booking row ────────────────────────────────────────────────
+
 export interface BookingRow {
   bookingId: string;
   instrumentName: string;
@@ -67,12 +67,12 @@ export interface SelectOption<T = string> {
  
 export class AdminActionBookingsComponent implements OnInit, OnDestroy {
 
-  // ── ViewChild refs ────────────────────────────────────────────────────────
+
   @ViewChild('viewDescModal2') viewDescModal2!: TemplateRef<any>;
   @ViewChild('table') tableRef!: ElementRef;
 
-  // ── Service injection via inject() ────────────────────────────────────────
-  // ✅ Angular 20: inject() replaces constructor parameter injection entirely
+
+
   private readonly cifWebService  = inject(LpuCIFWebService);
   private readonly storageService = inject(StorageService);
   private readonly authService    = inject(AuthService);
@@ -82,10 +82,10 @@ export class AdminActionBookingsComponent implements OnInit, OnDestroy {
   private readonly route          = inject(ActivatedRoute);
   private readonly cookieService  = inject(CookieService);
 
-  // ── RxJS teardown ─────────────────────────────────────────────────────────
+
   private readonly destroy$ = new Subject<void>();
 
-  // ── Constants ─────────────────────────────────────────────────────────────
+
   readonly serverUrl = 'https://files.lpu.in/umsweb/CIFDocuments/';
 
   readonly statusOptions: SelectOption[] = [
@@ -109,40 +109,40 @@ export class AdminActionBookingsComponent implements OnInit, OnDestroy {
     { label: 'All', value: 'all' },
   ];
 
-  // ── User session signals ──────────────────────────────────────────────────
+
   readonly userRole      = signal<string>('');
   readonly userEmail     = signal<string>('');
   readonly candidateName = signal<string>('');
 
-  // ── Data signals ──────────────────────────────────────────────────────────
-  // originalData: source of truth — never mutated after API load
+
+
   readonly originalData       = signal<BookingRow[]>([]);
   readonly allAssignedTests   = signal<any[]>([]);
   readonly allCifUserList     = signal<CifUser[]>([]);
 
-  // ── UI state signals ──────────────────────────────────────────────────────
+
   readonly loadingIndicator    = signal<boolean>(false);
   readonly showAdvancedSearch  = signal<boolean>(false);
 
-  // ── Search / filter signals ───────────────────────────────────────────────
+
   readonly searchQuery     = signal<string>('');
   readonly selectedStatus  = signal<string>('');
   readonly isAssigned      = signal<string>('');
 
-  // ── Pagination signals ────────────────────────────────────────────────────
+
   readonly currentPage     = signal<number>(1);
   readonly itemsPerPage    = signal<number>(15);
   readonly isAllSelected   = signal<boolean>(false);
 
-  // ── Modal state signals ───────────────────────────────────────────────────
+
   readonly bookingCase = signal<BookingRow | null>(null);
   readonly remarks     = signal<string>('');
   readonly fileStatus  = signal<boolean>(false);
   private fileData64   = '';
   private fileName_    = '';
 
-  // ── computed(): advanced-filtered data (no text search yet) ──────────────
-  // ✅ computed() replaces getAdvancedFilteredData() — memoized, reactive
+
+
   private readonly advancedFilteredData = computed<BookingRow[]>(() => {
     let data = this.originalData();
     const status   = this.selectedStatus();
@@ -164,7 +164,7 @@ export class AdminActionBookingsComponent implements OnInit, OnDestroy {
       );
     }
 
-    // Sort by bookingRequestDate ascending
+
     return [...data].sort((a, b) => {
       const dA = a.bookingRequestDate ? new Date(a.bookingRequestDate).getTime() : 0;
       const dB = b.bookingRequestDate ? new Date(b.bookingRequestDate).getTime() : 0;
@@ -172,7 +172,7 @@ export class AdminActionBookingsComponent implements OnInit, OnDestroy {
     });
   });
 
-  // ── computed(): text-search applied on top of advanced filter ────────────
+
   readonly filteredData = computed<BookingRow[]>(() => {
     const q = this.searchQuery().toLowerCase().trim();
     if (!q) return this.advancedFilteredData();
@@ -181,26 +181,25 @@ export class AdminActionBookingsComponent implements OnInit, OnDestroy {
     );
   });
 
-  // ── computed(): total pages ───────────────────────────────────────────────
+
   readonly totalPages = computed<number>(() =>
     this.isAllSelected() ? 1 : Math.ceil(this.filteredData().length / this.itemsPerPage())
   );
 
-  // ── computed(): current page slice ───────────────────────────────────────
+
   readonly currentPageData = computed<BookingRow[]>(() => {
     if (this.isAllSelected()) return this.filteredData();
     const start = (this.currentPage() - 1) * this.itemsPerPage();
     return this.filteredData().slice(start, start + this.itemsPerPage());
   });
 
-  // ── computed(): whether any filter is active ──────────────────────────────
+
   readonly hasAnySearchCriteria = computed<boolean>(() =>
     !!this.selectedStatus().trim() || !!this.isAssigned().trim()
   );
 
-  // ─────────────────────────────────────────────────────────────────────────
+
   ngOnInit(): void {
-    this.loadUserFromCookies();
     this.getAllPaymentDetails();
     this.getAllAssignedTest();
   }
@@ -210,26 +209,26 @@ export class AdminActionBookingsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // ── Cookie session ────────────────────────────────────────────────────────
+
   private loadUserFromCookies(): void {
-    // const raw = this.cookieService.get('AdminAuthData');
-    // if (!raw) {
-    //   Swal.fire('Session Expired', 'Please login again to continue.', 'warning');
-    //   this.router.navigate(['/Home']);
-    //   return;
-    // }
-    // try {
-    //   const parsed = JSON.parse(raw);
-    //   this.userRole.set(parsed.UserRole     ?? '');
-    //   this.userEmail.set(parsed.EmailId     ?? '');
-    //   this.candidateName.set(parsed.CandidateName ?? '');
-    // } catch {
-    //   Swal.fire('Session Error', 'Invalid session data. Please login again.', 'error');
-    //   this.router.navigate(['/Home']);
-    // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   }
 
-  // ── API: load all bookings ────────────────────────────────────────────────
+
   getAllPaymentDetails(): void {
     this.loadingIndicator.set(true);
     const startTime = Date.now();
@@ -252,7 +251,7 @@ export class AdminActionBookingsComponent implements OnInit, OnDestroy {
       });
   }
 
-  // ── API: load assigned tests ──────────────────────────────────────────────
+
   getAllAssignedTest(): void {
     this.cifWebService.GetAllUploadedResultsByStaff()
       .pipe(takeUntil(this.destroy$))
@@ -264,21 +263,21 @@ export class AdminActionBookingsComponent implements OnInit, OnDestroy {
       });
   }
 
-  // ── Search ────────────────────────────────────────────────────────────────
+
   onSearchQueryChange(value: string): void {
     this.searchQuery.set(value);
     this.currentPage.set(1);
   }
 
-  // ── Advanced search ───────────────────────────────────────────────────────
+
   toggleAdvancedSearch(): void {
     const next = !this.showAdvancedSearch();
     this.showAdvancedSearch.set(next);
     if (!next) this.resetAdvancedSearch();
   }
 
-  // No explicit applyAdvancedSearch needed — computed() handles it reactively.
-  // Button kept in template as UX affordance; it just resets pagination.
+
+
   applyAdvancedSearch(): void {
     this.currentPage.set(1);
   }
@@ -290,7 +289,7 @@ export class AdminActionBookingsComponent implements OnInit, OnDestroy {
     this.currentPage.set(1);
   }
 
-  // ── Pagination ────────────────────────────────────────────────────────────
+
   nextPage(): void {
     if (this.currentPage() < this.totalPages()) {
       this.currentPage.update(p => p + 1);
@@ -315,12 +314,12 @@ export class AdminActionBookingsComponent implements OnInit, OnDestroy {
     this.currentPage.set(1);
   }
 
-  // ── File helpers ──────────────────────────────────────────────────────────
+
   downloadFile(file: string): void {
     window.open(this.serverUrl + file, '_blank');
   }
 
-  // ── Modal ─────────────────────────────────────────────────────────────────
+
   openPaymentModal(row: BookingRow): void {
     this.bookingCase.set(row);
     this.remarks.set('');
@@ -408,7 +407,7 @@ export class AdminActionBookingsComponent implements OnInit, OnDestroy {
       });
   }
 
-  // ── Export ────────────────────────────────────────────────────────────────
+
   exportToExcel(): void {
     const rows = this.filteredData().map(item => ({
       BookingId:       item.bookingId,
@@ -439,7 +438,7 @@ export class AdminActionBookingsComponent implements OnInit, OnDestroy {
     link.click();
   }
 
-  // ── Payment status helpers ────────────────────────────────────────────────
+
   paymentLabel(status: string | null): string {
     if (status === 'success') return 'Paid';
     if (status === 'failure') return 'Failed';
