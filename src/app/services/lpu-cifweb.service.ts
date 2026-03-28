@@ -431,6 +431,7 @@ export class LpuCIFWebService {
     );
   }
  
+ 
   GetAllEventDetails(): Observable<any> {
     return this.http.get(
       `${this.api}/GetAllCifEventDetails`,

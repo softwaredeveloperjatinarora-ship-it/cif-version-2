@@ -1,13 +1,25 @@
+@if (loadingIndicator()) {
+  <div class="fullscreen-loader">
+    @if (isLoading()) {
+      <div class="custom-spinner-overlay">
+        <div class="custom-spinner-content text-center">
+          <img src="assets/images/spinner.gif" alt="Loading..." />
+        </div>
+      </div>
+    }
+  </div>
+}
 
-<section class="login-section d-flex align-items-center">
-  <div class="container BottomSpace">
 
-    
+<section class="login-section  d-flex align-items-center BottomSpace">
+  <div class="container bg-light">
     <div class="heading-wrapper LoginCards text-center">
-      <h1 class="fs-2 text-maroon">Central Instrumentation Facility - Admin Login</h1>
+      <h1 class="fs-2 text-maroon ">Central Instrumentation Facility - Admin Login</h1>
     </div>
 
-    <div class="row align-items-center justify-content-between gap-5">
+    
+
+    <div class="row align-items-center  justify-content-between gap-5">
 
       
       <div class="col-lg-6 d-none d-lg-block text-center">

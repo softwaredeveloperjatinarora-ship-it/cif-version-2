@@ -311,7 +311,7 @@ export class CifLoginPageComponent implements OnInit {
           this.loginError = 'Data Server Connection error, Try again later';
         }
 
-        const delay = Math.max(500 - (Date.now() - startTime), 0);
+        const delay = Math.max(800 - (Date.now() - startTime), 0);
         setTimeout(() => this.loadingIndicator.set(false), delay);
       },
       error: (err) => {

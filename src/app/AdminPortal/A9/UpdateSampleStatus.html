@@ -100,21 +100,24 @@
 </div>
 
 <ng-template #ViewUpdateStatusModal let-modal>
-  <div class="modal-header bg-dark text-white">
+  <div class="modal-header bg-light text-white">
     <h5 class="modal-title">Update Sample Status</h5>
     <button type="button" class="btn-close btn-close-white" (click)="modal.dismiss()"></button>
   </div>
   <div class="modal-body p-4">
     <div class="row g-3">
-      <div class="col-md-6">
+      <div class="col-md-3"> 
         <label class="form-label text-muted small">Booking ID</label>
-        <div class="fw-bold">{{ bookingCase().bookingId }}</div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-3">  <div class="fw-bold">{{ bookingCase().bookingId }}</div>
+      </div>
+      <div class="col-md-3">
         <label class="form-label text-muted small">Instrument ID</label>
         <div class="fw-bold">{{ bookingCase().instrumentId }}</div>
       </div>
-      <div class="col-md-6">
+    </div>
+    <div class="row g-3"> 
+      <div class="col-md-4">
         <label class="form-label">Sample Condition</label>
         <select class="form-select" [ngModel]="assignedTo()" (ngModelChange)="assignedTo.set($event)">
           <option value="" disabled>Select Status</option>
@@ -124,7 +127,7 @@
           <option value="Excellent">Excellent</option>
         </select>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
         <label class="form-label">Received Date</label>
         <input type="date" class="form-control" [ngModel]="receivedDate()" (ngModelChange)="receivedDate.set($event)">
       </div>

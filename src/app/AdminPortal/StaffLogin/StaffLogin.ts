@@ -79,6 +79,9 @@ export class AdminLoginComponent implements OnInit {
   readonly errMessage   = signal('');
 
 
+  readonly loadingIndicator = signal(false);
+  readonly isLoading       = signal(true);
+
   formdata!: FormGroup;
 
 
@@ -94,8 +97,13 @@ export class AdminLoginComponent implements OnInit {
 
 
   ngOnInit(): void {
+
+    this.loadingIndicator.set(true);
+    const startTime = Date.now();
     this.authSession.clearSession();
     this.buildForm();
+    const delay = Math.max(1800 - (Date.now() - startTime), 10);
+    setTimeout(() => this.loadingIndicator.set(false), delay);
   }
 
 

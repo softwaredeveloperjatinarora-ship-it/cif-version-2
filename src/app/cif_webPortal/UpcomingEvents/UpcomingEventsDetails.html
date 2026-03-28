@@ -1,0 +1,69 @@
+@if (loadingIndicator()) {
+  <div class="fullscreen-loader">
+    @if (isLoading()) {
+      <div class="custom-spinner-overlay">
+        <div class="custom-spinner-content text-center">
+          <img src="assets/images/spinner.gif" alt="Loading..." />
+        </div>
+      </div>
+    }
+  </div>
+}
+
+
+<section class="section bg-light">
+  <div class="container mb-4">
+    <div class="heading-wraper">
+      <div class="main-head d-flex align-items-center justify-content-between">
+        <h2 class="mb-0">Upcoming Events</h2>
+        
+        <div class="slider-custom-nav">
+          <button class="btn btn-sm btn-outline-dark me-2" (click)="prev()">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-dark" (click)="next()">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    @if (loadingIndicator()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-warning" role="status">
+          <span class="visually-hidden">Loading events...</span>
+        </div>
+      </div>
+    } @else {
+      @if (allEvents().length > 0) {
+        <ngb-carousel #ngbCarousel [interval]="autoSlideInterval" [pauseOnHover]="true" [wrap]="true"
+          [showNavigationArrows]="false" [showNavigationIndicators]="true">
+        
+          @for (event of allEvents(); track event.eventId; let i = $index) {
+          <ng-template ngbSlide [id]="'slide-' + i">
+             <div class="slider-item event-card mb-4 bg-dark-yellow">
+                    <div class="row">
+                        <div class="col-md-12 text-start">
+                            <h4 class="font-primary">{{ event.eventName }}</h4>
+                            <div class="misc-smfont mt-3"><b>Date:</b> {{ event.eventDate }}</div>
+                        </div>
+                    </div>
+                </div>
+          </ng-template>
+          }
+        </ngb-carousel>
+      } @else {
+        <div class="alert alert-light border text-center py-4 mt-3">
+          <i class="bi bi-info-circle fs-2 text-warning d-block mb-2"></i>
+          <label class="form-label fs-5 text-danger">No Upcoming Events Found.</label>
+        </div>
+      }
+    }
+
+    @if (serverError()) {
+      <div class="alert alert-danger mt-3 text-center">
+        <strong>Error:</strong> {{ errorMessage() }}
+      </div>
+    }
+  </div>
+</section>

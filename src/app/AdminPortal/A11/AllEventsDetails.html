@@ -1,0 +1,307 @@
+<app-admin-dashboard></app-admin-dashboard>
+ 
+<!-- @if (loadingIndicator()) {
+<div class="fullscreen-loader d-flex align-items-center justify-content-center">
+  <div class="text-center">
+    <img src="assets/images/spinner.gif" alt="Loading..." />
+    <p class="mt-2 fw-bold">Updating Data...</p>
+  </div>
+</div>
+} -->
+
+ 
+@if (loadingIndicator()) {
+  <div class="fullscreen-loader">
+    @if (isLoading()) {
+      <div class="custom-spinner-overlay">
+        <div class="custom-spinner-content text-center">
+          <img src="assets/images/spinner.gif" alt="Loading..." />
+        </div>
+      </div>
+    }
+  </div>
+}
+
+
+<div class="container-fluid py-4 BottomSpace">
+  <div class="card shadow border-0">
+    <div class="card-body">
+      <div class="row mb-4 align-items-center">
+        <div class="col-md-4">
+          <button (click)="exportToExcel()" class="btn btn-dark btn-sm shadow-sm" [disabled]="filteredEvents().length === 0">
+            <i class="mdi mdi-file-excel me-1"></i> Export Excel
+          </button>
+        </div>
+        <div class="col-md-4 text-center">
+          <h3 class="fw-bolder m-0">CIF Events Management</h3>
+        </div>
+        <div class="col-md-4">
+          <div class="input-group shadow-sm">
+            <span class="input-group-text bg-white"><i class="mdi mdi-magnify"></i></span>
+            <input type="text" class="form-control" placeholder="Search events..." 
+                   [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)">
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover border align-middle">
+          <thead class="table-light">
+            <tr>
+              <th class="form-label ">Event Id</th>
+              <th class="form-label ">Event Name</th>
+              <th class="form-label">EventDate</th>
+              <th class="form-label">EventDetils</th>
+              <th class="form-label">Edit </th>
+              <th class="form-label ">Action </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (InstrumentDataRow of filteredEvents(); track InstrumentDataRow.eventId; let i = $index) {
+
+              <tr>
+                <td class="fw-bold "> {{InstrumentDataRow.eventId}}</td>
+                <td class="fw-bold "> {{InstrumentDataRow.eventName}}</td>
+                <td class="fw-bold "> {{InstrumentDataRow.eventDate}}</td>
+                <td class="fw-bold "> {{InstrumentDataRow.eventDetails}}</td>
+                <td class="fw-bold ">
+                  <button class="btn btn-primary" (click)="openActionModal(InstrumentDataRow, actionModal, 'edit')"><i
+                      class="bi bi-pencil-square"></i> </button>
+                  <!-- <button class="btn btn-danger" (click)="onSelectFile(InstrumentDataRow)">
+                                                              View </button> -->
+                </td>
+                <td><button class="btn btn-danger" (click)="openActionModal(InstrumentDataRow, actionModal, 'reject')"> <i
+                      class="bi bi-exclamation-circle"></i></button></td>
+              
+              </tr>
+            <!-- <tr>
+              <td class="text-center text-muted">{{ i + 1 }}</td>
+              <td>
+                <div class="fw-bold">{{ event.eventName }}</div>
+                <small class="text-muted d-block text-truncate" style="max-width: 200px;">{{ event.eventDetails }}</small>
+              </td>
+              <td>
+                <div class="small"><i class="mdi mdi-calendar me-1"></i>{{ event.eventDate | date:'mediumDate' }}</div>
+                 
+              </td>
+              <td class="text-center">
+                <span [class]="event.isActive ? 'badge bg-success-subtle text-success' : 'badge bg-danger-subtle text-danger'">
+                  {{ event.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="btn-group shadow-sm">
+                  <button class="btn btn-primary btn-sm" (click)="openActionModal(event, actionModal, 'edit')">
+                    <i class="mdi mdi-pencil me-1"></i> Edit
+                  </button>
+                  <button class="btn btn-danger btn-sm" (click)="openActionModal(event, actionModal, 'reject')">
+                    <i class="mdi mdi-close-circle me-1"></i> Disapprove
+                  </button>
+                </div>
+              </td>
+            </tr> -->
+            } @empty {
+            <tr>
+              <td colspan="5" class="text-center py-5">
+                <i class="mdi mdi-database-off fs-1 d-block text-muted"></i>
+                No events found matching your search.
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #actionModal let-modal>
+  <div class="modal-header border-0 pb-0" [class.bg-danger]="isRejecting()" [class.text-white]="isRejecting()">
+    <h4 class="modal-title fw-bold">
+      {{ isRejecting() ? 'Confirm Disapproval' : 'Update Event Information' }}
+    </h4>
+    <button type="button" class="btn-close" [class.btn-close-white]="isRejecting()" (click)="modal.dismiss()"></button>
+  </div>
+  
+  <div class="modal-body p-4">
+    @if (isRejecting()) {
+      <div class="p-3 border border-danger rounded bg-danger-subtle shadow-sm">
+        <label class="form-label fw-bold text-danger">Reason for Disapproval <span class="text-danger">*</span></label>
+        <textarea class="form-control mb-3" rows="4" 
+                  [ngModel]="rejectReason()" (ngModelChange)="rejectReason.set($event)"
+                  placeholder="Explain why this event is being rejected..."></textarea>
+        
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-outline-dark btn-sm" (click)="isRejecting.set(false)">
+            <i class="mdi mdi-arrow-left"></i> Back to Edit
+          </button>
+          <button class="btn btn-danger btn-sm px-4" 
+                  [disabled]="!rejectReason().trim() || isLoading()" (click)="confirmDisapprove()">
+            {{ isLoading() ? 'Processing...' : 'Confirm Disapprove' }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <form [formGroup]="cifEventRegistration" (ngSubmit)="submitUpdate()">
+        <div class="row g-3">
+          <div class="col-md-12">
+            <label class="form-label small fw-bold">Event Name</label>
+            <input type="text" class="form-control shadow-sm" formControlName="EventName">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-bold">Event Date</label>
+            <input type="date" class="form-control shadow-sm" formControlName="EventDate">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-bold">Event Location</label>
+            <input type="text" class="form-control shadow-sm" formControlName="EventLocation">
+          </div>
+          <div class="col-12">
+            <label class="form-label small fw-bold">Description</label>
+            <textarea class="form-control shadow-sm" rows="3" formControlName="EventDescription"></textarea>
+          </div>
+          <div class="col-md-12 border-top pt-3">
+            <label class="form-label small fw-bold">Update Event Banner</label>
+            <input type="file" class="form-control shadow-sm" (change)="onFileSelected($event)" accept="image/*">
+            @if (selectedEvent()?.imageUrl) {
+              <div class="mt-2 text-primary small"><i class="mdi mdi-image"></i> Current: {{ selectedEvent().imageUrl }}</div>
+            }
+          </div>
+          <div class="col-12">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" formControlName="IsActive" id="activeToggle">
+              <label class="form-check-label" for="activeToggle">Active on Public Site</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer border-0 px-0 pb-0 mt-4">
+          <button type="button" class="btn btn-outline-danger me-auto btn-sm" (click)="isRejecting.set(true)">
+            Switch to Disapprove
+          </button>
+          <button type="button" class="btn btn-light btn-sm" (click)="modal.dismiss()">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm px-4" [disabled]="isLoading() || cifEventRegistration.invalid">
+            {{ isLoading() ? 'Submitting...' : 'Save Changes' }}
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</ng-template>
+<!-- 
+@if (loadingIndicator()) {
+<div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+        <div class="custom-spinner-content text-center">
+            <img src="assets/images/spinner.gif" alt="Loading..." />
+        </div>
+    </div>
+</div>
+}
+
+<div class="container-fluid py-4">
+    @if (instrumentData().length > 0) {
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="row align-items-center mb-4">
+                <div class="col-md-4">
+                    <button (click)="exportToExcel()" class="btn btn-dark" [disabled]="filteredEvents().length === 0">
+                        <i class="bi bi-download me-2"></i>Export to Excel
+                    </button>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h3 class="fw-bold">CIF Events Details</h3>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="Search events..." [ngModel]="searchQuery()"
+                        (ngModelChange)="searchQuery.set($event)">
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Event Name</th>
+                            <th>Date</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (event of filteredEvents(); track event.eventId) {
+                        <tr>
+                            <td><strong>{{ event.eventName }}</strong></td>
+                            <td>{{ event.eventDate | date:'mediumDate' }}</td>
+                            <td>{{ event.eventLocation }}</td>
+                            <td>
+                                <span [class]="event.isActive ? 'badge bg-success' : 'badge bg-danger'">
+                                    {{ event.isActive ? 'Active' : 'Inactive' }}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-primary btn-sm" (click)="openEditModal(event, editModal)">
+                                    Edit Event
+                                </button>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    } @else {
+    <div class="alert alert-warning text-center">No Event Data Available.</div>
+    }
+</div>
+
+<ng-template #editModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Edit CIF Event</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="cifEventRegistration" (ngSubmit)="submitForm()">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Event Name</label>
+                    <input type="text" class="form-control" formControlName="EventName">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Event Date</label>
+                    <input type="date" class="form-control" formControlName="EventDate">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-control" formControlName="EventLocation">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" rows="3" formControlName="EventDescription"></textarea>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label">Update Image</label>
+                    <input type="file" class="form-control" (change)="onFileSelectedConsentLetter($event)"
+                        accept="image/*">
+                    @if (editEvent.imageUrl) {
+                    <small class="text-muted">Current: {{ editEvent.imageUrl }}</small>
+                    }
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" formControlName="IsActive">
+                        <label class="form-check-label">Active Status</label>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary px-5"
+                    [disabled]="isLoading() || cifEventRegistration.invalid">
+                    {{ isLoading() ? 'Saving...' : 'Save Changes' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-template> -->

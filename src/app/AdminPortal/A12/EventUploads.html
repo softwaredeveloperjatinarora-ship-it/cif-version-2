@@ -1,0 +1,84 @@
+<app-admin-dashboard></app-admin-dashboard>
+
+
+<!-- @if (loadingIndicator()) {
+<div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+        <div class="custom-spinner-content text-center">
+            <img src="assets/images/spinner.gif" alt="Loading..." />
+        </div>
+    </div>
+</div>
+} -->
+
+
+@if (loadingIndicator()) {
+<div class="fullscreen-loader">
+    @if (isLoading()) {
+    <div class="custom-spinner-overlay">
+        <div class="custom-spinner-content text-center">
+            <img src="assets/images/spinner.gif" alt="Loading..." />
+        </div>
+    </div>
+    }
+</div>
+}
+
+
+<app-Upcoming-Events></app-Upcoming-Events>
+<section class="section bg-dark-yellow py-5">
+    <div class="container">
+        <div class="card shadow-sm rounded-3 border-0">
+            <div class="card-body px-5 py-4">
+                <h2 class="text-center mb-4 fw-bold text-primary">New Event(s) Upload Page</h2>
+            </div>
+            <div class="card-body p-4">
+                <form [formGroup]="CIFEventRegistration" (ngSubmit)="submitForm()">
+                    <fieldset class="border p-3 mb-4">
+                        <legend class="w-auto px-2">Event Details</legend>
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label">Event Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" formControlName="EventName"
+                                    [class.is-invalid]="CIFEventRegistration.get('EventName')?.invalid && CIFEventRegistration.get('EventName')?.touched">
+                            </div>
+                        
+                        
+                            <div class="col-md-4">
+                                <label class="form-label">Event Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" formControlName="EventDate" placeholder="e.g. (25-30 June 2026)"
+                                    [class.is-invalid]="CIFEventRegistration.get('EventDate')?.invalid && CIFEventRegistration.get('EventDate')?.touched">
+                            </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label">Event Details <span class="text-danger">*</span></label>
+                            <textarea class="form-control" rows="4" formControlName="EventDetails"
+                                [class.is-invalid]="CIFEventRegistration.get('EventDetails')?.invalid && CIFEventRegistration.get('EventDetails')?.touched"></textarea>
+                        </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="border p-3 mb-4">
+                        <legend class="w-auto px-2">Image (optional)</legend>
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-4">
+                                <input type="file" class="form-control" (change)="onFileSelectedConsentLetter($event)"
+                                    accept="image/*">
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary px-5 py-2"
+                            [disabled]="isLoading() || CIFEventRegistration.invalid">
+                            @if (isLoading()) {
+                            <span class="spinner-border spinner-border-sm me-2"></span> Submitting...
+                            } @else {
+                            Save Event
+                            }
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

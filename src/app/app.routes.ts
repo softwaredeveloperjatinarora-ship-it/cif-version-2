@@ -159,6 +159,14 @@ export const routes: Routes = [
     loadComponent: () => import('./AdminPortal/A10/UserFeedbacks').then(m => m.StaffUserFeedbackDetailsComponent)
   },
   {
+    path: 'AllCIFEvents',
+    loadComponent: () => import('./AdminPortal/A11/AllEventsDetails').then(m => m.AdminActionCifEvents)
+  },
+  {
+    path: 'EventUploads',
+    loadComponent: () => import('./AdminPortal/A12/EventUploads').then(m => m.AdminNewEventsDataComponent)
+  },
+  {
     path: 'AdminInstrumentAction',
     loadComponent: () => import('./AdminPortal/A6/AdminActionInstrument').then(m => m.AdminActionInstrumentsComponent)
   },
