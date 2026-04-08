@@ -60,3 +60,14 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+::ng-deep .ng-select .ng-select-container {
+  min-height: 38px;
+  align-items: center;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}

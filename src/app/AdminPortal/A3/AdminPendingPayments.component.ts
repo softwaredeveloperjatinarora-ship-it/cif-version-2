@@ -49,6 +49,34 @@ import { Subject, takeUntil } from 'rxjs';
   ]
 })
 export class AdminPendingPaymentsComponent implements OnInit {
+
+  // Add a getter to determine the color class of the select box itself
+get selectColorClass(): string {
+    switch (this.selectedStatus) {
+        case 'success': return 'border-success text-success';
+        case 'failure': return 'border-danger text-danger';
+        case 'null':    return 'border-warning text-warning';
+        default:        return 'border-secondary';
+    }
+}
+
+getStatusClass(value: string): string {
+    const base = 'badge ';
+    switch (value) {
+        case 'success': return base + 'bg-success';
+        case 'failure': return base + 'bg-danger';
+        case 'null':    return base + 'bg-warning text-dark';
+        default:        return 'text-secondary fw-bold';  
+    }
+}
+
+getStatusLabel(value: string) {
+    return this.statusOptions.find(opt => opt.value === value)?.label || '';
+}
+
+
+
+
   @ViewChild('ngSelectComponent')
   ngSelectComponent: NgSelectComponent = new NgSelectComponent;
   @ViewChild('ngSelectComponentStream')
@@ -414,10 +442,10 @@ export class AdminPendingPaymentsComponent implements OnInit {
   }
 
   statusOptions = [
-    { label: 'All', value: '' }, 
-    { label: 'Success', value: 'success' },
-    { label: 'Failure', value: 'failure' },
-    { label: 'Pending', value: 'null' }
+    { label: 'All Payments', value: '' }, 
+    { label: 'All Paid ', value: 'success' },
+    { label: 'All Failed', value: 'failure' },
+    { label: 'All Pending', value: 'null' }
   ];
   
 }

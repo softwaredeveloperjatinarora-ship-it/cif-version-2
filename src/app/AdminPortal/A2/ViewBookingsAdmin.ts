@@ -68,6 +68,27 @@ export interface SelectOption<T = string> {
 export class AdminActionBookingsComponent implements OnInit, OnDestroy {
 
 
+
+ 
+
+// Dynamic styling for Status
+getStatusClass(value: string) {
+  const base = 'badge ';
+  switch (value) {
+    case 'success': return base + 'bg-success';
+    case 'failure': return base + 'bg-danger';
+    case 'null':    return base + 'bg-warning text-dark';
+    default:        return ''; 
+  }
+}
+
+// Dynamic styling for Assigned
+getAssignedClass(value: string) {
+  if (!value) return '';
+  return value === 'Assigned' ? 'text-primary fw-bold' : 'text-muted';
+}
+
+
   @ViewChild('viewDescModal2') viewDescModal2!: TemplateRef<any>;
   @ViewChild('table') tableRef!: ElementRef;
 

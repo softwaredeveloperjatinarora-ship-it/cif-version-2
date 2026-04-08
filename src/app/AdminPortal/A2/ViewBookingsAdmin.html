@@ -38,7 +38,7 @@
 
           <div class="col-md-4 col-3 mb-4 mt-3">
             <button (click)="toggleAdvancedSearch()" class="btn btn-dark w-50">
-              {{ showAdvancedSearch() ? 'Hide Advanced' : 'Advanced Search' }}
+              {{ showAdvancedSearch() ? 'Hide Search' : 'Advanced Search' }}
             </button>
           </div>
 
@@ -46,52 +46,33 @@
         <hr />
 
         @if (showAdvancedSearch()) {
-        <div class="row mb-3 p-2 d-flex justify-content-center align-items-center bg-warning rounded">
-        
-          <div class="col-3 col-md-3 mb-3 mb-md-0">
-            <ng-select [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)" [items]="statusOptions"
-              bindLabel="label" bindValue="value" placeholder="-- Select Status --"  class=""
+        <div class="row mb-3 p-2 d-flex justify-content-center align-items-center rounded">
+          <div class="col-md-3 mb-3 mb-md-0 text-end">
+            <select class="form-select w-50" [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)"
               [disabled]="originalData().length === 0">
-              <ng-template ng-option-tmp let-item="item">
-                @if (item.value === '') { <div>-- All Payments --</div> }
-                @if (item.value === 'success') { <div>Paid</div> }
-                @if (item.value === 'failure') { <div>Failure</div> }
-                @if (item.value === 'null') { <div>Pending</div> }
-              </ng-template>
-              <ng-template ng-label-tmp let-item="item">
-                @if (item.value === '') { <div>-- All Payments --</div> }
-                @if (item.value === 'success') { <div>Success</div> }
-                @if (item.value === 'failure') { <div>Failure</div> }
-                @if (item.value === 'null') { <div>Pending</div> }
-              </ng-template>
-            </ng-select>
+              <option value="" disabled selected>-- Select Status --</option>
+              @for (opt of statusOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
           </div>
-        
-          <div class="col-3 col-md-3 mb-3 mb-md-0">
-            <ng-select [ngModel]="isAssigned()" (ngModelChange)="isAssigned.set($event)" [items]="assignedOptions"
-              bindLabel="label" bindValue="value" placeholder="-- Select --"  
+          
+          <div class="col-md-3 mb-3 mb-md-0">
+            <select class="form-select w-50" [ngModel]="isAssigned()" (ngModelChange)="isAssigned.set($event)"
               [disabled]="originalData().length === 0">
-              <ng-template ng-option-tmp let-item="item">
-                @if (item.value === '') { <div>-- All Tests --</div> }
-                @if (item.value === 'Assigned') { <div>All Assigned</div> }
-                @if (item.value === 'Pending') { <div>Not Assigned</div> }
-              </ng-template>
-              <ng-template ng-label-tmp let-item="item">
-                @if (item.value === '') { <div>-- All Tests --</div> }
-                @if (item.value === 'Assigned') { <div>All Assigned</div> }
-                @if (item.value === 'Pending') { <div>Not Assigned</div> }
-              </ng-template>
-            </ng-select>
+              <option value="" disabled selected>-- Select --</option>
+              @for (opt of assignedOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
           </div>
-        
-        
-        <!-- <div class="row d-flex justify-content-center align-items-center"> -->
-          <div class="col-3 col-md-3 mt-2">
+          
+          <!-- <div class="col-md-3 mt-2">
             <button (click)="applyAdvancedSearch()" class="btn btn-dark " [disabled]="!hasAnySearchCriteria()">
               Apply Filters
             </button>
-          </div>
-          <div class="col-3 col-md-3 mt-2">
+          </div> -->
+          <div class="col-md-3 mt-2">
             <button (click)="resetAdvancedSearch()" class="btn btn-dark">
               Reset Filters
             </button>
@@ -100,11 +81,11 @@
 
         </div>
         }
-
+        <hr/>
         <div class="row m-4 p-2">
           @if (hasAnySearchCriteria() || searchQuery()) {
-          <span class="fs-3 themeClr">
-            Search Result:–
+          <span class="  themeClr">
+            Search Result: -
             <span class="text-muted">Found {{ filteredData().length }} Records</span>
           </span>
           }
@@ -114,13 +95,13 @@
         <div class="row d-flex justify-content-center align-items-center mb-3">
 
           <div class="col-md-4 text-end">
-            <span class="text-dark fs-5 fw-bolder me-4 record-badge">
+            <span class="text-dark fw-bolder me-4 record-badge">
               Records: {{ filteredData().length }}
             </span>
           </div>
 
           <div class="col-md-4 text-start">
-            <span class="text-dark fs-5 fw-bolder me-4 record-badge">Items per page:</span>
+            <span class="text-dark fw-bolder me-4 record-badge">Items per page:</span>
             <select class="form-select d-inline-block ms-2 record-badge" style="width: auto;"
               [value]="isAllSelected() ? 'all' : itemsPerPage()" (change)="onItemsPerPageChange($event)">
               @for (opt of itemsPerPageOptions; track opt.value) {
@@ -134,7 +115,7 @@
               <a class="btn btn-outline-primary m-3" (click)="prevPage()" [class.disabled]="currentPage() === 1">
                 <i class="mdi mdi-chevron-left fs-4"></i>
               </a>
-              <span class="fs-5 mt-4">{{ currentPage() }} / {{ totalPages() }}</span>
+              <span class="fs-5">{{ currentPage() }} / {{ totalPages() }}</span>
               <a class="btn btn-outline-primary m-3" (click)="nextPage()"
                 [class.disabled]="currentPage() === totalPages()">
                 <i class="mdi mdi-chevron-right fs-4"></i>

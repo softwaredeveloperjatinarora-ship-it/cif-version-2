@@ -156,14 +156,20 @@ export class NewBookingsComponent implements OnInit {
     this.serverUrl = 'https://files.lpu.in/umsweb/CIFDocuments/CIFSampleExcelSheets/';
 
     const raw = this.cookieService.get('InternalUserAuthData');
-    const cookie = JSON.parse(raw);
-    this.userRole      = cookie.UserRole;
-    this.userId        = cookie.UserRole;
-    this.userEmail     = cookie.EmailId;
-    this.candidateName = cookie.CandidateName;
-    this.mobileNo      = cookie.MobileNo;
-    this.buildForm();
-    this.getInstrumentData();
+    if (raw) {
+      try {
+        const cookie = JSON.parse(raw);
+        this.userRole = cookie.UserRole;
+        this.userId = cookie.UserRole;
+        this.userEmail = cookie.EmailId;
+        this.candidateName = cookie.CandidateName;
+        this.mobileNo = cookie.MobileNo;
+        this.buildForm();
+        this.getInstrumentData();
+      } catch (e) {
+        console.error("Failed to parse JSON", e);
+      }
+    }
   }
 
 

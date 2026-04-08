@@ -47,3 +47,27 @@
     background-color: rgba(0, 0, 0, 0.05);
   }
    
+
+  /* Custom class for the status select */
+.custom-status-select {
+  min-width: 180px;
+}
+
+/* Remove default padding to let the badge breathe */
+::ng-deep .custom-status-select .ng-value-container {
+  padding-left: 8px !important;
+}
+
+/* Ensure the badge looks like a pill inside the dropdown and input */
+.badge {
+  font-weight: 500;
+  padding: 0.5em 0.8em;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* Optional: remove the default border if using within a form-group */
+::ng-deep .custom-status-select .ng-select-container {
+  border-radius: 0.375rem; /* Matches Bootstrap 5 defaults */
+  min-height: 38px;       /* Matches Bootstrap form-control height */
+}
