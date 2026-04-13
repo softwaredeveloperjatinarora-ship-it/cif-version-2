@@ -19,6 +19,7 @@ export class LpuCIFWebService {
   private readonly api  = `${this.base}/api/LpuCIF`;
 
   private readonly baseUrl = environment.apiUrl; //
+  private readonly LocalbaseUrl = environment.LocalapiUrl; //
   
 
   readonly folderUrl = 'https://files.lpu.in/umsweb/webftp/CIFDocuments/';
@@ -506,5 +507,78 @@ export class LpuCIFWebService {
   //     // 'https://projectsapi.lpu.in/api/LpuCIF/GetAllUserFeedbacks', { headers }
   //   );
   // }
+
+
+
+    EventsCrudOperation(data: FormData, action: 'Insert' | 'Update' | 'Delete' | 'View'): Observable<any> {
+    var authToken = this.storageService.getUser();
+    let headers = new HttpHeaders()
+      // .set('Authorization', 'Bearer ' + authToken)
+      .set('Authorization', 'Bearer ' + this.authToken)
+   
+
+    return this.http.post<any>(
+      `${this.api}/EventsCrudOperation`,
+       
+      data, { headers }
+    ).pipe(catchError(this.handleError('EventsCrudOperation', { success: false, message: 'Events CRUD operation failed' })));
+
+  
+  }
+
+
+
+
+
+    CifMOUCrudOperations(data: FormData, action:  'Insert' | 'Update' | 'Delete' | 'View' | 'ViewAll' | 'Approve' | 'DisApprove'  ): Observable<any> {
+    var authToken = this.storageService.getUser();
+    let headers = new HttpHeaders()
+      .set('Authorization', 'Bearer ' + authToken)
+      // .set('Authorization', 'Bearer ' + this.authToken)
+   
+
+    return this.http.post<any>(
+      `https://localhost:7125/api/LpuCIF/CIFMOUCrudOperation`,
+       
+      data, { headers }
+    ).pipe(catchError(this.handleError('CIFMOUCrudOperation', { success: false, message: 'MOU Cif CRUD operation failed' })));
+
+  
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    private handleError<T>(operation: string, fallbackValue: T): (error: any) => Observable<T> {
+    return (error: any): Observable<T> => {
+      console.error(`${operation} failed:`, error);
+      // Return the fallback value with user-friendly error message to prevent UI crashes
+      const userFriendlyMessage = 'Data Server Connection error , Try again later';
+
+      // For array fallbacks, return the empty array with error flag
+      if (Array.isArray(fallbackValue)) {
+        return of({ data: fallbackValue, error: true, message: userFriendlyMessage } as unknown as T);
+      }
+      // For null/nothing fallbacks, return error response object
+      if (fallbackValue === null || fallbackValue === undefined) {
+        return of({ error: true, message: userFriendlyMessage } as unknown as T);
+      }
+      // For object fallbacks, merge the error message
+      return of({ ...fallbackValue, error: true, message: userFriendlyMessage } as unknown as T);
+    };
+  }
+
 }
 

@@ -1,0 +1,759 @@
+<app-admin-dashboard></app-admin-dashboard>
+
+<div class="cif-mou-crud-container">
+  <!-- Loading Overlay -->
+  @if (isLoading()) {
+    <div class="loading-overlay">
+      <div class="spinner-container">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3 text-primary fw-bold">Processing...</p>
+      </div>
+    </div>
+  }
+
+  <!-- Admin Header -->
+  <div class="admin-header">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1 class="page-title">CIF MOU Management</h1>
+          <p class="page-subtitle">Admin Control Panel - Memorandum of Understanding Records</p>
+        </div>
+        <div class="col-md-4 text-end">
+          @if (isAdmin()) {
+            <span class="badge bg-success fs-6">
+              <i class="bi bi-shield-check"></i> Admin Access
+            </span>
+          }
+          @if (userEmail()) {
+            <p class="mt-2 text-muted">{{ userEmail() }}</p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid p-4">
+    <!-- Form Section -->
+    <div class="form-card card shadow-lg mb-5">
+      <div class="card-header bg-gradient">
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 class="m-0 fw-bold">
+            @if (isEditMode()) {
+              <i class="bi bi-pencil-square"></i> Edit MOU Record
+            } @else {
+              <i class="bi bi-plus-circle"></i> Add New MOU
+            }
+          </h2>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary"
+            (click)="toggleForm()"
+            [disabled]="isLoading()"
+          >
+            <i class="bi bi-chevron-down"></i> {{ showForm() ? 'Hide' : 'Show' }} Form
+          </button>
+        </div>
+      </div>
+
+      @if (showForm()) {
+        <div class="card-body p-4">
+          <form [formGroup]="mouForm()!" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+            <!-- Row 1: User ID & Start Date -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label for="userId" class="form-label fw-bold required-field">User ID / Email</label>
+                <input
+                  type="text"
+                  id="userId"
+                  formControlName="userId"
+                  class="form-control form-control-lg"
+                  placeholder="Enter user email or ID (e.g., user@example.com)"
+                  [class.is-invalid]="isFormSubmitted() && formControls['userId']?.invalid"
+                  [readonly]="isEditMode()"
+                />
+                @if (isFormSubmitted() && formControls['userId']?.invalid) {
+                  <div class="invalid-feedback d-block">
+                    @if (formControls['userId']?.hasError('required')) {
+                      <span><i class="bi bi-exclamation-circle"></i> User ID is required.</span>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="col-md-6">
+                <label for="mouStartDate" class="form-label fw-bold required-field">MOU Start Date</label>
+                <input
+                  type="date"
+                  id="mouStartDate"
+                  formControlName="mouStartDate"
+                  class="form-control form-control-lg"
+                  [class.is-invalid]="isFormSubmitted() && formControls['mouStartDate']?.invalid"
+                />
+                @if (isFormSubmitted() && formControls['mouStartDate']?.invalid) {
+                  <div class="invalid-feedback d-block">
+                    @if (formControls['mouStartDate']?.hasError('required')) {
+                      <span><i class="bi bi-exclamation-circle"></i> Start date is required.</span>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Row 2: End Date & Status -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label for="mouEndDate" class="form-label fw-bold required-field">MOU End Date</label>
+                <input
+                  type="date"
+                  id="mouEndDate"
+                  formControlName="mouEndDate"
+                  class="form-control form-control-lg"
+                  [class.is-invalid]="isFormSubmitted() && formControls['mouEndDate']?.invalid"
+                />
+                @if (isFormSubmitted() && formControls['mouEndDate']?.invalid) {
+                  <div class="invalid-feedback d-block">
+                    @if (formControls['mouEndDate']?.hasError('required')) {
+                      <span><i class="bi bi-exclamation-circle"></i> End date is required.</span>
+                    }
+                    @if (mouForm()?.errors?.['invalidDateRange']) {
+                      <span><i class="bi bi-exclamation-circle"></i> End date must be after start date.</span>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">MOU Status</label>
+                @if (mouStatus()) {
+                  <div class="alert alert-info mb-3">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Status:</strong> {{ mouStatus() }}
+                    @if (daysUntilExpiry() !== null) {
+                      <br />
+                      <small>Days remaining: {{ daysUntilExpiry() }} days</small>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Row 3: MOU Remarks -->
+            <div class="row mb-4">
+              <div class="col-md-12">
+                <label for="mouRemarks" class="form-label fw-bold required-field">MOU Remarks</label>
+                <textarea
+                  id="mouRemarks"
+                  formControlName="mouRemarks"
+                  class="form-control form-control-lg"
+                  rows="4"
+                  placeholder="Enter remarks about this MOU (minimum 10 characters)..."
+                  [class.is-invalid]="isFormSubmitted() && formControls['mouRemarks']?.invalid"
+                ></textarea>
+                @if (isFormSubmitted() && formControls['mouRemarks']?.invalid) {
+                  <div class="invalid-feedback d-block">
+                    @if (formControls['mouRemarks']?.hasError('required')) {
+                      <span><i class="bi bi-exclamation-circle"></i> MOU remarks are required.</span>
+                    }
+                    @if (formControls['mouRemarks']?.hasError('minlength')) {
+                      <span><i class="bi bi-exclamation-circle"></i> Minimum 10 characters required.</span>
+                    }
+                  </div>
+                }
+                <small class="form-text text-muted d-block mt-2">
+                  Character count: {{ mouForm()?.get('mouRemarks')?.value?.length || 0 }} / 1500
+                </small>
+              </div>
+            </div>
+
+            <!-- Document Upload -->
+            <div class="row mb-4">
+              <div class="col-md-12">
+                <label for="mouDocument" class="form-label fw-bold">MOU Document</label>
+                <div class="file-upload-wrapper">
+                  <input
+                    type="file"
+                    id="mouDocument"
+                    accept=".pdf,.doc,.docx,.xls,.xlsx"
+                    class="form-control form-control-lg"
+                    (change)="onFileSelected($event)"
+                  />
+                  <small class="form-text text-muted d-block mt-2">
+                    Supported formats: PDF, DOC, DOCX (Max {{ maxFileSizeMb() }}MB)
+                  </small>
+                </div>
+
+                @if (mouFileName()) {
+                  <div class="alert alert-success mt-3" role="alert">
+                    <i class="bi bi-check-circle"></i>
+                    <strong>File selected:</strong> {{ mouFileName() }}
+                  </div>
+                }
+
+                @if (currentMouUrl() && isEditMode()) {
+                  <div class="alert alert-info mt-3" role="alert">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Current document:</strong> {{ currentMouUrl() }}
+                    <a
+                      href="javascript:void(0)"
+                      class="ms-2"
+                      (click)="onDownloadDocument(currentMouUrl())"
+                    >
+                      <i class="bi bi-download"></i> Download
+                    </a>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="row mt-5">
+              <div class="col-12">
+                <div class="d-flex gap-2 justify-content-center">
+                  <button
+                    type="submit"
+                    class="btn btn-primary btn-lg px-5"
+                    [disabled]="isLoading()"
+                  >
+                    @if (isLoading()) {
+                      <span class="spinner-border spinner-border-sm me-2"></span>
+                    }
+                    @if (isEditMode()) {
+                      <i class="bi bi-arrow-repeat"></i> Update MOU
+                    } @else {
+                      <i class="bi bi-save"></i> Create MOU
+                    }
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-lg px-5"
+                    (click)="resetForm()"
+                    [disabled]="isLoading()"
+                  >
+                    <i class="bi bi-arrow-counterclockwise"></i> Reset
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      }
+    </div>
+
+    <!-- Data Table Section -->
+    <div class="table-card card shadow-lg">
+      <div class="card-header bg-gradient">
+        <div class="row align-items-center">
+          <div class="col-md-4">
+            <h2 class="m-0 fw-bold">
+              <i class="bi bi-table"></i> MOU Records
+            </h2>
+          </div>
+          <div class="col-md-8">
+            <div class="row gap-2">
+              <!-- Search Input -->
+              <div class="col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-search"></i></span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Search by email or user ID..."
+                    [(ngModel)]="searchTerm"
+                    (ngModelChange)="onSearchChange()"
+                  />
+                </div>
+              </div>
+
+              <!-- Page Size Selector -->
+              <div class="col-md-4">
+                <select
+                  class="form-select"
+                  [(ngModel)]="pageSize"
+                  (ngModelChange)="onPageSizeChange()"
+                >
+                  <option [ngValue]="5">5 per page</option>
+                  <option [ngValue]="10">10 per page</option>
+                  <option [ngValue]="25">25 per page</option>
+                  <option [ngValue]="50">50 per page</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          @if (paginatedMouData().length === 0) {
+            <div class="empty-state">
+              <i class="bi bi-inbox"></i>
+              <p class="text-muted mt-3">No MOU records found. Create a new record to get started.</p>
+            </div>
+          } @else {
+            <table class="table table-hover table-striped mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 12%;">Email</th>
+                  <th style="width: 10%;">Start Date</th>
+                  <th style="width: 10%;">End Date</th>
+                  <th style="width: 8%;">Status</th>
+                  <th style="width: 8%;">Approval</th>
+                  <th style="width: 28%;">Remarks</th>
+                  <th style="width: 8%;">Document</th>
+                  <th style="width: 16%;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (mou of paginatedMouData(); track mou.userId) {
+                  <tr>
+                    <td>
+                      <strong>{{ mou.emailId }}</strong>
+                      <br />
+                      <small class="text-muted">ID: {{ mou.userId }}</small>
+                    </td>
+                    <td>
+                      {{ mou.mouStartDate | date: 'mediumDate' }}
+                    </td>
+                    <td>
+                      {{ mou.mouEndDate | date: 'mediumDate' }}
+                    </td>
+                    <td>
+                      @switch (mou.mouStatus) {
+                        @case ('0') {
+                          <span class="badge bg-success">Active</span>
+                        }
+                        @case ('1') {
+                          <span class="badge bg-danger">Expired</span>
+                        }
+                        @default {
+                          <span class="badge bg-secondary">Unknown</span>
+                        }
+                      }
+                    </td>
+                    <td>
+                      @if (mou.isMouApproved === 1) {
+                        <span class="badge bg-success">Approved</span>
+                      } @else if (mou.isMouApproved === 0) {
+                        <span class="badge bg-danger">Rejected</span>
+                      } @else {
+                        <span class="badge bg-warning text-dark">Pending</span>
+                      }
+                    </td>
+                    <td>
+                      <small class="text-muted">{{ mou.mouRemarks | slice: 0: 30 }}...</small>
+                    </td>
+                    <td>
+                      @if (mou.mouDocumentUrl) {
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-info"
+                          (click)="onDownloadDocument(mou.mouDocumentUrl)"
+                          title="Download document"
+                        >
+                          <i class="bi bi-download"></i>
+                        </button>
+                      } @else {
+                        <span class="text-muted small">N/A</span>
+                      }
+                    </td>
+                    <td>
+                      <div class="btn-group btn-group-sm" role="group">
+                        <button
+                          type="button"
+                          class="btn btn-warning"
+                          (click)="onEdit(mou)"
+                          title="Edit record"
+                          [disabled]="isLoading()"
+                        >
+                          <i class="bi bi-pencil"></i>
+                        </button>
+
+                        @if (mou.isMouApproved !== 1) {
+                          <button
+                            type="button"
+                            class="btn btn-success"
+                            (click)="onApprove(mou)"
+                            title="Approve MOU"
+                            [disabled]="isLoading()"
+                          >
+                            <i class="bi bi-check-circle"></i>
+                          </button>
+                        }
+
+                        <button
+                          type="button"
+                          class="btn btn-danger"
+                          (click)="onReject(mou)"
+                          title="Reject MOU"
+                          [disabled]="isLoading()"
+                        >
+                          <i class="bi bi-x-circle"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        </div>
+      </div>
+
+      <!-- Pagination Controls -->
+      @if (totalPages() > 1) {
+        <div class="card-footer bg-light d-flex justify-content-between align-items-center">
+          <div class="text-muted small">
+            Showing
+            <strong>{{ (currentPage() - 1) * pageSize() + 1 }}</strong>
+            to
+            <strong>{{ Math.min(currentPage() * pageSize(), totalItems()) }}</strong>
+            of
+            <strong>{{ totalItems() }}</strong>
+            records
+          </div>
+
+          <nav>
+            <ul class="pagination pagination-sm mb-0">
+              <!-- Previous -->
+              <li class="page-item" [class.disabled]="currentPage() === 1">
+                <a
+                  class="page-link"
+                  [style.cursor]="currentPage() === 1 ? 'default' : 'pointer'"
+                  (click)="goToPage(currentPage() - 1)"
+                >
+                  <i class="bi bi-chevron-left"></i> Previous
+                </a>
+              </li>
+
+              <!-- Page Numbers -->
+              @for (page of [].constructor(totalPages()); track $index; let i = $index) {
+                <li class="page-item" [class.active]="currentPage() === i + 1">
+                  <a
+                    class="page-link"
+                    [style.cursor]="'pointer'"
+                    (click)="goToPage(i + 1)"
+                  >
+                    {{ i + 1 }}
+                  </a>
+                </li>
+              }
+
+              <!-- Next -->
+              <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+                <a
+                  class="page-link"
+                  [style.cursor]="currentPage() === totalPages() ? 'default' : 'pointer'"
+                  (click)="goToPage(currentPage() + 1)"
+                >
+                  Next <i class="bi bi-chevron-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Expose Math for template -->
+@if (false) {
+  {{ Math }}
+}
+
+<!-- <app-admin-dashboard></app-admin-dashboard>
+
+ 
+@if (isLoading()) {
+  <div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+      <div class="custom-spinner-content text-center">
+        <img src="assets/images/spinner.gif" alt="Loading..." />
+      </div>
+    </div>
+  </div>
+}
+ 
+
+<div class="container-fluid p-3">
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h2 class="m-0 font-weight-bold text-primary">
+        @if (isEditMode()) {
+        Edit Event (ID: {{ currentEventId() }})
+        } @else {
+        Add New Event
+        }
+      </h2>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="eventForm()!" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+        <input type="hidden" formControlName="eventId" />
+
+         
+        <div class="form-group row">
+          <label for="mouRemarks" class="col-3 col-form-label required">Event Name</label>
+          <div class="col-3">
+            <input type="text" id="mouRemarks" formControlName="mouRemarks" class="form-control"
+              [ngClass]="{ 'is-invalid': isFormSubmitted() && f['mouRemarks']?.invalid }" />
+            @if (isFormSubmitted() && f['mouRemarks']?.invalid) {
+            <div class="invalid-feedback">
+              @if (f['mouRemarks']?.hasError('required')) {
+              <span>Mou Details is required.</span>
+              }
+            </div>
+            }
+          </div>
+
+          <label for="MouStartDate" class="col-3 col-form-label required">Start Date</label>
+          <div class="col-3">
+            <input type="date" id="MouStartDate" formControlName="MouStartDate" class="form-control" [ngClass]="{
+                                              'is-invalid':
+                                                isFormSubmitted() && f['MouStartDate']?.invalid
+                                            }" />
+            @if (isFormSubmitted() && f['MouStartDate']?.invalid) {
+            <div class="invalid-feedback">
+              @if (f['MouStartDate']?.hasError('required')) {
+              <span>Date is required.</span>
+              }
+            </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-group row">
+           <label for="MouEndDate" class="col-3 col-form-label required">MouEnd Date</label>
+          <div class="col-3">
+            <input type="date" id="MouEndDate" formControlName="MouEndDate" class="form-control" [ngClass]="{
+                                              'is-invalid':
+                                                isFormSubmitted() && f['MouEndDate']?.invalid
+                                            }" />
+            @if (isFormSubmitted() && f['MouEndDate']?.invalid) {
+            <div class="invalid-feedback">
+              @if (f['MouEndDate']?.hasError('required')) {
+              <span>Date is required.</span>
+              }
+            </div>
+            }
+          </div>
+         
+          <label for="eventDetails" class="col-3 col-form-label required">Details</label>
+          <div class="col-3">
+            <textarea id="eventDetails" formControlName="eventDetails" class="form-control" rows="3" [ngClass]="{
+                    'is-invalid':
+                      isFormSubmitted() && f['eventDetails']?.invalid
+                  }"></textarea>
+            @if (isFormSubmitted() && f['eventDetails']?.invalid) {
+            <div class="invalid-feedback">
+              @if (f['eventDetails']?.hasError('required')) {
+              <span>Details are required.</span>
+              }
+            </div>
+            }
+          </div>
+        </div>
+
+       
+        @if (isImageRequired()) {
+        <div class="form-group row">
+          <label for="imageFile" class="col-3 col-form-label">Event Image</label>
+          <div class="col-3">
+            <input type="file" id="imageFile" accept="image/*" class="form-control"
+              (change)="onFileSelectedEventFile($event)" />
+            @if (eventFileName()) {
+            <div class="mt-2 small text-success">
+              File selected: {{ eventFileName() }}
+            </div>
+            }
+            @if (currentImageUrl() && isEditMode()) {
+            <div class="mt-2 small text-muted">
+              Current image: {{ currentImageUrl() }}
+            </div>
+            }
+          </div>
+        </div>
+        }
+
+        
+        <div class="form-group row">
+          <div class="col-sm-12 text-center">
+            <button type="submit" class="btn btn-primary m-2" [disabled]="isLoading()">
+              @if (isLoading()) {
+              <span class="spinner-border spinner-border-sm mr-2"></span>
+              }
+              @if (isEditMode()) {
+              Update Event
+              } @else {
+              Create New Event
+              }
+            </button>
+            <button type="button" class="btn btn-secondary m-2" (click)="resetForm()" [disabled]="isLoading()">
+              Clear Form
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <hr />
+
+   
+  <div class="container-fluid p-3">
+    <div class="card shadow mb-4">
+      <div class="row mb-5 mt-4">
+        <h2 class="text-center">All Events</h2>
+      </div>
+
+      <div class="card-header py-3 d-flex justify-content-center align-items-center">
+        <div class="col-2">
+          <h2 class="m-0 font-weight-bold text-start text-primary">
+            All Event List
+          </h2>
+        </div>
+        <div class="col-3">
+          <input type="text" placeholder="Search..." class="form-control form-control-sm mr-2" [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange()" />
+        </div>
+        <span class="ms-4 col-2 text-end">Select Items per page</span>
+        <div class="ms-1 col-2">
+          <select class="form-control form-control-sm"
+            style="width: auto; background-color: bisque !important; color: black !important;" [(ngModel)]="pageSize"
+            (ngModelChange)="onPageSizeChange()">
+            <option [ngValue]="5" selected>Select</option>
+            <option [ngValue]="10">10 / page</option>
+            <option [ngValue]="25">25 / page</option>
+            <option [ngValue]="50">50 / page</option>
+          </select>
+        </div>
+
+        @if (totalPages() > 1) {
+        <div class="col-3">
+          <nav>
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="currentPage() === 1">
+                <a class="page-link" (click)="goToPage(currentPage() - 1)"
+                  [style.cursor]="currentPage() === 1 ? 'default' : 'pointer'">Previous</a>
+              </li>
+              @for (page of [].constructor(totalPages()); track $index; let i = $index) {
+              <li class="page-item" [class.active]="currentPage() === i + 1">
+                <a class="page-link" (click)="goToPage(i + 1)" style="cursor: pointer;">{{ i + 1 }}</a>
+              </li>
+              }
+              <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+                <a class="page-link" (click)="goToPage(currentPage() + 1)" [style.cursor]="
+                        currentPage() === totalPages() ? 'default' : 'pointer'
+                      ">Next</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        }
+      </div>
+
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          @if (paginatedEventsData().length === 0) {
+          <p class="p-4 text-center text-muted">
+            No events found matching your criteria.
+          </p>
+          } @else {
+          <table class="table table-striped table-hover mb-0">
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>MOU </th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Image</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (event of paginatedEventsData(); track event.UserId) {
+              <tr>
+                <td>{{ event.UserId }}</td>
+                <td>{{ event.MOURemarks }}</td>
+                <td>{{ event.MouStartDate | date : "shortDate" }}</td>
+                <td>{{ event.MouEndDate | date : "shortDate"}}</td>
+                 
+                <td>
+                  @if (event.MOUDocumentUrl) {
+                  <button class="btn btn-sm btn-info" (click)="onViewFile(event.MOUDocumentUrl)" [attr.aria-label]="
+                              'View image for ' + event.MOURemarks
+                            ">
+                    <span class="bi bi-eye"></span>
+                  </button>
+                  } @else {
+                  <span class="text-muted">N/A</span>
+                  }
+                </td>
+                <td>
+                  <button class="btn btn-sm btn-warning mr-2" (click)="onEdit(event)" [attr.aria-label]="
+                            'Edit ' + event.MOURemarks
+                          ">
+                    <span class="bi bi-pencil"></span>
+                  </button>
+                  <button class="btn btn-sm btn-danger" (click)="onDelete(event)" [attr.aria-label]="
+                            'Delete ' + event.MOURemarks
+                          ">
+                    <span class="bi bi-trash"></span>
+                  </button>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+          }
+        </div>
+      </div>
+
+      @if (totalPages() > 1) {
+      <div class="card-footer d-flex justify-content-between align-items-center">
+        <nav>
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" [class.disabled]="currentPage() === 1">
+              <a class="page-link" (click)="goToPage(currentPage() - 1)"
+                [style.cursor]="currentPage() === 1 ? 'default' : 'pointer'">Previous</a>
+            </li>
+            @for (page of [].constructor(totalPages()); track $index; let i = $index) {
+            <li class="page-item" [class.active]="currentPage() === i + 1">
+              <a class="page-link" (click)="goToPage(i + 1)" style="cursor: pointer;">{{ i + 1 }}</a>
+            </li>
+            }
+            <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+              <a class="page-link" (click)="goToPage(currentPage() + 1)" [style.cursor]="
+                      currentPage() === totalPages() ? 'default' : 'pointer'
+                    ">Next</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+
+ 
+<ng-template #loginFailed>
+  @if (isLoginFailed()) {
+    <div class="text-center bg-danger">
+      <h3 class="text-center fs-2 m-5 text-warn pt-5">
+        Error in User Login.
+      </h3>
+      <div class="row mt-4 mb-4">
+        <div class="col-sm-12 text-center">
+          <div class="mb-3 p-4">
+            <label class="form-label fs-4 text-warn"
+              >Something Went Wrong. Please Try login again!</label
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</ng-template> -->

@@ -2,6 +2,10 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
 
   {
+    path: 'UserMous',
+    loadComponent: () => import('./InternalUserDashboard/cif-mou-user-page/new-Mou').then(m => m.NewUserMouComponent)
+  },
+  {
     path: 'UserProfiles',
     loadComponent: () => import('./InternalUserDashboard/Profile/Profiles').then(m => m.UserProfileComponent)
   },
@@ -169,6 +173,15 @@ export const routes: Routes = [
   {
     path: 'AdminInstrumentAction',
     loadComponent: () => import('./AdminPortal/A6/AdminActionInstrument').then(m => m.AdminActionInstrumentsComponent)
+  },
+  {
+    path: 'EventCrud',
+    loadComponent: () => import('./AdminPortal/A_EventsCrud/new-events-crud.component').then(m => m.NewEventsCrudComponent)
+  },
+  {
+    path: 'CifMouCrud',
+    // loadComponent: () => import('./AdminPortal/A_CIFMouCrud/cifMou-crud').then(m => m.cifMouCrudComponent)
+    loadComponent: () => import('./AdminPortal/CifMouCrud/admin-mou.component').then(m => m.AdminMouComponent)
   },
 ];
 

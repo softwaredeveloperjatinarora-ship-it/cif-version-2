@@ -1,0 +1,330 @@
+<app-cif-menu-bar></app-cif-menu-bar>
+<div class="mou-user-page">
+
+  <!-- ── Page Header ──────────────────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-content">
+      <div>
+        <h1 class="page-title">MOU Management</h1>
+        <p class="page-subtitle">Memoranda of Understanding — {{ userName() }}</p>
+      </div>
+      @if (formMode() === null) {
+        <button class="btn-create" (click)="openCreateForm()">
+          <span class="btn-icon">＋</span> New MOU
+        </button>
+      }
+    </div>
+    <div class="header-accent"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       CREATE FORM
+  ══════════════════════════════════════════════════════════════════════ -->
+  @if (formMode() === 'create') {
+    <div class="form-card slide-in">
+      <div class="form-card-header">
+        <h2 class="form-card-title">
+          <span class="title-dot"></span>Submit New MOU
+        </h2>
+        <button class="btn-close-form" (click)="closeForm()" title="Close">✕</button>
+      </div>
+
+      <form #createForm="ngForm" (ngSubmit)="submitCreate(createForm)" novalidate>
+        <div class="form-grid">
+
+          <!-- Title -->
+          <div class="field-group full-width">
+            <label class="field-label">MOU Title <span class="required">*</span></label>
+            <input type="text" name="mouTitle" class="field-input"
+              [(ngModel)]="form.mouTitle" required
+              #titleRef="ngModel"
+              placeholder="Enter the full MOU title"
+              [class.invalid]="titleRef.invalid && titleRef.touched" />
+            @if (titleRef.invalid && titleRef.touched) {
+              <span class="error-msg">MOU Title is required.</span>
+            }
+          </div>
+
+          <!-- Start Date -->
+          <div class="field-group">
+            <label class="field-label">MOU Start Date <span class="required">*</span></label>
+            <input type="date" name="mouStartDate" class="field-input"
+              [(ngModel)]="form.mouStartDate" required
+              #startRef="ngModel"
+              [class.invalid]="startRef.invalid && startRef.touched" />
+            @if (startRef.invalid && startRef.touched) {
+              <span class="error-msg">Start date is required.</span>
+            }
+          </div>
+
+          <!-- End Date -->
+          <div class="field-group">
+            <label class="field-label">MOU End Date <span class="required">*</span></label>
+            <input type="date" name="mouEndDate" class="field-input"
+              [(ngModel)]="form.mouEndDate" required
+              #endRef="ngModel"
+              [min]="form.mouStartDate"
+              [class.invalid]="endRef.invalid && endRef.touched" />
+            @if (endRef.invalid && endRef.touched) {
+              <span class="error-msg">End date is required.</span>
+            }
+          </div>
+
+          <!-- Document Upload -->
+          <div class="field-group full-width">
+            <label class="field-label">MOU Document <span class="required">*</span></label>
+            <div class="upload-zone" [class.uploaded]="fileStatus()">
+              <input type="file" id="mouFile" class="upload-input"
+                (change)="onFileSelected($event)" accept=".pdf,.doc,.docx" />
+              <label for="mouFile" class="upload-label">
+                @if (fileStatus()) {
+                  <span class="upload-icon success-icon">✔</span>
+                  <div class="upload-text-group">
+                    <span class="upload-filename">{{ fileName }}</span>
+                    <small class="upload-hint">Click to replace</small>
+                  </div>
+                } @else {
+                  <span class="upload-icon">📄</span>
+                  <span class="upload-text">Click to upload PDF or Word document (max 5 MB)</span>
+                }
+              </label>
+            </div>
+          </div>
+
+          <!-- Remarks -->
+          <div class="field-group full-width">
+            <label class="field-label">Remarks</label>
+            <textarea name="mouRemarks" class="field-textarea"
+              [(ngModel)]="form.mouRemarks"
+              rows="3" placeholder="Add any relevant remarks or notes…">
+            </textarea>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="closeForm()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="submitting()">
+            @if (submitting()) { <span class="spinner"></span> Submitting… }
+            @else { Submit MOU }
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       MY MOUs TABLE
+  ══════════════════════════════════════════════════════════════════════ -->
+  <div class="table-section">
+    <div class="table-toolbar">
+      <h2 class="section-title">My Submitted MOUs</h2>
+      <div class="toolbar-right">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" placeholder="Search MOUs…"
+            [value]="searchQuery()"
+            (input)="onSearch($any($event.target).value)" />
+        </div>
+        <span class="record-count">{{ filteredList().length }} records</span>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading your MOUs…</p>
+      </div>
+    } @else if (filteredList().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <p class="empty-title">No MOUs found</p>
+        <p class="empty-sub">Click "New MOU" to submit your first memorandum.</p>
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="mou-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>MOU Title</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Status</th>
+              <th>Submitted On</th>
+              <th>Document</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of pagedList(); track row.mouId; let i = $index) {
+              <tr class="table-row">
+                <td class="td-index">{{ (currentPage() - 1) * pageSize() + i + 1 }}</td>
+                <td class="td-title">
+                  <span class="title-text">{{ row.mouTitle }}</span>
+                  <small class="remarks-text">{{ row.mouRemarks }}</small>
+                </td>
+                <td>{{ row.mouStartDate }}</td>
+                <td>{{ row.mouEndDate }}</td>
+                <td>
+                  <span class="status-badge {{ statusClass(row) }}">
+                    {{ statusLabel(row) }}
+                  </span>
+                </td>
+                <td>{{ row.createdOn }}</td>
+                <td>
+                  @if (row.mouDocumentUrl) {
+                    <button class="btn-doc" (click)="viewDocument(row.mouDocumentUrl)">
+                      📄 View
+                    </button>
+                  } @else {
+                    <span class="no-doc">—</span>
+                  }
+                </td>
+                <td>
+                  @if (row.isApproved !== 1) {
+                    <button class="btn-edit" (click)="openEditModal(row)">Edit</button>
+                  } @else {
+                    <span class="approved-lock" title="Approved MOUs cannot be edited">🔒</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (totalPages() > 1) {
+        <div class="pagination">
+          <button class="pg-btn" (click)="prevPage()" [disabled]="currentPage() === 1">‹</button>
+          @for (n of pageNumbers(); track n) {
+            <button class="pg-btn" [class.active]="currentPage() === n" (click)="currentPage.set(n)">
+              {{ n }}
+            </button>
+          }
+          <button class="pg-btn" (click)="nextPage()" [disabled]="currentPage() === totalPages()">›</button>
+        </div>
+      }
+    }
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     EDIT MODAL
+══════════════════════════════════════════════════════════════════════ -->
+<ng-template #editModal let-modal>
+  <div class="modal-wrapper">
+    <div class="modal-head">
+      <h3 class="modal-title">Edit MOU</h3>
+      <button class="modal-close" (click)="modal.dismiss()">✕</button>
+    </div>
+
+    <div class="modal-body-content">
+      <form #editForm="ngForm" (ngSubmit)="submitUpdate(editForm, modal)" novalidate>
+        <div class="form-grid">
+
+          <!-- Title -->
+          <div class="field-group full-width">
+            <label class="field-label">MOU Title <span class="required">*</span></label>
+            <input type="text" name="mouTitle" class="field-input"
+              [(ngModel)]="form.mouTitle" required
+              #eTitleRef="ngModel"
+              [class.invalid]="eTitleRef.invalid && eTitleRef.touched" />
+            @if (eTitleRef.invalid && eTitleRef.touched) {
+              <span class="error-msg">MOU Title is required.</span>
+            }
+          </div>
+
+          <!-- Start Date -->
+          <div class="field-group">
+            <label class="field-label">Start Date <span class="required">*</span></label>
+            <input type="date" name="mouStartDate" class="field-input"
+              [(ngModel)]="form.mouStartDate" required
+              #eStartRef="ngModel"
+              [class.invalid]="eStartRef.invalid && eStartRef.touched" />
+            @if (eStartRef.invalid && eStartRef.touched) {
+              <span class="error-msg">Start date is required.</span>
+            }
+          </div>
+
+          <!-- End Date -->
+          <div class="field-group">
+            <label class="field-label">End Date <span class="required">*</span></label>
+            <input type="date" name="mouEndDate" class="field-input"
+              [(ngModel)]="form.mouEndDate" required
+              #eEndRef="ngModel"
+              [min]="form.mouStartDate"
+              [class.invalid]="eEndRef.invalid && eEndRef.touched" />
+            @if (eEndRef.invalid && eEndRef.touched) {
+              <span class="error-msg">End date is required.</span>
+            }
+          </div>
+
+          <!-- Document Upload — REQUIRED on edit -->
+          <div class="field-group full-width">
+            <label class="field-label">
+              MOU Document <span class="required">*</span>
+            </label>
+
+            <!-- Current file indicator — shows what is already attached -->
+            @if (editExistingFileName()) {
+              <div class="current-file-banner">
+                <span class="current-file-icon">📎</span>
+                <div class="current-file-info">
+                  <span class="current-file-label">Currently attached:</span>
+                  <span class="current-file-name">{{ editExistingFileName() }}</span>
+                </div>
+                <span class="current-file-replace-hint">Upload below to replace</span>
+              </div>
+            }
+
+            <!-- Upload zone — invalid border when form submitted without file -->
+            <div class="upload-zone"
+              [class.uploaded]="fileStatus()"
+              [class.upload-required]="!fileStatus()">
+              <input type="file" id="editFile" class="upload-input"
+                (change)="onFileSelected($event)" accept=".pdf,.doc,.docx" />
+              <label for="editFile" class="upload-label">
+                @if (fileStatus()) {
+                  <!-- New file chosen -->
+                  <span class="upload-icon success-icon">✔</span>
+                  <div class="upload-text-group">
+                    <span class="upload-filename">{{ fileName }}</span>
+                    <small class="upload-hint">Click to choose a different file</small>
+                  </div>
+                } @else {
+                  <!-- No file chosen yet -->
+                  <span class="upload-icon">📄</span>
+                  <div class="upload-text-group">
+                    <span class="upload-text">Click to upload PDF or Word document</span>
+                    <small class="upload-hint required-hint">Required — max 5 MB</small>
+                  </div>
+                }
+              </label>
+            </div>
+
+          </div>
+
+          <!-- Remarks -->
+          <div class="field-group full-width">
+            <label class="field-label">Remarks</label>
+            <textarea name="mouRemarks" class="field-textarea"
+              [(ngModel)]="form.mouRemarks" rows="3"
+              placeholder="Add any relevant remarks or notes…">
+            </textarea>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="modal.dismiss()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="submitting()">
+            @if (submitting()) { <span class="spinner"></span> Saving… }
+            @else { Save Changes }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

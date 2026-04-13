@@ -1,0 +1,433 @@
+<app-admin-dashboard></app-admin-dashboard>
+
+<!-- Loading Spinner -->
+@if (isLoading()) {
+  <div class="fullscreen-loader">
+    <div class="custom-spinner-overlay">
+      <div class="custom-spinner-content text-center">
+        <img src="assets/images/spinner.gif" alt="Loading..." />
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Happenings Carousel Section -->
+<section class="section bg-dark-yellow">
+  <div class="container">
+    <div class="heading-wraper">
+      <div class="main-head">
+        <h2>Events & Happenings</h2>
+        <div class="inner-testi-slider-nav">
+          <button
+            id="prev_event_slide"
+            class="inner-testi-prev-arrow"
+            (click)="carousel.prev()"
+          >
+            <img
+              src="https://www.lpu.in/lpu-assets/images/icons/vector-left.svg"
+              alt="Previous"
+            />
+          </button>
+          <button
+            id="next_event_slide"
+            class="inner-testi-next-arrow"
+            (click)="carousel.next()"
+          >
+            <img
+              src="https://www.lpu.in/lpu-assets/images/icons/vector-right.svg"
+              alt="Next"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ngb-carousel
+      #carousel
+      [interval]="15000"
+      [pauseOnHover]="true"
+      [showNavigationArrows]="false"
+      [showNavigationIndicators]="true"
+    >
+      @for (group of chunkedEvents(); track $index) {
+        <ng-template ngbSlide>
+          <div
+            class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 text-center justify-content-center"
+          >
+            @for (event of group; track event.eventId) {
+              <div class="col">
+                <img
+                  [src]="serverUrl() + event.imageUrl"
+                  [alt]="event.eventName"
+                  class="img-fluid"
+                />
+                <div class="mt-4 mb-2">
+                  <strong class="d-block">{{ event.eventName }}</strong>
+                  {{ event.eventDetails }}
+                </div>
+              </div>
+            }
+          </div>
+        </ng-template>
+      }
+    </ngb-carousel>
+
+    @if (chunkedEvents().length === 0) {
+      <p class="text-center mt-4 text-muted">
+        No Happenings events available at the moment.
+      </p>
+    }
+  </div>
+</section>
+
+<!-- Upcoming Events Carousel Section -->
+<section class="section bg-light-yellow">
+  <div class="container">
+    <div class="heading-wraper">
+      <div class="main-head">
+        <h2>Upcoming Events</h2>
+        <div class="inner-testi-slider-nav">
+          <button
+            id="prev_upcoming_slide"
+            class="inner-testi-prev-arrow"
+            (click)="carousel2.prev()"
+          >
+            <img
+              src="https://www.lpu.in/lpu-assets/images/icons/vector-left.svg"
+              alt="Previous"
+            />
+          </button>
+          <button
+            id="next_upcoming_slide"
+            class="inner-testi-next-arrow"
+            (click)="carousel2.next()"
+          >
+            <img
+              src="https://www.lpu.in/lpu-assets/images/icons/vector-right.svg"
+              alt="Next"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ngb-carousel
+      #carousel2
+      [interval]="15000"
+      [pauseOnHover]="true"
+      [showNavigationArrows]="false"
+      [showNavigationIndicators]="true"
+    >
+      @for (group of upcomingChunkedEvents(); track $index) {
+        <ng-template ngbSlide>
+          <div
+            class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 text-center justify-content-center"
+          >
+            @for (event of group; track event.eventId) {
+              <div class="col">
+                <div class="mt-4 mb-2">
+                  <strong class="d-block">{{ event.eventName }}</strong>
+                  {{ event.eventDetails }}
+                </div>
+              </div>
+            }
+          </div>
+        </ng-template>
+      }
+    </ngb-carousel>
+
+    @if (upcomingChunkedEvents().length === 0) {
+      <p class="text-center mt-4 text-muted">
+        No Upcoming events available at the moment.
+      </p>
+    }
+  </div>
+</section>
+
+<div class="container-fluid p-3">
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h2 class="m-0 font-weight-bold text-primary">
+        @if (isEditMode()) {
+        Edit Event (ID: {{ currentEventId() }})
+        } @else {
+        Add New Event
+        }
+      </h2>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="eventForm()!" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+        <input type="hidden" formControlName="eventId" />
+
+        <!-- Event Name  and Event Date-->
+        <div class="form-group row">
+          <label for="eventName" class="col-3 col-form-label required">Event Name</label>
+          <div class="col-3">
+            <input type="text" id="eventName" formControlName="eventName" class="form-control"
+              [ngClass]="{ 'is-invalid': isFormSubmitted() && f['eventName']?.invalid }" />
+            @if (isFormSubmitted() && f['eventName']?.invalid) {
+            <div class="invalid-feedback">
+              @if (f['eventName']?.hasError('required')) {
+              <span>Event Name is required.</span>
+              }
+            </div>
+            }
+          </div>
+
+          <label for="eventDate" class="col-3 col-form-label required">Date</label>
+          <div class="col-3">
+            <input type="date" id="eventDate" formControlName="eventDate" class="form-control" [ngClass]="{
+                                              'is-invalid':
+                                                isFormSubmitted() && f['eventDate']?.invalid
+                                            }" />
+            @if (isFormSubmitted() && f['eventDate']?.invalid) {
+            <div class="invalid-feedback">
+              @if (f['eventDate']?.hasError('required')) {
+              <span>Date is required.</span>
+              }
+            </div>
+            }
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="eventCategory" class="col-3 col-form-label required">Category</label>
+          <div class="col-3">
+            <select id="eventCategory" formControlName="eventCategory" class="form-control" [ngClass]="{
+                                                              'is-invalid':
+                                                                isFormSubmitted() && f['eventCategory']?.invalid
+                                                            }">
+              @for (cat of categories(); track cat) {
+              <option [value]="cat">{{ cat }}</option>
+              }
+            </select>
+            @if (isFormSubmitted() && f['eventCategory']?.invalid) {
+            <div class="invalid-feedback">
+              @if (f['eventCategory']?.hasError('required')) {
+              <span>Category is required.</span>
+              }
+            </div>
+            }
+          </div>
+
+
+
+          <!-- Event Details 
+            <div class="form-group row">-->
+          <label for="eventDetails" class="col-3 col-form-label required">Details</label>
+          <div class="col-3">
+            <textarea id="eventDetails" formControlName="eventDetails" class="form-control" rows="3" [ngClass]="{
+                    'is-invalid':
+                      isFormSubmitted() && f['eventDetails']?.invalid
+                  }"></textarea>
+            @if (isFormSubmitted() && f['eventDetails']?.invalid) {
+            <div class="invalid-feedback">
+              @if (f['eventDetails']?.hasError('required')) {
+              <span>Details are required.</span>
+              }
+            </div>
+            }
+          </div>
+        </div>
+
+        <!-- File Upload (Conditional for Happenings) -->
+        @if (isImageRequired()) {
+        <div class="form-group row">
+          <label for="imageFile" class="col-3 col-form-label">Event Image</label>
+          <div class="col-3">
+            <input type="file" id="imageFile" accept="image/*" class="form-control"
+              (change)="onFileSelectedEventFile($event)" />
+            @if (eventFileName()) {
+            <div class="mt-2 small text-success">
+              File selected: {{ eventFileName() }}
+            </div>
+            }
+            @if (currentImageUrl() && isEditMode()) {
+            <div class="mt-2 small text-muted">
+              Current image: {{ currentImageUrl() }}
+            </div>
+            }
+          </div>
+        </div>
+        }
+
+        <!-- Form Actions -->
+        <div class="form-group row">
+          <div class="col-sm-12 text-center">
+            <button type="submit" class="btn btn-primary m-2" [disabled]="isLoading()">
+              @if (isLoading()) {
+              <span class="spinner-border spinner-border-sm mr-2"></span>
+              }
+              @if (isEditMode()) {
+              Update Event
+              } @else {
+              Create New Event
+              }
+            </button>
+            <button type="button" class="btn btn-secondary m-2" (click)="resetForm()" [disabled]="isLoading()">
+              Clear Form
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- All Events Table -->
+  <div class="container-fluid p-3">
+    <div class="card shadow mb-4">
+      <div class="row mb-5 mt-4">
+        <h2 class="text-center">All Events</h2>
+      </div>
+
+      <div class="card-header py-3 d-flex justify-content-center align-items-center">
+        <div class="col-2">
+          <h2 class="m-0 font-weight-bold text-start text-primary">
+            All Event List
+          </h2>
+        </div>
+        <div class="col-3">
+          <input type="text" placeholder="Search..." class="form-control form-control-sm mr-2" [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange()" />
+        </div>
+        <span class="ms-4 col-2 text-end">Select Items per page</span>
+        <div class="ms-1 col-2">
+          <select class="form-control form-control-sm"
+            style="width: auto; background-color: bisque !important; color: black !important;" [(ngModel)]="pageSize"
+            (ngModelChange)="onPageSizeChange()">
+            <option [ngValue]="5" selected>Select</option>
+            <option [ngValue]="10">10 / page</option>
+            <option [ngValue]="25">25 / page</option>
+            <option [ngValue]="50">50 / page</option>
+          </select>
+        </div>
+
+        @if (totalPages() > 1) {
+        <div class="col-3">
+          <nav>
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="currentPage() === 1">
+                <a class="page-link" (click)="goToPage(currentPage() - 1)"
+                  [style.cursor]="currentPage() === 1 ? 'default' : 'pointer'">Previous</a>
+              </li>
+              @for (page of [].constructor(totalPages()); track $index; let i = $index) {
+              <li class="page-item" [class.active]="currentPage() === i + 1">
+                <a class="page-link" (click)="goToPage(i + 1)" style="cursor: pointer;">{{ i + 1 }}</a>
+              </li>
+              }
+              <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+                <a class="page-link" (click)="goToPage(currentPage() + 1)" [style.cursor]="
+                        currentPage() === totalPages() ? 'default' : 'pointer'
+                      ">Next</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        }
+      </div>
+
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          @if (paginatedEventsData().length === 0) {
+          <p class="p-4 text-center text-muted">
+            No events found matching your criteria.
+          </p>
+          } @else {
+          <table class="table table-striped table-hover mb-0">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Details</th>
+                <th>Image</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (event of paginatedEventsData(); track event.eventId) {
+              <tr>
+                <td>{{ event.eventId }}</td>
+                <td>{{ event.eventName }}</td>
+                <td>{{ event.eventDate | date : "shortDate" }}</td>
+                <td>{{ event.eventCategory }}</td>
+                <td>{{ event.eventDetails | slice : 0 : 70 }}...</td>
+                <td>
+                  @if (event.imageUrl) {
+                  <button class="btn btn-sm btn-info" (click)="onViewFile(event.imageUrl)" [attr.aria-label]="
+                              'View image for ' + event.eventName
+                            ">
+                    <span class="bi bi-eye"></span>
+                  </button>
+                  } @else {
+                  <span class="text-muted">N/A</span>
+                  }
+                </td>
+                <td>
+                  <button class="btn btn-sm btn-warning mr-2" (click)="onEdit(event)" [attr.aria-label]="
+                            'Edit ' + event.eventName
+                          ">
+                    <span class="bi bi-pencil"></span>
+                  </button>
+                  <button class="btn btn-sm btn-danger" (click)="onDelete(event)" [attr.aria-label]="
+                            'Delete ' + event.eventName
+                          ">
+                    <span class="bi bi-trash"></span>
+                  </button>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+          }
+        </div>
+      </div>
+
+      @if (totalPages() > 1) {
+      <div class="card-footer d-flex justify-content-between align-items-center">
+        <nav>
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" [class.disabled]="currentPage() === 1">
+              <a class="page-link" (click)="goToPage(currentPage() - 1)"
+                [style.cursor]="currentPage() === 1 ? 'default' : 'pointer'">Previous</a>
+            </li>
+            @for (page of [].constructor(totalPages()); track $index; let i = $index) {
+            <li class="page-item" [class.active]="currentPage() === i + 1">
+              <a class="page-link" (click)="goToPage(i + 1)" style="cursor: pointer;">{{ i + 1 }}</a>
+            </li>
+            }
+            <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+              <a class="page-link" (click)="goToPage(currentPage() + 1)" [style.cursor]="
+                      currentPage() === totalPages() ? 'default' : 'pointer'
+                    ">Next</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Login Failed Template -->
+<ng-template #loginFailed>
+  @if (isLoginFailed()) {
+    <div class="text-center bg-danger">
+      <h3 class="text-center fs-2 m-5 text-warn pt-5">
+        Error in User Login.
+      </h3>
+      <div class="row mt-4 mb-4">
+        <div class="col-sm-12 text-center">
+          <div class="mb-3 p-4">
+            <label class="form-label fs-4 text-warn"
+              >Something Went Wrong. Please Try login again!</label
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</ng-template>
