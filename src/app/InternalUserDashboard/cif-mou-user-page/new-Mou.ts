@@ -275,14 +275,11 @@ export class NewUserMouComponent implements OnInit, OnDestroy {
       });
   }
 
-  // ── Submit: Update ────────────────────────────────────────────────────────
-  // FIX: File is now REQUIRED on update — guard added before API call.
-  // The payload always includes MOUDocumentData + MOUDocumentUrl so the
-  // endpoint receives a fresh file on every update (same as Insert).
+   
   submitUpdate(ngForm: NgForm, modal: any): void {
     if (ngForm.invalid) { ngForm.form.markAllAsTouched(); return; }
 
-    // File is required — user must upload a new document with every update
+  
     if (!this.fileStatus()) {
       Swal.fire({
         title: 'Document required',
@@ -335,14 +332,18 @@ export class NewUserMouComponent implements OnInit, OnDestroy {
 
   // ── Helpers ───────────────────────────────────────────────────────────────
   statusLabel(row: MouRecord): string {
-    if (row.mouStatus === '1') return 'Expired';
-    if (row.isApproved === 1)  return 'Approved';
+    if (row.mouStatus === '0')   return 'Expired';
+    if (row.mouStatus === '1')   return 'Active';  
+    if (row.isApproved === 'True')  return 'Approved';
+    if (row.isApproved === 'False')  return 'Disapproved';
     return 'Pending';
   }
 
   statusClass(row: MouRecord): string {
-    if (row.mouStatus === '1') return 'badge-expired';
-    if (row.isApproved === 1)  return 'badge-approved';
+    if (row.mouStatus === '0')   return 'badge-expired';
+    if (row.mouStatus === '1')   return 'badge-approved';
+    if (row.isApproved === 'True')  return 'badge-approved';
+    if (row.isApproved === 'False')  return 'badge-disapproved';
     return 'badge-pending';
   }
 

@@ -3,17 +3,17 @@
 
   <!-- ── Page Header ──────────────────────────────────────────────────────── -->
   <!-- <div class="admin-header"> -->
-    <!-- <div class="header-top"> -->
-      <!-- <div>
+  <!-- <div class="header-top"> -->
+  <!-- <div>
         <div class="admin-eyebrow">Administrator Panel</div>
         <h1 class="admin-title">MOU Management</h1>
         <p class="admin-sub">All Memoranda of Understanding — Centralized Review</p>
       </div> -->
-      <!-- <button class="btn-refresh" (click)="loadAllMous()" title="Refresh data">
+  <!-- <button class="btn-refresh" (click)="loadAllMous()" title="Refresh data">
         ↻ Refresh
       </button> -->
-    <!-- </div> -->
-    <!-- <div class="header-stripe"></div> -->
+  <!-- </div> -->
+  <!-- <div class="header-stripe"></div> -->
   <!-- </div> -->
 
   <!-- ── Stat Cards ────────────────────────────────────────────────────────── -->
@@ -50,8 +50,7 @@
     <div class="search-box">
       <span>🔍</span>
       <input type="text" class="filter-input search-input" placeholder="Search by title, user, org…"
-        [value]="searchQuery()"
-        (input)="onSearch($any($event.target).value)" />
+        [value]="searchQuery()" (input)="onSearch($any($event.target).value)" />
     </div>
 
     <select class="filter-select" [value]="filterApproved()"
@@ -65,8 +64,8 @@
     <select class="filter-select" [value]="filterStatus()"
       (change)="filterStatus.set($any($event.target).value); onFilterChange()">
       <option value="">All MOU Status</option>
-      <option value="0">Active</option>
-      <option value="1">Expired</option>
+      <option value="1">Active</option>
+      <option value="0">Expired</option>
     </select>
 
     <select class="filter-select" [value]="filterUserType()"
@@ -86,138 +85,141 @@
   <div class="grid-section">
 
     @if (isLoading()) {
-      <div class="state-center">
-        <div class="admin-spinner"></div>
-        <p>Loading MOU records…</p>
-      </div>
+    <div class="state-center">
+      <div class="admin-spinner"></div>
+      <p>Loading MOU records…</p>
+    </div>
     } @else if (filteredList().length === 0) {
-      <div class="state-center">
-        <div class="empty-icon">📋</div>
-        <p class="empty-title">No MOUs match the current filters.</p>
-        <button class="btn-clear-filters" (click)="clearFilters()">Clear Filters</button>
-      </div>
+    <div class="state-center">
+      <div class="empty-icon">📋</div>
+      <p class="empty-title">No MOUs match the current filters.</p>
+      <button class="btn-clear-filters" (click)="clearFilters()">Clear Filters</button>
+    </div>
     } @else {
-      <div class="table-responsive">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th class="th-num">#</th>
-              <th>MOU Title</th>
-              <th>Submitted By</th>
-              <th>User Type</th>
-              <th>Start Date</th>
-              <th>End Date</th>
-              <th>Submitted On</th>
-              <th>MOU Status</th>
-              <th>Approval</th>
-              <th>Document</th>
-              <th class="th-actions">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (row of pagedList(); track row.mouId; let i = $index) {
-              <tr class="admin-row" [class.row-expired]="row.mouStatus === '1'">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover mb-0">
+          <thead class="table-dark ">
+          <tr>
+            <th class="th-num">#</th>
+            <th>MOU Title</th>
+            <th>Submitted By</th>
+            <th>User Type</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Submitted On</th>
+            <th>MOU Status</th>
+            <th>Approval</th>
+            <th>Document</th>
+            <th class="th-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of pagedList(); track row.mouId; let i = $index) {
+          <tr class="admin-row" [class.row-expired]="row.mouStatus === '1'">
 
-                <td class="td-num">{{ (currentPage() - 1) * pageSize() + i + 1 }}</td>
+            <td class="td-num">{{ (currentPage() - 1) * pageSize() + i + 1 }}</td>
 
-                <td class="td-title">
-                  <span class="row-title">{{ row.mouTitle }}</span>
-                  @if (row.mouRemarks) {
-                    <small class="row-remark">{{ row.mouRemarks }}</small>
-                  }
-                </td>
+            <td class="td-title">
+              <span class="row-title">{{ row.mouTitle }}</span>
+              @if (row.mouRemarks) {
+              <small class="row-remark">{{ row.mouRemarks }}</small>
+              }
+            </td>
 
-                <td>
-                  <div class="user-cell">
-                    <span class="user-name">{{ row.userName }}</span>
-                    <small class="user-email">{{ row.userEmailId }}</small>
-                  </div>
-                </td>
+            <td>
+              <div class="user-cell">
+                <span class="user-name">{{ row.userName }}</span>
+                <small class="user-email">{{ row.userEmailId }}</small>
+              </div>
+            </td>
 
-                <td>
-                  <span class="type-chip">
-                    {{ row.userType }}
-                  </span>
-                </td>
+            <td>
+              <span class="type-chip">
+                {{ row.userType }}
+              </span>
+            </td>
 
-                <td class="td-date">{{ row.mouStartDate }}</td>
-                <td class="td-date">{{ row.mouEndDate }}</td>
-                <td class="td-date">{{ row.createdOn }}</td>
+            <td class="td-date">{{ row.mouStartDate }}</td>
+            <td class="td-date">{{ row.mouEndDate }}</td>
+            <td class="td-date">{{ row.createdOn }}</td>
 
-                <td>
-                  <span class="status-badge {{ statusClass(row) }}">
-                    {{ statusLabel(row) }}
-                  </span>
-                </td>
+            <td>
+              <span class="status-badge {{ statusClass(row) }}">
+                {{ statusLabel(row) }}
+              </span>
+            </td>
 
-                <td>
-                  @if (row.isApproved === 'True') {
-                    <span class="status-badge badge-approved">✔ Approved</span>
-                  } @else if (row.isApproved === 'NA' ) {
-                    <span class="status-badge badge-pending">⏳ Pending</span>
-                  } @else if (row.isApproved === 'False') {
-                    <span class="status-badge status-badge">Disapproved</span>
-                  }
-                </td>
+            <td>
+              @if (row.isApproved === 'True') {
+              <span class="status-badge badge-approved">Approved</span>
+              } @else if (row.isApproved === 'False') {
+              <span class="status-badge badge-disapproved">Disapproved</span>
+              } @else {
+              <span class="status-badge badge-pending">Pending</span>
+              }
+            </td>
 
-                <td>
-                  @if (row.mouDocumentUrl) {
-                    <button class="btn-doc" (click)="viewDocument(row.mouDocumentUrl)">
-                      📄 View
-                    </button>
-                  } @else {
-                    <span class="no-doc">—</span>
-                  }
-                </td>
+            <td>
+              @if (row.mouDocumentUrl) {
+              <button class="btn-doc" (click)="viewDocument(row.mouDocumentUrl)">
+                📄 
+                <!-- View -->
+              </button>
+              } @else {
+              <span class="no-doc">—</span>
+              }
+            </td>
 
-                <td class="td-actions">
-                  <div class="action-group">
-                    <!-- Approve: only if not already approved and not expired -->
-                    @if (row.isApproved === 'NA' && row.mouStatus !== 'True') {
-                      <button class="action-btn approve"
-                        (click)="openAction('Approve', row)" title="Approve this MOU">
-                        ✔ Approve
-                      </button>
-                      <button class="action-btn disapprove"
-                        (click)="openAction('DisApprove', row)" title="Disapprove this MOU">
-                        ✘ Revoke
-                      </button>
-                    }
+            <td class="td-actions">
+              <div class="action-group">
+                <!-- Approve: only if not already approved and not expired -->
+                @if (row.isApproved === 'NA' && row.mouStatus !== 'True') {
+                <button class="action-btn approve" (click)="openAction('Approve', row)" title="Approve this MOU">
+                  ✔ 
+                  <!-- Approve -->
 
-                    <!-- Disapprove: only if currently approved -->
-                    @if (row.isApproved === 'null') {
-                      <button class="action-btn disapprove"
-                        (click)="openAction('DisApprove', row)" title="Disapprove this MOU">
-                        ✘ Revoke
-                      </button>
-                    }
+                </button>
+                <button class="action-btn disapprove" (click)="openAction('DisApprove', row)"
+                  title="Disapprove this MOU">
+                  ✘ 
+                  <!-- Revoke -->
+                </button>
+                }
 
-                    <!-- Delete: always available to admin -->
-                    <button class="action-btn delete"
-                      (click)="openAction('Delete', row)" title="Delete this MOU">
-                      🗑
-                    </button>
-                  </div>
-                </td>
+                <!-- Disapprove: only if currently approved -->
+                @if (row.isApproved === 'null') {
+                <button class="action-btn disapprove" (click)="openAction('DisApprove', row)"
+                  title="Disapprove this MOU">
+                  ✘ 
+                  <!-- Revoke -->
+                </button>
+                }
 
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+                <!-- Delete: always available to admin -->
+                <button class="action-btn delete" (click)="openAction('Delete', row)" title="Delete this MOU">
+                  🗑
+                </button>
+              </div>
+            </td>
 
-      <!-- Pagination -->
-      @if (totalPages() > 1) {
-        <div class="admin-pagination">
-          <button class="pg-btn" (click)="prevPage()" [disabled]="currentPage() === 1">‹ Prev</button>
-          @for (n of pageNumbers(); track n) {
-            <button class="pg-btn" [class.active]="currentPage() === n" (click)="currentPage.set(n)">
-              {{ n }}
-            </button>
+          </tr>
           }
-          <button class="pg-btn" (click)="nextPage()" [disabled]="currentPage() === totalPages()">Next ›</button>
-        </div>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages() > 1) {
+    <div class="admin-pagination">
+      <button class="pg-btn" (click)="prevPage()" [disabled]="currentPage() === 1">‹ Prev</button>
+      @for (n of pageNumbers(); track n) {
+      <button class="pg-btn" [class.active]="currentPage() === n" (click)="currentPage.set(n)">
+        {{ n }}
+      </button>
       }
+      <button class="pg-btn" (click)="nextPage()" [disabled]="currentPage() === totalPages()">Next ›</button>
+    </div>
+    }
     }
 
   </div><!-- /grid-section -->
@@ -237,40 +239,37 @@
 
     <div class="confirm-body">
       @if (pendingRow(); as row) {
-        <div class="mou-summary">
-          <div class="summary-label">MOU Title</div>
-          <p class="summary-value">{{ row.mouTitle }}</p>
-          <p class="summary-label">Submitted By</p>
-          <p class="summary-value">{{ row.userName }} — {{ row.userEmailId }}</p>
-        </div>
+      <div class="mou-summary">
+        <div class="summary-label">MOU Title</div>
+        <p class="summary-value">{{ row.mouTitle }}</p>
+        <p class="summary-label">Submitted By</p>
+        <p class="summary-value">{{ row.userName }} — {{ row.userEmailId }}</p>
+      </div>
       }
 
       <!-- Remarks field for Approve / Disapprove -->
       @if (needsRemark()) {
-        <div class="remark-field">
-          <label class="remark-label">
-            Approval Remarks
-            @if (pendingAction() === 'DisApprove') { <span class="required">*</span> }
-          </label>
-          <textarea class="remark-input" rows="4"
-            [value]="approvalRemark()"
-            (input)="approvalRemark.set($any($event.target).value)"
-            placeholder="Add any remarks for this decision…">
+      <div class="remark-field">
+        <label class="remark-label">
+          Approval Remarks
+          @if (pendingAction() === 'DisApprove') { <span class="required">*</span> }
+        </label>
+        <textarea class="remark-input" rows="4" [value]="approvalRemark()"
+          (input)="approvalRemark.set($any($event.target).value)" placeholder="Add any remarks for this decision…">
           </textarea>
-        </div>
+      </div>
       }
 
       @if (pendingAction() === 'Delete') {
-        <div class="delete-warning">
-          ⚠️ This will deactivate the MOU record. This action cannot be reversed.
-        </div>
+      <div class="delete-warning">
+        ⚠️ This will deactivate the MOU record. This action cannot be reversed.
+      </div>
       }
     </div>
 
     <div class="confirm-footer ">
       <button class="btn-secondary" (click)="modal.dismiss()">Cancel</button>
-      <button class="btn-confirm {{ actionColor() }}" [disabled]="processing()"
-        (click)="confirmAction(modal)">
+      <button class="btn-confirm {{ actionColor() }}" [disabled]="processing()" (click)="confirmAction(modal)">
         @if (processing()) { <span class="spinner"></span> Processing… }
         @else { Confirm {{ actionLabel() }} }
       </button>

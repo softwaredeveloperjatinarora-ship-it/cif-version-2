@@ -345,6 +345,29 @@ form { padding: 2rem; }
 
 .toolbar-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
 
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--surface-alt);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: .45rem .9rem;
+  flex: 1;
+  min-width: 220px;
+}
+
+.search-input {
+  border: none;
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .9rem;
+  color: var(--ink);
+  outline: none;
+  width: 100%;
+}
+
 .search-wrap {
   display: flex;
   align-items: center;
@@ -357,15 +380,16 @@ form { padding: 2rem; }
 
 .search-icon { font-size: .9rem; }
 
-.search-input {
-  border: none;
-  background: transparent;
-  font-family: 'DM Sans', sans-serif;
-  font-size: .9rem;
-  color: var(--ink);
-  outline: none;
-  width: 200px;
-}
+// .search-input {
+//   border: none;
+//   background: transparent;
+//   font-family: 'DM Sans', sans-serif;
+//   font-size: .9rem;
+//   color: var(--ink);
+//   outline: none;
+//   width: 200px;
+// }
+
 
 .record-count {
   font-size: .85rem;
@@ -419,7 +443,7 @@ form { padding: 2rem; }
   display: flex;
   flex-direction: column;
   gap: .2rem;
-  max-width: 260px;
+  // max-width: 260px;
 }
 
 .title-text { font-weight: 600; }
@@ -434,17 +458,62 @@ form { padding: 2rem; }
 }
 
 // ── Status badges ──────────────────────────────────────────────────────────
+//
+//   isApproved value → badge class
+//   '1'  (Approved)     → badge-approved     green
+//   '0'  (Disapproved)  → badge-disapproved  red-orange with left border accent
+//   'NA' (Pending)      → badge-pending      amber
+//   mouStatus '1' (Expired) → badge-expired  muted grey
+//
 .status-badge {
-  padding: .3rem .8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .3rem .85rem;
   border-radius: 50px;
   font-size: .78rem;
   font-weight: 600;
   white-space: nowrap;
   letter-spacing: .3px;
+  border: 1px solid transparent;
+  transition: opacity .15s;
 
-  &.badge-approved { background: #e8f5e9; color: #2e7d32; }
-  &.badge-pending  { background: #fff8e1; color: #f57f17; }
-  &.badge-expired  { background: #fce4ec; color: #b71c1c; }
+  // ── Approved — solid green pill ───────────────────────────────────────────
+  &.badge-approved {
+    background: #e8f5e9;
+    color:      #2e7d32;
+    border-color: #a5d6a7;
+
+    &::before { content: '✔'; font-size: .72rem; }
+  }
+
+  &.badge-disapproved {
+    background:   #fff3e0;
+    color:        #bf360c;
+    border-color: #ffab91;
+    box-shadow:   inset 3px 0 0 #bf360c;   // left accent bar
+    border-radius: 0 50px 50px 0;           // flat left edge to complement bar
+
+    &::before { content: '✘'; font-size: .72rem; }
+  }
+
+  // ── Pending — amber / awaiting admin review ───────────────────────────────
+  &.badge-pending {
+    background:  #fff8e1;
+    color:       #f57f17;
+    border-color: #ffe082;
+
+    &::before { content: '⏳'; font-size: .7rem; }
+  }
+
+  // ── Expired — muted grey / date-driven ───────────────────────────────────
+  &.badge-expired {
+    background:  #f5f5f5;
+    color:       #757575;
+    border-color: #e0e0e0;
+
+    &::before { content: '⌛'; font-size: .7rem; }
+  }
 }
 
 // ── Row action buttons ────────────────────────────────────────────────────

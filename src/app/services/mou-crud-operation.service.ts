@@ -49,7 +49,7 @@ export interface MouRecord {
   mouTitle: string;
   mouStartDate: string;
   mouEndDate: string;
-  mouStatus: string;
+  mouStatus: any;
   mouRemarks: string;
   isApproved: any;
   isActive: any;

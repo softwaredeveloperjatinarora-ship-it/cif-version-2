@@ -5,17 +5,17 @@
   --orange:       #ef7d00;
   --orange-light: #fff4e6;
   --orange-dark:  #c96800;
-  --ink:          #1a1a2e;
+  --ink:          #2222bf;
   --ink-muted:    #5a5a7a;
   --surface:      #ffffff;
   --surface-alt:  #f5f4f2;
   --border:       #e4e0db;
   --green:        #2e7d32;
-  --green-bg:     #040604;
+  --green-bg:     #bac1ba;
   --red:          #b71c1c;
   --red-bg:       #fce4ec;
   --amber:        #f57f17;
-  --amber-bg:     #fff8e1;
+  --amber-bg:    #bac1ba;
   --radius:       10px;
   --radius-lg:    16px;
   --shadow-sm:    0 2px 8px rgba(0,0,0,.06);
@@ -247,8 +247,8 @@
   border-collapse: collapse;
   font-size: .875rem;
 
-  thead tr {
-    background: var(--ink);
+  .thead .tr {
+    background: darkred !important;
     color: rgba(255,255,255,.9);
   }
 
@@ -264,7 +264,7 @@
     &.th-actions { width: 180px; }
   }
 
-  tbody tr {
+  .tbody .tr {
     border-bottom: 1px solid var(--border);
     transition: background .15s;
 
@@ -286,7 +286,7 @@
   display: flex;
   flex-direction: column;
   gap: .2rem;
-  max-width: 240px;
+  // max-width: 240px;
 }
 
 .row-title  { font-weight: 600; word-break: break-word; }
@@ -313,20 +313,58 @@
 
 // ── Status badges ──────────────────────────────────────────────────────────
 .status-badge {
-  padding: .28rem .75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .3rem .85rem;
   border-radius: 50px;
-  font-size: .76rem;
+  font-size: .78rem;
   font-weight: 600;
   white-space: nowrap;
+  letter-spacing: .3px;
+  border: 1px solid transparent;
+  transition: opacity .15s;
 
-  &.badge-approved { background: var(--green-bg); color: var(--green); }
-  &.badge-pending  { background: var(--amber-bg); color: var(--amber); }
-  &.badge-expired  { background: var(--red-bg);   color: var(--red);   }
+  // ── Approved — solid green pill ───────────────────────────────────────────
+  &.badge-approved {
+    background: #e8f5e9;
+    color:      #2e7d32;
+    border-color: #a5d6a7;
+
+    &::before { content: '✔'; font-size: .72rem; }
+  }
+
+  &.badge-disapproved {
+    background:   #fff3e0;
+    color:        #bf360c;
+    border-color: #ffab91;
+    box-shadow:   inset 3px 0 0 #bf360c;   // left accent bar
+    border-radius: 0 50px 50px 0;           // flat left edge to complement bar
+
+    &::before { content: '✘'; font-size: .72rem; }
+  }
+
+  // ── Pending — amber / awaiting admin review ───────────────────────────────
+  &.badge-pending {
+    background:  #fff8e1;
+    color:       #f57f17;
+    border-color: #ffe082;
+
+    &::before { content: '⏳'; font-size: .7rem; }
+  }
+
+  // ── Expired — muted grey / date-driven ───────────────────────────────────
+  &.badge-expired {
+    background:  #f5f5f5;
+    color:       #757575;
+    border-color: #e0e0e0;
+
+    &::before { content: '⌛'; font-size: .7rem; }
+  }
 }
-
 // ── Document button ────────────────────────────────────────────────────────
 .btn-doc {
-  background: var(--ink);
+  background:  var(--surface);// var(--ink);
   color: #fff;
   border: none;
   padding: .35rem .85rem;

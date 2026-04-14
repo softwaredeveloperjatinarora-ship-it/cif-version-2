@@ -46,13 +46,13 @@ export class AdminMouComponent implements OnInit, OnDestroy {
 
   // ── Filters ───────────────────────────────────────────────────────────────
   readonly searchQuery   = signal<string>('');
-  readonly filterStatus  = signal<string>('');    // '' | '0' | '1'
-  readonly filterApproved = signal<string>('');   // '' | '0' | '1'
+  readonly filterStatus  = signal<string>(''); 
+  readonly filterApproved = signal<string>('');
   readonly filterUserType = signal<string>('');
 
   // ── Pagination ────────────────────────────────────────────────────────────
   readonly currentPage   = signal<number>(1);
-  readonly pageSize      = signal<number>(10);
+  readonly pageSize      = signal<number>(5);
 
   readonly filteredList = computed(() => {
     let data = this.mouList();
@@ -120,7 +120,6 @@ export class AdminMouComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: res => {
-          console.log(JSON.stringify(res)+'Data CIF mous')
           this.mouList.set(res.item1 ?? []);
           this.currentPage.set(1);
           this.isLoading.set(false);
@@ -217,17 +216,23 @@ export class AdminMouComponent implements OnInit, OnDestroy {
     if (url) window.open(url, '_blank');
   }
 
-  statusLabel(row: MouRecord): string {
-    if (row.mouStatus === '1') return 'Expired';
-    if (row.isApproved === 1)  return 'Approved';
+statusLabel(row: MouRecord): string {
+    if (row.mouStatus === '0')   return 'Expired';
+    if (row.mouStatus === '1')   return 'Active';  
+    if (row.isApproved === 'True')  return 'Approved';
+    if (row.isApproved === 'False')  return 'Disapproved';
     return 'Pending';
   }
 
+
   statusClass(row: MouRecord): string {
-    if (row.mouStatus === '1') return 'badge-expired';
-    if (row.isApproved === 1)  return 'badge-approved';
+    if (row.mouStatus === '0')   return 'badge-expired';
+    if (row.mouStatus === '1')   return 'badge-approved';
+    if (row.isApproved === 'True')  return 'badge-approved';
+    if (row.isApproved === 'False')  return 'badge-disapproved';
     return 'badge-pending';
   }
+
 
   actionLabel(): string {
     const a = this.pendingAction();
