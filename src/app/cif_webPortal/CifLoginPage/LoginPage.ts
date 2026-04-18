@@ -13,6 +13,7 @@ import swal from 'sweetalert2';
 
 import { LpuCIFWebService } from '../../services/lpu-cifweb.service';
 import { TopBar } from '../top-bar/top-bar';
+import { EventsCarousel } from '../../shared/EventsCarousel/events-carousel';
 
 interface UserData {
     CandidateName: string;
@@ -35,7 +36,8 @@ interface UserData {
         CommonModule,
         ReactiveFormsModule,
         RouterModule,
-        TopBar
+        TopBar, 
+        EventsCarousel
 
     ],
     templateUrl: './LoginPage.html',

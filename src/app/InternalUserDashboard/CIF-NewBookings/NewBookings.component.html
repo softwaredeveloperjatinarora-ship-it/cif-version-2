@@ -36,11 +36,16 @@
         <h3 class="m-2 fs-5 fs-sm-3">Instruments Under Maintenance:</h3>
 
         @if (instrumentDataInactive().length > 0) {
-          @for (banner of instrumentDataInactive(); track banner.instrumentId) {
+        @for (banner of instrumentDataInactive(); track banner.instrumentId) {
+        <span class="badge fs-6 fs-sm-5 me-1 badge-wrap">
+          {{ banner.instrumentName }}
+        </span>
+        }
+          <!-- @for (banner of instrumentDataInactive(); track banner.instrumentId) {
             <span class="badge text-bg-warning fs-6 fs-sm-5 me-1 badge-wrap">
               {{ banner.instrumentName }}
             </span>
-          }
+          } -->
         } @else {
           <h2 class="badge text-bg-warning fs-6 fs-sm-5 me-1 badge-wrap">
             No Instrument is under Maintenance

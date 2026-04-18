@@ -23,6 +23,8 @@ import { StorageService } from '../../services/storage.service';
 import { LoginSessionService } from '../../services/login-session.service';
 import { CookieService } from 'ngx-cookie-service';
 import { NgbCarousel } from "@ng-bootstrap/ng-bootstrap";
+import { EventsCarousel } from '../../shared/EventsCarousel/events-carousel';
+import { MFacilitiesSection } from '../../shared/FacilitiesSection/Facilities-section';
 
  
 
@@ -34,7 +36,8 @@ import { NgbCarousel } from "@ng-bootstrap/ng-bootstrap";
     ReactiveFormsModule,
     RouterLink,
     NgbCarouselModule,
-    TopBar,
+    TopBar, EventsCarousel,
+    MFacilitiesSection
   ],
   templateUrl: './CifLoginPage.component.html',
   styleUrls: ['./CifLoginPage.component.scss'],

@@ -60,6 +60,7 @@ export interface MouRecord {
   userType: string;
   mouDocumentUrl?: string;
   mouId?: string;
+  approvalRemarks?: string;
 }
 
 export interface MouApiResponse {

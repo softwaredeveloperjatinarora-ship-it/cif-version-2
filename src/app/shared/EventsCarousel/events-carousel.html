@@ -1,0 +1,135 @@
+<!-- Upcoming Events Carousel Section -->
+<section class="section bg-light-yellow">
+  <div class="container">
+    <div class="heading-wraper">
+      <div class="main-head">
+        <h2>Upcoming Events</h2>
+        <div class="inner-testi-slider-nav">
+          <button
+            id="prev_upcoming_slide"
+            class="inner-testi-prev-arrow"
+            (click)="carousel2.prev()"
+          >
+            <img
+              src="https://www.lpu.in/lpu-assets/images/icons/vector-left.svg"
+              alt="Previous"
+            />
+          </button>
+          <button
+            id="next_upcoming_slide"
+            class="inner-testi-next-arrow"
+            (click)="carousel2.next()"
+          >
+            <img
+              src="https://www.lpu.in/lpu-assets/images/icons/vector-right.svg"
+              alt="Next"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ngb-carousel
+      #carousel2
+      [interval]="15000"
+      [pauseOnHover]="true"
+      [showNavigationArrows]="false"
+      [showNavigationIndicators]="true"
+    >
+      @for (group of upcomingChunkedEvents(); track $index) {
+        <ng-template ngbSlide>
+          <div
+            class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 text-center justify-content-center"
+          >
+            @for (event of group; track event.eventId) {
+              <div class="col">
+                <div class="mt-4 mb-2">
+                  <strong class="d-block">{{ event.eventName }}</strong>
+                  {{ event.eventDetails }}
+                </div>
+              </div>
+            }
+          </div>
+        </ng-template>
+      }
+    </ngb-carousel>
+
+    @if (upcomingChunkedEvents().length === 0) {
+      <p class="text-center mt-4 text-muted">
+        No Upcoming events available at the moment.
+      </p>
+    }
+  </div>
+</section>
+
+
+
+<!-- Happenings Carousel Section -->
+<section class="section bg-dark-yellow">
+  <div class="container">
+    <div class="heading-wraper">
+      <div class="main-head">
+        <h2>Events & Happenings</h2>
+        <div class="inner-testi-slider-nav">
+          <button
+            id="prev_event_slide"
+            class="inner-testi-prev-arrow"
+            (click)="carousel.prev()"
+          >
+            <img
+              src="https://www.lpu.in/lpu-assets/images/icons/vector-left.svg"
+              alt="Previous"
+            />
+          </button>
+          <button
+            id="next_event_slide"
+            class="inner-testi-next-arrow"
+            (click)="carousel.next()"
+          >
+            <img
+              src="https://www.lpu.in/lpu-assets/images/icons/vector-right.svg"
+              alt="Next"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ngb-carousel
+      #carousel
+      [interval]="15000"
+      [pauseOnHover]="true"
+      [showNavigationArrows]="false"
+      [showNavigationIndicators]="true"
+    >
+      @for (group of chunkedEvents(); track $index) {
+        <ng-template ngbSlide>
+          <div
+            class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 text-center justify-content-center"
+          >
+            @for (event of group; track event.eventId) {
+              <div class="col">
+                <img
+                  [src]="serverUrl() + event.imageUrl"
+                  [alt]="event.eventName"
+                  class="img-fluid"
+                />
+                <div class="mt-4 mb-2">
+                  <strong class="d-block">{{ event.eventName }}</strong>
+                  {{ event.eventDetails }}
+                </div>
+              </div>
+            }
+          </div>
+        </ng-template>
+      }
+    </ngb-carousel>
+
+    @if (chunkedEvents().length === 0) {
+      <p class="text-center mt-4 text-muted">
+        No Happenings events available at the moment.
+      </p>
+    }
+  </div>
+</section>
+

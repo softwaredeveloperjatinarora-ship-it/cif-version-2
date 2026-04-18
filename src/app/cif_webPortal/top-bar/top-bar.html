@@ -1,4 +1,4 @@
-<div class="nest-nav">
+<div class="nest-nav section bg-dark-yellow">
     <nav>
         <label for="drop" class="toggle">
             <div class="mobile-nav-icon nav-toggle" onclick="myFunction(this)">
@@ -10,7 +10,8 @@
         <input type="checkbox" id="drop" />
         <ul class="menu">
             
-            <li><a (click)="onFacilitiesClick()">Facilities</a></li>
+            <li><a (click)="goto('ourInstruments')">Facilities</a></li>
+            <!-- <li><a (click)="onFacilitiesClick()">Facilities</a></li> -->
             <li><a target="_blank" (click)="testClick('TestingChargesList')"> Test Charges</a></li>
                 
             

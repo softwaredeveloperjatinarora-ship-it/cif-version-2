@@ -22,11 +22,8 @@ import swal from 'sweetalert2';
 
 import { LpuCIFWebService } from '../../services/lpu-cifweb.service';
 import { TopBar } from "../top-bar/top-bar";
-import { AuthService } from '../../services/auth.service';
-import { StorageService } from '../../services/storage.service';
-import { LoginSessionService } from '../../services/login-session.service';
-import { CookieService } from 'ngx-cookie-service';
-import { NgbCarousel } from "@ng-bootstrap/ng-bootstrap";
+import { EventsCarousel } from '../../shared/EventsCarousel/events-carousel';
+import { MFacilitiesSection } from '../../shared/FacilitiesSection/Facilities-section';
 
 
 const passwordMatchValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
@@ -53,7 +50,8 @@ const passwordMatchValidator: ValidatorFn = (group: AbstractControl): Validation
     ReactiveFormsModule,
     RouterLink,
     NgbCarouselModule,
-    TopBar,
+    TopBar, EventsCarousel,
+        MFacilitiesSection
   ],
   templateUrl: './CifRegisterPage.component.html',
   styleUrls: ['./CifRegisterPage.component.scss'],

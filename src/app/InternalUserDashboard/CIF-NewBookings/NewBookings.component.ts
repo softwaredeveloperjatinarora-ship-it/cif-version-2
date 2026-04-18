@@ -215,8 +215,8 @@ export class NewBookingsComponent implements OnInit {
       next: (response: { item1: any[]; }) => {
         if (response.item1?.length) {
           this.instrumentData.set(response.item1);
-          const inactive = response.item1.filter((i: Instrument) => !i.isActive);
-          this.instrumentDataInactive.set(inactive);
+           const inactiveList = response.item1.filter((instrument: any) => instrument.isActive === false);
+          this.instrumentDataInactive.set(inactiveList);
         } else {
           this.instrumentData.set([]);
         }

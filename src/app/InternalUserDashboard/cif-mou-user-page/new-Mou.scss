@@ -46,11 +46,13 @@
 .header-content {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 1rem;
   position: relative;
   z-index: 1;
+  margin-top: 1.2rem;
+  margin-bottom: 1.2rem;
 }
 
 .page-title {
@@ -75,8 +77,8 @@
 // ── Create button ──────────────────────────────────────────────────────────
 .btn-create {
   border: none;
-  padding: .75rem 1.5rem;
-  border-radius: 50px;
+  padding: .75rem 0.5rem;
+  border-radius: 20px;
   font-family: 'DM Sans', sans-serif;
   font-weight: 600;
   font-size: .95rem;

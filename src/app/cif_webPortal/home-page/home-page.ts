@@ -14,6 +14,7 @@ import swal from 'sweetalert2';
 
 import { LpuCIFWebService } from '../../services/lpu-cifweb.service';
 import { TopBar } from '../top-bar/top-bar';
+import { EventsCarousel } from '../../shared/EventsCarousel/events-carousel';
  
 const FALLBACK_INSTRUMENTS = [
   { id: 1,  instrumentId: 0, categoryId: 1,  isActive: true, instrumentName: 'Field Emission Scanning Electron Microscope, FESEM JEOL JSM-7610F-PLUS',        imageUrl: 'https://files.lpu.in/umsweb/CIFDocuments/Instrument_23899918_2_2025_100006_FESEM-Instrument.JPG' },
@@ -38,7 +39,9 @@ const FALLBACK_INSTRUMENTS = [
  
   changeDetection: ChangeDetectionStrategy.OnPush,
 
-  imports: [CommonModule, TopBar, NgbCarouselModule],
+  imports: [CommonModule, TopBar, NgbCarouselModule, EventsCarousel],
+
+  
 })
 export class HomePage implements OnInit {
 
@@ -48,11 +51,11 @@ export class HomePage implements OnInit {
 
 
   @ViewChild('facilitiesSection') facilitiesSection!: ElementRef;
+  readonly tmpsInstrumentsDataData = signal<typeof FALLBACK_INSTRUMENTS>([]);
 
   
   readonly loadingIndicator       = signal(false);
   readonly isLoading              = signal(true);
-  readonly tmpsInstrumentsDataData = signal<typeof FALLBACK_INSTRUMENTS>([]);
 
 
   readonly loadingStates = signal<boolean[]>([]);

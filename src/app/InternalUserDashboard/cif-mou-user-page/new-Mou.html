@@ -2,14 +2,14 @@
 <div class="mou-user-page">
 
   <!-- ── Page Header ──────────────────────────────────────────────────────── -->
-  <div class="page-header">
-    <div class="header-content">
+  <div class="page-headers">
+    <div class="header-content p-3">
       <div>
         <h1 class="page-title">MOU Management</h1>
         <p class="page-subtitle">Memoranda of Understanding — {{ userName() }}</p>
       </div>
       @if (formMode() === null) {
-      <button class="btn-create" (click)="openCreateForm()">
+      <button class="btn-create" (click)="openCreateForm()" disabled="filteredList().length >=1">
         <span class="btn-icon">＋</span> New MOU
       </button>
       }
@@ -166,9 +166,11 @@
 
             <td>
               @if (row.isApproved === 'True') {
-              <span class="status-badge badge-approved">Approved</span>
+              <span class="status-badge badge-approved">Approved</span> 
+              <span class="text-success  ms-3 me-2 ">{{row.approvalRemarks }}</span>
               } @else if (row.isApproved === 'False') {
               <span class="status-badge badge-disapproved">Disapproved</span>
+              <span class="text-danger  ms-3 me-2 ">{{row.approvalRemarks }}</span>
               } @else {
               <span class="status-badge badge-pending">Pending</span>
               }
