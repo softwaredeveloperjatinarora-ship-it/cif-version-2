@@ -53,7 +53,7 @@ export class LpuCIFWebService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Accept': '*/*',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${this.authToken}`
     });
     return this.http.post('https://projectsapi.lpu.in/api/Mou/DownloadMOUFiles/MOUDownloadFiles', payload, {
 

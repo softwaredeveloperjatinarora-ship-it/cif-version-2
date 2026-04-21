@@ -112,7 +112,8 @@ export class UserMouComponent implements OnInit, OnDestroy {
     this.loadSession();
     this.loadMyMous();
     // ftp://umsftp@172.19.2.52/umsweb/webftp/CIFDocuments/CIFMouDocuments/
-     this.serverUrl = 'https://172.19.2.52/umsweb/webftp/CIFDocuments/CIFMouDocuments/';
+     this.serverUrl = 'https://files.lpu.in/umsweb/CIFDocuments/CIFMouDocuments/';//'http://172.19.2.52/umsweb/webftp/CIFDocuments/CIFMouDocuments/';
+    this.ServerUrl = 'https://files.lpu.in/umsweb/CIFDocuments/CIFMouDocuments/';
   }
 
   ngOnDestroy(): void {

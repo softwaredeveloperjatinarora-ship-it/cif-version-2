@@ -17,7 +17,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { finalize, forkJoin, Observable } from 'rxjs';
+import { finalize, forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { LoginSessionService } from '../../services/login-session.service';
@@ -74,7 +74,12 @@ interface BookingForm {
 }
 
 
-
+import {
+  MOUCrudOperation,
+  MouRecord,
+  MouInsertPayload,
+  MouUpdatePayload,
+} from '../../services/mou-crud-operation.service';
 
 @Component({
   selector: 'app-new-bookings',
@@ -87,6 +92,7 @@ interface BookingForm {
 export class NewBookingsComponent implements OnInit {
 
   private readonly cifWebService = inject(LpuCIFWebService);
+  private readonly mouService = inject(MOUCrudOperation);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly cookieService = inject(CookieService);
@@ -98,13 +104,13 @@ export class NewBookingsComponent implements OnInit {
 
   readonly loadingIndicator = signal(false);
   readonly currentStep      = signal(1);
-
+    mouList = <MouRecord[]>([]);
   readonly instrumentData         = signal<Instrument[]>([]);
   readonly instrumentDataInactive = signal<Instrument[]>([]);
   readonly analysisData           = signal<Analysis[]>([]);
   readonly instrumentsDuration    = signal<DurationItem[]>([]);
   readonly datagrid               = signal<GridEntry[]>([]);
-
+  private readonly destroy$ = new Subject<void>();
 
   readonly inactiveInstrumentIds = computed(() =>
     this.instrumentDataInactive().map(i => i.instrumentId).join(' | ')
@@ -155,6 +161,13 @@ export class NewBookingsComponent implements OnInit {
   ngOnInit(): void {
     this.serverUrl = 'https://files.lpu.in/umsweb/CIFDocuments/CIFSampleExcelSheets/';
 
+    this.LoadUser();
+
+    this.loadMyMous();
+  }
+
+  LoadUser(): void {
+
     const raw = this.cookieService.get('InternalUserAuthData');
     if (raw) {
       try {
@@ -170,6 +183,27 @@ export class NewBookingsComponent implements OnInit {
         console.error("Failed to parse JSON", e);
       }
     }
+  }
+  loadMyMous(): void {
+    this.mouService.viewMyMous(this.userEmail)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          this.mouList = res.item1 ?? [];
+          // console.log(JSON.stringify(this.mouList) + ' mou lists ');
+
+          const hasApprovedMou = this.mouList.some(
+            mou => mou.isApproved?.toLowerCase() === 'true' && mou.mouStatus?.toLowerCase() === '1'
+          );
+
+          if (hasApprovedMou) {
+            this.userRole = '400000';
+          }
+          // console.log("USERROLE = " + this.UserRole)
+        },
+        error: () => {
+        },
+      });
   }
 
 

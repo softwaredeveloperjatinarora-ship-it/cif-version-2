@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
 
 import { StorageService } from './storage.service';
+import { environment } from '../../environments/environment';
 
 // ─── Interfaces matching the stored procedure columns ────────────────────────
 
@@ -80,7 +81,9 @@ export class MOUCrudOperation {
   private readonly storageService = inject(StorageService);
 
   // ✅ Update to your actual API base URL
-  private readonly baseUrl = 'https://localhost:7125/api/LpuCIF';
+
+    private readonly baseUrl = environment.apiUrl; //
+  // private readonly baseUrl = 'https://localhost:7125/api/LpuCIF';
 
   // ── Bearer-only header for FormData (browser sets Content-Type + boundary) ─
   private get authHeadersFormData(): HttpHeaders {
@@ -129,7 +132,7 @@ export class MOUCrudOperation {
     });
 
     return this.http.post<MouApiResponse>(
-      `${this.baseUrl}/CIFMOUCrudOperation`,
+      `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
       fd,
       { headers: this.authHeadersFormData }
     ).pipe(
@@ -152,7 +155,7 @@ export class MOUCrudOperation {
     });
 
     return this.http.post<MouApiResponse>(
-      `${this.baseUrl}/CIFMOUCrudOperation`,
+      `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
       fd,
       { headers: this.authHeadersFormData }
     ).pipe(
@@ -173,7 +176,7 @@ export class MOUCrudOperation {
     });
 
     return this.http.post<MouApiResponse>(
-      `${this.baseUrl}/CIFMOUCrudOperation`,
+      `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
       fd,
       { headers: this.authHeadersFormData }
     ).pipe(
@@ -190,7 +193,7 @@ export class MOUCrudOperation {
     });
 
     return this.http.post<MouViewResponse>(
-      `${this.baseUrl}/CIFMOUCrudOperation`,
+      `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
       fd,
       { headers: this.authHeadersFormData }
     ).pipe(
@@ -209,7 +212,7 @@ export class MOUCrudOperation {
     });
 
     return this.http.post<MouViewResponse>(
-      `${this.baseUrl}/CIFMOUCrudOperation`,
+      `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
       fd,
       { headers: this.authHeadersFormData }
     ).pipe(
@@ -228,7 +231,7 @@ export class MOUCrudOperation {
     });
 
     return this.http.post<MouApiResponse>(
-      `${this.baseUrl}/CIFMOUCrudOperation`,
+      `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
       fd,
       { headers: this.authHeadersFormData }
     ).pipe(
@@ -248,7 +251,7 @@ export class MOUCrudOperation {
     });
 
     return this.http.post<MouApiResponse>(
-      `${this.baseUrl}/CIFMOUCrudOperation`,
+      `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
       fd,
       { headers: this.authHeadersFormData }
     ).pipe(
@@ -262,7 +265,7 @@ export class MOUCrudOperation {
     const fd = new FormData();
     fd.append('File', file);   // PascalCase 'File' to match controller param
     return this.http.post<{ fileUrl: string }>(
-      `${this.baseUrl}/CIFMOUCrudOperation`,
+      `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
       fd,
       { headers: this.authHeadersFormData }
     ).pipe(
@@ -392,7 +395,7 @@ export class MOUCrudOperation {
 //   // ── Insert new MOU (Simple User) ──────────────────────────────────────────
 //   insertMou(payload: MouInsertPayload): Observable<MouApiResponse> {
 //     return this.http.post<MouApiResponse>(
-//       `${this.baseUrl}/CIFMOUCrudOperation`,
+//       `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
 //       payload,
 //       { headers: this.authHeaders }
 //     ).pipe(
@@ -404,7 +407,7 @@ export class MOUCrudOperation {
 //   // ── Update existing MOU (Simple User) ────────────────────────────────────
 //   updateMou(payload: MouUpdatePayload): Observable<MouApiResponse> {
 //     return this.http.post<MouApiResponse>(
-//       `${this.baseUrl}/CIFMOUCrudOperation`,
+//       `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
 //       payload,
 //       { headers: this.authHeaders }
 //     ).pipe(
@@ -416,7 +419,7 @@ export class MOUCrudOperation {
 //   // ── Delete / deactivate MOU (Admin) ──────────────────────────────────────
 //   deleteMou(payload: MouDeletePayload): Observable<MouApiResponse> {
 //     return this.http.post<MouApiResponse>(
-//       `${this.baseUrl}/CIFMOUCrudOperation`,
+//       `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
 //       payload,
 //       { headers: this.authHeaders }
 //     ).pipe(
@@ -428,7 +431,7 @@ export class MOUCrudOperation {
 //   // ── View MOUs for a specific user (Simple User) ───────────────────────────
 //   viewMyMous(userId: string): Observable<MouViewResponse> {
 //     return this.http.post<MouViewResponse>(
-//       `${this.baseUrl}/CIFMOUCrudOperation`,
+//       `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
 //       { action: 'View', userId } as MouViewPayload,
 //       { headers: this.authHeaders }
 //     ).pipe(
@@ -439,7 +442,7 @@ export class MOUCrudOperation {
 //   // ── View ALL MOUs (Admin) ─────────────────────────────────────────────────
 //   viewAllMous(): Observable<MouViewResponse> {
 //     return this.http.post<MouViewResponse>(
-//       `${this.baseUrl}/CIFMOUCrudOperation`,
+//       `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
 //       { action: 'ViewAll' } as MouViewAllPayload,
 //       { headers: this.authHeaders }
 //     ).pipe(
@@ -450,7 +453,7 @@ export class MOUCrudOperation {
 //   // ── Approve MOU (Admin) ───────────────────────────────────────────────────
 //   approveMou(payload: MouApprovePayload): Observable<MouApiResponse> {
 //     return this.http.post<MouApiResponse>(
-//       `${this.baseUrl}/CIFMOUCrudOperation`,
+//       `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
 //       { ...payload, action: 'Approve' },
 //       { headers: this.authHeaders }
 //     ).pipe(
@@ -462,7 +465,7 @@ export class MOUCrudOperation {
 //   // ── Disapprove MOU (Admin) ────────────────────────────────────────────────
 //   disapproveMou(payload: MouApprovePayload): Observable<MouApiResponse> {
 //     return this.http.post<MouApiResponse>(
-//       `${this.baseUrl}/CIFMOUCrudOperation`,
+//       `${this.baseUrl}/LpuCIF/CIFMOUCrudOperation`,
 //       { ...payload, action: 'DisApprove' },
 //       { headers: this.authHeaders }
 //     ).pipe(
