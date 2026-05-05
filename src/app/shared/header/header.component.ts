@@ -20,7 +20,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
   ) {}
 ngOnInit() {
     this.http
-      .get('https://includepages.lpu.in/newlpu/header.php', { responseType: 'text' })
+      .get('https://www.lpu.in/includepages/newlpu/header.php', { responseType: 'text' })
       .subscribe({
         next: html => {
           this.headerHtml = this.sanitizer.bypassSecurityTrustHtml(html);

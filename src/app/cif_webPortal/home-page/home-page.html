@@ -2,7 +2,7 @@
 
 
 @if (loadingIndicator()) {
-  <div class="fullscreen-loader">
+  <div class="fullscreen-loader d-none">
     @if (isLoading()) {
       <div class="custom-spinner-overlay">
         <div class="custom-spinner-content text-center">
@@ -13,7 +13,6 @@
   </div>
 }
 
-<section class="section pb-0"></section>
 
 
 <section class="section bg-dark-yellow" #facilitiesSection>
@@ -55,7 +54,7 @@
             <img
               [src]="InstrumentData.imageUrl"
               [alt]="InstrumentData.instrumentName"
-              class="img-fluid"
+              class="img-fluid imageSize"
               loading="lazy"
               (load)="onImageLoad($index)"
               (error)="onImageError($event, $index)" />

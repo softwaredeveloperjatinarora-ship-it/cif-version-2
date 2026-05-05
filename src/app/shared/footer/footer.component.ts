@@ -23,7 +23,7 @@ export class FooterComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.http
-      .get('https://includepages.lpu.in/newlpu/footer.php', { responseType: 'text' })
+      .get('https://www.lpu.in/includepages/newlpu/footer.php', { responseType: 'text' })
       .subscribe({
         next: html => {
 

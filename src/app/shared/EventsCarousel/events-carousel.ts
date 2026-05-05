@@ -8,6 +8,7 @@ import {
     computed,
     inject,
     DOCUMENT,
+    afterNextRender,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -121,6 +122,10 @@ export class EventsCarousel implements OnInit {
 
     constructor() {
 
+        afterNextRender(() => {
+      // This only runs in the browser
+      this.loadEvents(); 
+    });
     }
 
     ngOnInit(): void {
