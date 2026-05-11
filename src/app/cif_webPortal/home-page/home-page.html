@@ -15,7 +15,7 @@
 
 
 
-<section class="section bg-dark-yellow" #facilitiesSection>
+<section class="section  " #facilitiesSection>
   <div class="container">
 
     <div class="heading-wraper mb-4">
@@ -42,28 +42,35 @@
 
           <div class="position-relative mb-4">
 
-            
-            @if (loadingStates()[$index]) {
+          <div class="cif-img-frame" If="InstrumentData.instrumentId">
+                    <img [src]="'assets/images/Instrument-Images/' + InstrumentData.instrumentId + '.jpg'"
+                         [alt]="InstrumentData.instrumentName" 
+                         class="cif-fit-img img-fluid imageSize" 
+                         loading="eager" 
+                         fetchpriority="high" />
+                </div>  
+            <!-- @if (loadingStates()[$index]) {
               <div
                 class="spinner-border text-primary position-absolute top-50 start-50 translate-middle"
                 role="status">
                 <span class="visually-hidden">Loading...</span>
               </div>
-            }
+            } -->
 
-            <img
+            <!-- <img
               [src]="InstrumentData.imageUrl"
               [alt]="InstrumentData.instrumentName"
               class="img-fluid imageSize"
               loading="lazy"
               (load)="onImageLoad($index)"
-              (error)="onImageError($event, $index)" />
+              (error)="onImageError($event, $index)" /> -->
           </div>
 
           <div>
+            
             <a
               href="javascript:void(0)"
-              (click)="VisitUrl('/ourInstruments', InstrumentData.instrumentName, InstrumentData.id, InstrumentData.categoryId)"
+              (click)="VisitUrl('/ourInstruments', InstrumentData.instrumentName, InstrumentData.instrumentId, InstrumentData.categoryId)"
               [attr.data-is-active]="InstrumentData.isActive ? 'true' : 'false'"
               class="text-decoration-none">
               {{ InstrumentData.instrumentName }}
@@ -73,10 +80,7 @@
         </div>
       }
 
-      @empty {
-        <p class="text-center w-100">No instruments data available.</p>
-      }
-
+      
     </div>
   </div>
 </section>

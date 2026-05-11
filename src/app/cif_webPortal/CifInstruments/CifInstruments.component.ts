@@ -137,6 +137,7 @@ export class CifInstrumentsComponent implements OnInit {
   readonly isInstrumentActive = signal(false);
   readonly instrumentStatus = signal('');
   readonly instrumentName = signal('');
+  readonly instrumentId = signal('');
   readonly imageUrl = signal('');
   readonly description = signal('');
   readonly specifications = signal<Specification[]>([]);
@@ -279,6 +280,7 @@ export class CifInstrumentsComponent implements OnInit {
      this.loadAllInstruments();
     this.route.paramMap.subscribe(params => {
       const id = Number(params.get('id'));
+        this.instrumentId.set(id ? id.toString() : '');
       const categoryId = Number(params.get('categoryId'));
       if (id && categoryId) {
         this.fetchSpecifications(categoryId, id);
@@ -330,16 +332,17 @@ export class CifInstrumentsComponent implements OnInit {
         this.instrumentList.set(rows);
         this.facilityList.set(rows);
         this.loadingStates.set(Array(rows.length).fill(true));
-         const delay = Math.max(2500 - (Date.now() - startTime), 0);
+        //  const delay = Math.max(2500 - (Date.now() - startTime), 0);
         // Finalize page loading
-        setTimeout(() => this.isLoading.set(false),delay); 
+        // setTimeout(() => this.isLoading.set(false),delay); 
       },
       error: (err) => {
-        this.instrumentList.set(STATIC_INSTRUMENTS);
-        this.facilityList.set(STATIC_INSTRUMENTS);
+        // this.instrumentList.set(STATIC_INSTRUMENTS);
+        // this.facilityList.set(STATIC_INSTRUMENTS);
         this.isLoading.set(false);
       },
     });
+    this.isLoading.set(false);
   }
 
 
